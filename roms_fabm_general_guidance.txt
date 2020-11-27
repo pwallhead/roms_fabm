@@ -20,8 +20,8 @@ To set up ROMS with FABM coupling you need to:
 1) Download and install the FABM with ROMS support
 2) Download and install the FABM python front end
 3) Adapt the FABM model specification file fabm.yaml for the chosen biological model
-4) Adapt the python script fabm_roms_input_from_yaml...py for the chosen model
-5) Generate the ROMS biological model/input files using fabm_roms_input_from_yaml...py and fabm.yaml
+4) Adapt the python script fabm_roms_...py for the chosen model
+5) Generate the ROMS biological model/input files using fabm_roms_...py and fabm.yaml
 6) Compile ROMS with FABM coupling using the python-generated biological model files
 7) Run ROMS using the python-generated biological input file
 
@@ -48,7 +48,7 @@ If a different/incompatible version of ROMS is to be used:
 1) The modifications in Src_<version>_modify files will need to be transferred to the new source files.
 For guidance see Src_<version>_modify/notes/roms_<version>_fabm_notes.txt
 2) The base files for python-generated files may need to be updated.
-3) The python script fabm_roms_input_from_yaml.py may need to be updated if line numbers have changed.
+3) The python script fabm_roms_....py may need to be updated if line numbers have changed.
 NOTE 1: The build script and modified makefile (in Src_<version>_modify) both depend on the FABM installation directory,
         so may need to be adapted if the installation directory is changed. 
 NOTE 2: Files makefile and Linux-<fortran compiler>.mk are platform/compiler dependent
@@ -69,7 +69,7 @@ Using pyfabm to generate ROMS files
 2. Copy fabm_appname.yaml to runtime directory as fabm.yaml
 (I recommend adding commented-out notes at the top of fabm.yaml to document provenance)
 3. Generate (rfabm_mod.h, rfabm_var.h, rfabm_inp.h, varinfo_rfabm.dat, rfabm.in, fabm_appname.cdl) using:
-python fabm_roms_input_from_yaml.py fabm_appname.yaml
+python fabm_roms_appname.py fabm_appname.yaml
 4. Copy (rfabm_mod.h, rfabm_var.h, rfabm_inp.h) to Src_modify in compile directory (or to ROMS/Nonlinear/Biology in source directory)
 5. Copy (varinfo...dat, rfabm.in) to runtime directory
 
@@ -79,8 +79,8 @@ cp -p rfabm.in ~/Run/.
 cp -p varinfo_rfabm.dat ~/Run/.
 
 NOTE: Boundary condition options and source/sink switches in rfabm.in will need to be adapted to the specific ROMS application
-      This can be done 1) by hand in the Runtime directory or 2) by adjusting fabm_roms_input_from_yaml.py
-      I use approach 2), and therefore have application-tailored fabm_roms_input_from_yaml.py files, e.g: fabm_roms_input_from_yaml_A20.py
+      This can be done 1) by hand in the Runtime directory or 2) by adjusting fabm_roms_appname.py
+      I use approach 2), and therefore have application-tailored fabm_roms_appname.py files, e.g: fabm_roms_a20_v3_npzd_Franks.py
 
 NOTE: To save time you can do all the cp-ing by sourcing a single shell script, e.g. see: 
       example_scripts/make_fabm_roms_a20_v3_npzd_franks.sh
@@ -94,7 +94,7 @@ Compiling ROMS + FABM-model using Src_<version>_modify
 First, copy the files in Src_<version>_modify/ to a folder Src_modify/ in your compile directory.
 Files in Src_modify/ will be used by the build script to substitute for unmodified files in the (pristine) ROMS source directory.
 Python-generated source files for ROMS (e.g. rfabm_mod.h) and runtime input files for ROMS
-are made using fabm_roms_input_from_yaml.py (see above).
+are made using fabm_roms_appname.py (see above).
 These are subsequently copied to Src_modify/ (source files) and <Run folder>/
 The code is finally compiled by running the build script, e.g.:
 ./build_bash_fram_A20.sh -j 16
