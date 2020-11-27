@@ -13,6 +13,7 @@ https://www.myroms.org/
 
 NOTE: It has been developed and tested so far ONLY FOR MPI PARALLEL configurations of ROMS,
       and only for Hedstrom and Rutgers branches of the ROMS code.
+      COMING SOON! roms_fabm code for ROMS COAWST.
 
 To set up ROMS with FABM coupling you need to:
 
