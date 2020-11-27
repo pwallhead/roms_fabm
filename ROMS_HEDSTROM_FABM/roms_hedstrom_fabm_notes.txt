@@ -1,0 +1,336 @@
+﻿Modifications to Hedstrom ROMS source files (version April 2017 "v37_KATE")
+---------------------------------------------------------------------------
+
+Insertions and modifications can be browsed by searching "!!!" or "PWA" in each modified file in Src_v37_KATE_modify.
+
+
+Nonlinear/albedo.F (NOT FABM RELATED):
+- Modified albedo computations for consistency with CESM2/CICE5.1 (ALBEDO_CSIM)
+
+Nonlinear/Biology/biology.F:
+- added cpp-contingent include command for RFABM (17/11/2014)
+
+Nonlinear/bulk_flux.F (NOT FABM-RELATED):
+- new variable fsnow, modified correction of srflx to account for snow/ice albedo and also correct SRad (07/03/2019)
+- modified correction of qswi for consistency with new cpp CCSM_ICE_SHORTWAVE (14/03/2019) 
+  NOTE: In later versions of Hedstrom ROMS the lack of snow/ice albedo impact on srflx was corrected by
+        updating srflx in ice_mk.h. However this is not done in the present version (ROMS_v37_KATE, April 2017),
+        hence the impact of snow/ice albedo on srflx is missing in the present version (a major bug).
+        Also, note that it may not be ideal to have the correction of srflx deferred to ice_mk.h. 
+- Corrected intent(inout) to intent(in) for albedo, albedo_ice: these should not be modified in bulk_flux.F (05/11/2020)
+- Deleted redundant SW_thru_ice assignment (05/22/2020)
+
+Utility/cawdir_eval.F (NOT FABM-RELATED):
+- modified cpp conditions to use new cpp ALBEDO_DIRDIFF (allows use of cloudiness correction to air-sea albedo without having to use ALBEDO_CLOUD option in ana_srflux.h) (07/03/2019)
+
+Utility/checkdefs.F:
+- inserted/modified the following checks of preprocessing options:
+RFABM
+FABM_INITIAL (17/09/2015)
+SPECIFIC_HUMIDITY (08/03/2017)
+BIOLOGY (08/03/2017) Strange that this one was missing!
+- added missing END IF for ICESHELF && !defined DJ_GRADPS options - surprised it compiled without
+FABM_ASILT (14/04/2017)
+FABM_PCO2ATM (14/04/2017)
+FABM_ADYTRACER (07/02/2018)
+CCSM_ICE_SHORTWAVE (14/03/2019) - NOT FABM-RELATED
+ICE_SHORTWAVE_R (01/10/2019) - NOT FABM-RELATED
+FABM_NONNEG_S cpp to use zero-capped salinity for input to FABM (requires copying tracer array) (11/12/2019)
+FABM_N3ATMDEPO (25/10/2020)
+FABM_N4ATMDEPO (25/10/2020)
+FABM_AICE (25/10/2020)
+FABM_CHECK_STATE (03/11/2020) 
+
+Utility/checkvars.F
+- Modified condition to set get_var to FALSE if FABM_INITIAL defined 18/09/2015
+  (avoids searching for netcdf ICs when FABM defaults ICs are used)
+- Simplified by removing superfluous idsat and idbat indices (23/08/2019)
+- Modified logic to agree with modified Rutgers code (24/08/2019) 
+
+Include/cppdefs.h (NOT FABM-RELATED)
+- modified for new cpp ALBEDO_DIRDIFF (should also update for CCSM_ICE_SHORTWAVE, RFABM, etc.)
+
+Utility/def_avg.F:
+- Added RFABM-dependent code to define NetCDF averages for:
+(srfWm2,Asilt,xCO2atm,pCO2atm,state_bt,state_sf) (23/04/2017)
+- Added RFABM-dependent code to define NetCDF averages for ADY_0 (07/02/2018)
+- Added definition of NetCDF averages for current speed (idSUVav) (22/10/2018) (NOT FABM-RELATED)
+- Added definition of NetCDF averages for idfrswp and idrfaci (01/10/2019) (NOT FABM-RELATED)
+- Added RFABM+(FABM_N3ATMDEPO,FABM_N4ATMDEPO)-dependent code to define NetCDF averages for N3atmd, N4atmd (30/04/2020)
+- Added definition of NetCDF averages for scalar bottom stress (idbstrPa) (11/09/2020) (NOT FABM-RELATED)
+- Changed index name idSUVav -> idSUV (11/09/2020)
+
+Utility/def_his.F:
+- Added RFABM-dependent code to define NetCDF history variables:
+(srfWm2,Asilt,xCO2atm,pCO2atm,state_bt,state_sf) (24/04/2017)
+- Added RFABM-dependent code to define NetCDF history variable for ADY_0 (07/02/2018)
+- Added RFABM+(FABM_N3ATMDEPO,FABM_N4ATMDEPO)-dependent code to define NetCDF history variables N3atmd, N4atmd (30/04/2020)
+
+Utility/def_rst.F:
+- Added RFABM-dependent code to define surface/bottom attached restart values (24/04/2017)
+
+Utility/def_station.F:
+- Added RFABM-dependent code to define NetCDF station variables (srfWm2,Asilt,xCO2atm,pCO2atm,state_bt,state_sf) (22/08/2019)
+- Added RFABM+(FABM_N3ATMDEPO,FABM_N4ATMDEPO)-dependent code to define NetCDF station variables N3atmd, N4atmd (30/04/2020)
+- Added TS_ISOURCE-dependent code to defined NetCDF station variable tsisource (30/04/2020) (NOT FABM-RELATED)
+- Added code to define NetCDF station variables (suv,bstrPa) (14/09/2020) (NOT FABM-RELATED)
+
+Nonlinear/diag.F: (optional, not FABM-related)
+- Transferred PWA modifications to allow biological output diagnostics, including minimum values
+- 28/02/2017: This may change formatting of runtime output if NESTING cpp is activated
+              Basically, the changes extend the runtime output to include minbio as well as maxbio
+
+Nonlinear/get_data.F:
+- Added RFABM+FABM_ASILT-dependent getting of Asilt data (16/04/2017)
+- Added RFABM+FABM_PCO2ATM-dependent getting of xCO2atm data (16/04/2017)
+- Added RFABM+FABM_ADYTRACER-dependent getting of ADY_0 data (07/02/2018)
+- Added TS_ISOURCE-dependent getting of tsisource data (18/05/2020) (NOT FABM-RELATED)
+- Added RFABM+(FABM_N3ATMDEPO,FABM_N4ATMDEPO)-dependent getting of data (18/05/2020)
+
+Utility/get_state.F
+- Added RFABM-dependent reading in of surface/bottom-attached initial conditions (30/06/2020)
+
+Include/globaldefs.h
+- Modified cpp conditions to account for ALBEDO_DIRDIFF (07/03/2019) (NOT FABM-RELATED)
+- Modified cpp corrections to switch on BIOLOGY if RFABM activated (22/08/2019)
+
+Utility/lbc.F:
+- RFABM-dependent doubling of the length of lbc_att to allow for ERSEM-type models (02/11/2015)
+- Changed to RFABM-dependent quadrupling and also apply to lbc_getatt (18/09/2018)
+
+Compilers/Linux-ftn.mk (for STALLO setup)
+- Added FABM library linking commands to "LIBS", dependent on USE_FABM macro (04/03/2015)
+
+Compilers/Linux-ifort.mk (for FRAM setup)
+- Added FABM library linking commands to "LIBS", dependent on USE_FABM macro (03/12/2018)
+- Modified nc-config -> nf-config following latest Hedstrom code, to avoid missing .mod files (04/12/2018)
+- Modified FFLAGS to agree with Hedstrom latest (04/12/2018)
+
+Nonlinear/lmd_skpp.F (NOT FABM-RELATED)
+- Added ICE_MODEL+ICE_SHORTWAVE_R-dependent use of rfaci to pass to lmd_swfrac_tile (26/09/2019)
+
+Nonlinear/lmd_bkpp.F (NOT FABM-RELATED)
+- Added ICE_MODEL+ICE_SHORTWAVE_R-dependent use of rfaci to pass to lmd_swfrac_tile (26/09/2019)
+
+Nonlinear/lmd_swfrac.F (NOT FABM-RELATED)
+- Added ICE_MODEL+ICE_SHORTWAVE_R-dependent use of rfaci to modify near-IR fraction of shortwave irradiance (25/09/2019)
+
+Nonlinear/main3d.F (NOT FABM-RELATED)
+- Modified cpp conditions to account for ALBEDO_DIRDIFF (07/03/2019)
+
+Nonlinear/main3d_offline.F (NOT FABM-RELATED)
+- Modified cpp conditions to account for ALBEDO_DIRDIFF (07/03/2019)
+
+Compilers/make_macros.h
+- Added RFABM-dependent definition of USE_FABM macro (04/03/2015)
+
+makefile (DEPENDS ON LOCATION OF INSTALLED FABM INCLUDE DIRECTORY)
+- Added FABM include directory to includes list (for locating .h files), dependent on USE_FABM macro (04/03/2015)
+- Inserted command to copy FABM .mod files from FABM_INCDIR, dependent on USE_FABM macro (04/03/2015)
+
+Modules/mod_average.F
+- Added RFABM-dependent declaration, allocation, and initialization of:
+AVERAGE(ng)%avg(srfWm2,Asilt,xCO2atm,pCO2atm,state_bt,state_sf) (21/04/2017)
+- Added RFABM+FABM_ADYTRACER-dependent declaration, allocation, and initialization of AVERAGE(ng)%avgADY_0
+- Added declaration, allocation, and initialization of AVERAGE(ng)%avgSUV (22/10/2018) (NOT FABM-RELATED)
+- Added declaration, allocation, and initialization of AVERAGE(ng)%avgfrswp, AVERAGE(ng)%avgrfaci (04/10/2019)  (NOT FABM-RELATED)
+- Added RFABM+(FABM_N3ATMDEPO,FABM_N4ATMDEPO)-dependent declaration, allocation, and initialization of AVERAGE(ng)%avgN3atmd,avgN4atmd
+- Added TS_ISOURCE-dependent declaration, allocation, and initialization of AVERAGE(ng)%avgtsisource (NOT FABM-RELATED) (30/04/2020)
+- Added declaration, allocation, and initialization of AVERAGE(ng)%avgbstrPa (11/09/2020) (NOT FABM-RELATED)
+- Changed index name idSUVav -> idSUV (11/09/2020)
+
+Modules/mod_biology.F:
+- Added RFABM-dependent include statement for rfabm_mod.F (17/11/2014)
+
+Modules/mod_coupler.F:
+- Added RFABM-dependent increase of MaxNumberFields from 50 to 100 to allow for ERSEM-level complexity (05/10/2015)
+- Added RFABM-dependent increase of MaxNumberFields from 100 to 150 to allow for ERSEM-level complexity (18/09/2018)
+
+Modules/mod_forces.F
+- Added RFABM-dependent declaration, allocation, and initialization of wind_speed variable Swind (16/03/2015)
+- Added RFABM-dependent declaration, allocation, and initialization of srflxWm2, Asilt, pCO2atm, bstrPa (30/10/2015)
+- Added RFABM+FABM_ASILT-dependent declaration, allocation, and initialization of Asilt and AsiltG (14/04/2017)
+- Added RFABM+FABM_PCO2ATM-dependent declaration, allocation, and initialization of xCO2atm and xCO2atmG (14/04/2017)
+- Added RFABM+FABM_ADYTRACER-dependent declaration, allocation, and initialization of ADY_0 and ADY_0G (07/02/2018)
+- Added ALBEDO_DIRDIFF-dependent declaration, allocation, and initialization of cawdir (07/03/2019) (NOT FABM-RELATED)
+- Added RFABM+(FABM_N3ATMDEPO,FABM_N4ATMDEPO)-dependent declaration, allocation, and initialization of FORCES(ng)%N3atmd,N4atmd and FORCES(ng)%N3atmdG,N4atmdG
+- Added TS_ISOURCE-dependent declaration, allocation, and initialization of tsisource (30/04/2020) (NOT FABM-RELATED)
+
+Modules/mod_ice.F
+- Added declaration, allocation, and initialization of rfaci (25/09/2019) (NOT FABM-RELATED)
+
+Modules/mod_ncparam.F
+- Added comments showing how this code is a likely source of SIGSEGV errors (worth keeping these!)
+- Added RFABM-dependent inclusion of rfabm_var.h (17/11/2014)
+- Added RFABM+FABM_ASILT-dependent declaration and input of netCDF forcing index idAsilt (14/04/2017)
+- Added RFABM+FABM_PCO2ATM-dependent declaration and input of netCDF forcing index idxCO2atm (14/04/2017)
+- Added RFABM-dependent declaration and input of netCDF forcing index idSradWm2 (05/05/2017)
+- Added DEBUG-dependent screen output "Done initialize_ncparam" (05/05/2017)
+- Added RFABM+FABM_ADYTRACER-dependent declaration and input of netCDF forcing index idADY_0 (07/02/2018)
+- Increased parameters MV and NV from 3000 to 5000 for use with FABM (04/09/2018).
+  These had previously been increased from 1300 (ROMS value)
+  but with a more complex AERSEM models (65 state vars) even 3000 was causing SIGSEGV.
+  NOTE: An early runtime SIGSEGV error (e.g. just after writing the title to output)
+  is most likely due to a fault in varinfo.dat being read by mod_ncparam
+- Added declaration and input of netCDF average index idSUVav (22/10/2018) (NOT FABM-RELATED)
+- Added declaration and input of netCDF indices idfrswp and idrfaci (04/10/2019) (NOT FABM-RELATED)
+- Added RFABM+(FABM_N3ATMDEPO,FABM_N4ATMDEPO)-dependent declaration and input of netCDF forcing indices idN3atmd,idN4atmd (30/04/2020)
+- Added TS_ISOURCE-dependent declaration and input of netCDF forcing indices idItrc (30/04/2020) (NOT FABM-RELATED)
+- Added declaration and input of netCDF index for scalar bottom stress idbstrPa (11/09/2020) (NOT FABM-RELATED)
+- Changed index name idSUVav -> idSUV (11/09/2020)
+
+Modules/mod_ocean.F
+- Added RFABM-dependent declaration, allocation, and initialization of full density variable rhof and water pressure variable pres (16/03/2015)
+- Added RFABM-dependent declaration, allocation, and initialization of state_sf and state_bt (16/03/2015)
+- Added RFABM-dependent declaration, allocation, and initialization of state1 (08/05/2017)
+
+Modules/mod_param.F
+- Added RFABM-dependent declaration and allocation of FMODELS(1:Ngrids)%fmodel(-1:Ntiles) (16/03/2015)
+- Added RFABM-dependent declaration and allocation of NBS(Ngrids) and NBB(Ngrids) (02/11/2015)
+- Added RFABM-dependent declaration and allocation of:
+  ndiagi(Ngrids), idiagimin(Ngrids), ndiagimax(Ngrids), ndiagh(Ngrids), idiaghmin(Ngrids), ndiaghmax(Ngrids) (04/11/2015)
+- Updated declaration of fabm model structure vector fmodels(:) (type->class) and names of fabm types (29/10/2020)
+- Updated fabm objects (e.g. FMODEL(ng)%f(tile)%model) for compatibility with updated FABM source (29/10/2020)
+
+Modules/mod_scalars.F
+- Added RFABM-dependent declaration and allocation of scalar ydayc(ng) = No. days since start of year (29/10/2015)
+- Increased the maximum allowable tracer value max_bio to 1.0E+08 (else stop with "BIO trouble in DIAG") (25/05/2017)
+- Added TS_ISOURCE-dependent declaration, allocation, and initialization of LtracerISrc (30/04/2020) (NOT FABM-RELATED)
+
+Master/ocean.h
+- Inserted RFABM-dependent USE statement and call to roms_fabm_init (31/03/2015)
+
+Nonlinear/pre_step3d.F
+- Added ICE_MODEL+ICE_SHORTWAVE_R-dependent use of rfaci to pass to lmd_swfrac_tile (26/09/2019)
+
+Utility/read_biopar.F
+- RFABM-dependent include statement referring to rfabm_inp.h (04/08/2015)
+
+Utility/read_icepar.F (NOT FABM-RELATED)
+- Added Aout options for idfrswp and idrfaci (05/10/2019)
+
+Utility/read_phypar.F
+- RFABM+FABM_ASILT/FABM_PCO2ATM-dependent reading in of Hout(idAsilt) Aout(idAsilt) etc. (04/05/2017)
+- RFABM-dependent reading in of Hout(idSradWm2) and Aout(idSradWm2) (05/05/2017)
+- RFABM+FABM_ADYTRACER-dependent reading in of Hout(idADY_0) Aout(idADY_0) etc. (07/02/2018)
+- Reading in of Aout(idSUVav), Hout2(idSUVav), and Aout2(idSUVav) (22/10/2018) (NOT FABM-RELATED)
+- RFABM+(FABM_N3ATMDEPO,FABM_N4ATMDEPO)-dependent reading in of Hout, Aout etc. (30/04/2020)
+- Added TS_ISOURCE-dependent input of logical LtracerISrc to switch on internal sources/sinks (30/04/2020) (NOT FABM-RELATED)
+- Reading in of Aout(idbstrPa) (11/09/2020) (NOT FABM-RELATED)
+- Changed index name idSUVav -> idSUV (11/09/2020)
+
+Utility/read_stapar.F
+- Added RFABM-dependent reading in of Sout for (srfWm2,Asilt,xCO2atm,pCO2atm,state_bt,state_sf) (22/08/2019)
+  Note: It could be necessary to increase dimensions of (Rval,Cval) to allow for complex models (cf. base_rfabm_inp.h).
+- Added RFABM+(FABM_N3ATMDEPO,FABM_N4ATMDEPO)-dependent reading in of Sout (30/04/2020)
+- Added TS_ISOURCE-dependent reading in of Sout (30/04/2020) (NOT FABM-RELATED)
+
+Nonlinear/Biology/rfabm.h (NEW, from npzd_Franks.h)
+- Added linking calls (pointers that change between time steps) and call to fabm_do (31/03/2015)
+- Removed ITER_LOOP and BioIter (28/07/2015)
+- Added call to fabm_get_vertical_movement to compute sinking velocities in new array "w" (04/08/2015)
+- Changed SINK_LOOP to loop over all NBT variables, rather than prescribing the sinking variables (04/08/2015)
+- Added icheckmax and dBdt1max as runtime input parameters (in rfabm.in) (09/03/2017)
+  - these allow optional additional screen output for initial iterations (see rfabm.in)
+- Added accumulation of saved diagnostics into ROMS arrays "DiaBio2d" and "DiaBio3d" (01/05/2017)
+- Shifted FABM linkage from "t" to "state1" in order to allow use of fabm_check_state for clipping (08/05/2017)
+  - "state1" and "state_old" now replace "Bio" and "Bio_old"
+- Added use of idfabmD2 and idfabmD3 to avoid excessive diagnostic array size (28/08/2019)
+- Added FABM_NONNEG_S-dependent use of a zero-capped salinity for input to FABM (requires copying tracer array) (11/12/2019)
+- Major update for compatibility with updated FABM source (29/10/2020)
+- Corrected IF statement used to skip non-sinking variables, using a fixed tolerance 1.0E-12_r8 [m/s] (30/10/2020)
+- Updated structure to call the new FABM API prepare_inputs() outside of J loop (03/11/2020)
+- Added new cpp FABM_CHECK_STATE so that the FABM-capping can be switched off at compile time (03/11/2020) 
+(maybe desirable e.g. for npzd_Franks module where nonnegativity is internally corrected for) 
+
+Nonlinear/rho_eos.F/rho_eos.F
+- Added RFABM-dependent update of rhof from rho and water pressure (pres) calculation (16/03/2015)
+
+Nonlinear/Biology/roms_fabm.F (NEW)
+- Wrote initialisation subroutine roms_fabm_init (31/03/2015)
+- Added RFABM-dependent inclusion of module content
+- Added FABM_ASILT-dependent linking to ROMS forcing Asilt (14/04/2017)
+- Added FABM_PCO2ATM-dependent linking to ROMS forcing pCO2atm (14/04/2017)
+- Added setting of diagnostic saving logical based in input NetCDF Dout (01/05/2017)
+- Shifted FABM linkage from "t" to "state1" in order to allow use of fabm_check_state for clipping in rfabm.h (08/05/2017)
+- Modified using idfabmD2, idfabmD3 to allow parismonious diagnostic array size (02/09/2019)
+- Added (FABM_N3ATMDEPO,FABM_N4ATMDEPO)-dependent linkage to (FORCES(ng)%N3atmd,FORCES(ng)%N4atmd) (30/04/2020)
+AT THIS POINT Hedstrom roms_fabm.F is identical to that used in the Arango modified code, hence we use a copy of this file (30/04/2020)
+- Major update for compatibility with updated FABM source (29/10/2020)
+- Modified conditions on diagnostics computations to switch off when NDIA=0 (24/11/2020)
+
+Nonlinear/set_avg.F
+- Added RFABM-dependent calculation of avgstate_sf and avgstate_bt (23/04/2017)
+- Added RFABM-dependent calculation of avgxCO2atm and avgpCO2atm (23/04/2017)
+- Added RFABM+FABM_ADYTRACER-dependent calculation of avgADY_0 (07/02/2018)
+- Added calculation of average current speed avgSUV (22/10/2018) (NOT FABM-RELATED)
+- Added calculation of averages for idfrswp and idrfaci (02/10/2019) (NOT FABM-RELATED)
+- Added RFABM+(FABM_N3ATMDEPO,FABM_N4ATMDEPO)-dependent calculation of avgN3atmd, avgN4atmd, avgIsources (30/04/2020)
+- Corrected calculation of average current speed avgSUV for consistency with avgUV (11/09/2020) (NOT FABM-RELATED)
+- Changed index name idSUVav -> idSUV (11/09/2020)
+
+Nonlinear/set_data.F
+- Added RFABM-dependent update of wind_speed variable Swind (16/03/2015)
+- Added RFABM-dependent update of srflxWm2, Asilt, pCO2atm, bstrPa (30/10/2015)
+- Added RFABM+FABM_ASILT-dependent update of Asilt (14/04/2017)
+- Added RFABM+FABM_PCO2ATM-dependent update of xCO2atm and pCO2atm calculation corrected for water vapor (14/04/2017)
+- Added RFABM+FABM_ADYTRACER-dependent update of ADY_0 (07/02/2018)
+- Modified pCO2atm calculation to use salinity capped at zero (11/12/2019)
+- Added TS_ISOURCE-dependent update of tsisource (30/04/2020) (NOT FABM-RELATED)
+- Tidied calculated of Swind and corrected calculation of bstrPa (accounting for (bustr,bvstr) being defined at (u,v) points, following sed_bed.F) (11/09/2020)
+
+Utility/set_diags.F
+- Added RFABM-dependent exemption from ipCO2 exemption (29/04/2017)
+- Possible BUGFIX: Modified the condition to accumulate GRID(ng)%rmask_dia etc. if DIAGNOSTICS_BIO defined (03/05/2017)
+
+Nonlinear/set_vbc.F
+- Added RFABM-dependent assignment of srflxWm2 from srflx (05/05/2017)
+(done here to account for ice cover corrections in bulk_flux.F etc.)
+
+Nonlinear/step3d_t.F (NOT FABM-RELATED)
+- Added TS_ISOURCE-dependent injection of tracer due to internal sources (e.g. fish farm) (30/04/2020)
+
+Utility/wrt_avg.F
+- Added RFABM-dependent code to write NetCDF averages for:
+(srfWm2,Asilt,xCO2atm,pCO2atm,state_bt,state_sf) (25/04/2017)
+- Added RFABM+FABM_ADYTRACER-dependent code to write NetCDF averages for ADY_0 (07/02/2018)
+- Added code to write NetCDF averages for current speed (idSUVav) (22/10/2018) (NOT FABM-RELATED)
+- Added code to write NetCDF averages for idfrswp and idrfaci (01/10/2019) (NOT FABM-RELATED)
+- Added RFABM+(FABM_N3ATMDEPO,FABM_N4ATMDEPO)-dependent writing of avgN3atmd, avgN4atmd (30/04/2020)
+- Added code to write NetCDF averages for scalar bottom stress (idbstrPa) (11/09/2020) (NOT FABM-RELATED)
+- Changed index name idSUVav -> idSUV (11/09/2020)
+
+Utility/wrt_diags.F
+- Added RFABM-dependent removal of per-second to per-day units conversion (28/04/2017) and dtBIO setting (29/04/2017)
+- Added RFABM-dependent removal of optional argument SetFillVal = .FALSE. (07/05/2017)
+
+Utility/wrt_his.F
+- Added RFABM-dependent code to write NetCDF history variables:
+(srfWm2,Asilt,xCO2atm,pCO2atm,state_bt,state_sf) (24/04/2017)
+- Added RFABM+FABM_ADYTRACER-dependent code to write NetCDF history variable for ADY_0 (07/02/2018)
+- Added RFABM+(FABM_N3ATMDEPO,FABM_N4ATMDEPO) code to write NetCDF history variables N3atmd, N4atmd, Isources (30/04/2020)
+
+Utility/wrt_rst.F
+- Added RFABM-dependent code to write NetCDF restart variables (state_bt,state_sf) (25/04/2017)
+
+Utility/wrt_station.F
+- Added RFABM-dependent code to write NetCDF station variables (srfWm2,Asilt,xCO2atm,pCO2atm,state_bt,state_sf) (22/08/2019)
+- Added RFABM+(FABM_N3ATMDEPO,FABM_N4ATMDEPO)-dependent code to write NetCDF station variables N3atmd, N4atmd, Isources (30/04/2020)
+- Added TS_ISOURCE-dependent code to write NetCDF station variable tsisource (30/04/2020)
+- Added code to write NetCDF station variables (suv,bstrPa) (11/09/2020)
+
+
+Base files for python-generated input files
+-------------------------------------------
+
+base_rfabm.in (from External/npzd_Franks.in)
+- Copied and renamed ROMS/External/npzd_Franks.in
+
+base_rfabm_inp.h (from Nonlinear/Biology/npzd_Franks_inp.h)
+- Removed BioIter and wPhy parameters, but still need to input tracer diffusivities etc. (28/07/2015)
+- Migrated to new version based on ROMS_v37_KATE/ROMS/Nonlinear/Biology/npzd_Franks_inp.h (09/03/2017)
+- Added icheckmax and dBdt1max as runtime input parameters (in rfabm.in) (09/03/2017)
+- Simplified by removing superfluous idsat and idbat indices (23/08/2019)
+
+base_varinfo_v37_rfabm.h (from External/varinfo.dat)
+- Copied and renamed ROMS/External/varinfo.dat (30/07/2019)
