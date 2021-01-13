@@ -119,6 +119,8 @@ FABM_PCO2ATM        /* use to provide atmospheric pCO2 forcing via ROMS (need to
 FABM_N3ATMDEPO      /* use to provide atmospheric deposition flux of oxidized nitrogen via ROMS (input N3atmd) */
 FABM_N4ATMDEPO      /* use to provide atmospheric deposition flux of reduced nitrogen via ROMS (input N4atmd) */
 FABM_AICE           /* use to provide fractional ice area from ROMS internal ice model (NOT YET TESTED) */
+FABM_TSS            /* use to provide Total Suspended Sediments concentration from input file(s) as a forcing */
+FABM_TSS_ONLINE     /* use to provide Total Suspended Sediments concentration calculated online by ROMS to FABM (NOT YET TESTED) */ 
 FABM_NONNEG_S       /* use to cap salinity input to FABM at zero PSU */
 FABM_CHECK_STATE    /* use to cap bgc variable input to FABM */
 FABM_INITIAL        /* use to set all bgc initial conditions to FABM default values (simple constants) */
@@ -129,6 +131,7 @@ This will be independent of the FABM coupling, via the ROMS code in step3d_t.F (
 However this code is NOT YET TESTED.
 There is also some code under a cpp FABM_ISOURCES to provide bgc sources via the FABM, but this is also
 NOT YET TESTED and may be deleted in future updates.
+FABM_TSS and FABM_TSS_ONLINE options are presently only coded for Rutgers (ARANGO) or COAWST branches.
 
 NOTE 2: If you have a VERY complex FABM model, you may need to increase maximum array size parameters in ROMS.
         See: mod_coupler.F, mod_ncparam.F, lbc.F, base_rfabm_inp.h
