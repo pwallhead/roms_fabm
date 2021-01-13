@@ -1081,6 +1081,25 @@
 # endif
 !!!End insert PWA 10/02/2020
 
+!!!Inserted PWA 13/12/2020
+!
+!  Define Total Suspended Sediments.
+!
+        IF (Sout(idtss,ng)) THEN
+          Vinfo( 1)=Vname(1,idtss)
+          Vinfo( 2)=Vname(2,idtss)
+          Vinfo( 3)=Vname(3,idtss)
+          Vinfo(14)=Vname(4,idtss)
+          Vinfo(16)=Vname(1,idtime)
+          status=def_var(ng, iNLM, STA(ng)%ncid, STA(ng)%Vid(idtss),    &
+     &                   NF_FOUT, 3, rgrd, Aval, Vinfo, ncname,         &
+     &                   SetFillVal = .TRUE.,                           &
+     &                   SetParAccess = .TRUE.)
+          IF (FoundError(exit_flag, NoError, __LINE__,                  &
+     &                   __FILE__)) RETURN
+        END IF
+!!!End insert PWA 13/12/2020
+
 !
 !  Define surface U-momentum stress.
 !
@@ -2214,6 +2233,12 @@
           END DO
 # endif
 !!!End insert PWA 10/02/2020
+!!!Inserted PWA 13/12/2020
+          IF (TRIM(var_name(i)).eq.TRIM(Vname(1,idtss))) THEN
+            got_var(idtss)=.TRUE.
+            STA(ng)%Vid(idtss)=var_id(i)
+          END IF
+!!!End insert PWA 13/12/2020
 
         END DO
 !
@@ -2834,6 +2859,14 @@
         END DO
 # endif
 !!!End insert PWA 10/02/2020
+!!!Inserted PWA 13/12/2020
+        IF (.not.got_var(idtss).and.Sout(idtss,ng)) THEN
+          IF (Master) WRITE (stdout,60) TRIM(Vname(1,idtss)),          &
+     &                                  TRIM(ncname)
+          exit_flag=3
+          RETURN
+        END IF
+!!!End insert PWA 13/12/2020
 
 !
 !  Set unlimited time record dimension to the appropriate value.

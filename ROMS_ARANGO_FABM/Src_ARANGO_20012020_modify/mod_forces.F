@@ -121,6 +121,11 @@
 # ifdef FABM_ASILT
 !  Asilt        Absorption of silt for use in FABM models              !
 # endif
+!!!PWA Inserted 13/12/2020
+# if defined FABM_TSS || defined FABM_TSS_ONLINE
+!  tss          Total Suspended Sediment for use in FABM models        !
+# endif
+!!!End insert PWA 13/12/2020
 # ifdef FABM_PCO2ATM
 !  xCO2atm      Atmospheric dry molar fraction of CO2 (ppm)            !
 !  pCO2atm      Atmospheric partial pressure of CO2 (uatm)             !
@@ -138,7 +143,7 @@
 !  Isources     Internal biogeochemical sources (concentration/s)      !
 # endif
 #endif
-!!!PWA Inserted 16/03/2015                                             !
+!!!End insert PWA 16/03/2015                                           !
 !                                                                      !
 !  Rain fall rate.                                                     !
 !                                                                      !
@@ -342,6 +347,15 @@
           real(r8), pointer :: Asilt(:,:,:)
           real(r8), pointer :: AsiltG(:,:,:,:)
 # endif
+!!!Inserted PWA 13/12/2020
+# ifdef FABM_TSS
+          real(r8), pointer :: tss(:,:,:)
+          real(r8), pointer :: tssG(:,:,:,:)
+# endif
+# ifdef FABM_TSS_ONLINE
+          real(r8), pointer :: tss(:,:,:)
+# endif
+!!!End insert PWA 13/12/2020
 # ifdef FABM_PCO2ATM
           real(r8), pointer :: xCO2atm(:,:)
           real(r8), pointer :: pCO2atm(:,:)
@@ -364,7 +378,7 @@
           real(r8), pointer :: IsourcesG(:,:,:,:,:)
 # endif
 #endif
-!!!PWA Inserted 16/03/2015
+!!!End insert PWA 16/03/2015
 
 # ifdef BULK_FLUXES
           real(r8), pointer :: rain(:,:)
@@ -773,6 +787,20 @@
       allocate ( FORCES(ng) % AsiltG(LBi:UBi,LBj:UBj,N(ng),2) )
       Dmem(ng)=Dmem(ng)+2.0_r8*REAL(N(ng),r8)*size2d
 #  endif
+
+!!!Inserted PWA 13/12/2020
+#  ifdef FABM_TSS
+      allocate ( FORCES(ng) % tss(LBi:UBi,LBj:UBj,N(ng)) )
+      Dmem(ng)=Dmem(ng)+REAL(N(ng),r8)*size2d
+
+      allocate ( FORCES(ng) % tssG(LBi:UBi,LBj:UBj,N(ng),2) )
+      Dmem(ng)=Dmem(ng)+2.0_r8*REAL(N(ng),r8)*size2d
+#  endif
+#  ifdef FABM_TSS_ONLINE
+      allocate ( FORCES(ng) % tss(LBi:UBi,LBj:UBj,N(ng)) )
+      Dmem(ng)=Dmem(ng)+REAL(N(ng),r8)*size2d
+#  endif
+!!!End insert PWA 13/12/2020
 
 #  ifdef FABM_PCO2ATM
       allocate ( FORCES(ng) % xCO2atm(LBi:UBi,LBj:UBj) )
@@ -1320,6 +1348,20 @@
               FORCES(ng) % AsiltG(i,j,k,2) = IniVal
             END DO
 # endif
+!!!Inserted PWA 13/12/2020
+# ifdef FABM_TSS
+            DO k=1,N(ng)
+              FORCES(ng) % tss(i,j,k) = IniVal
+              FORCES(ng) % tssG(i,j,k,1) = IniVal
+              FORCES(ng) % tssG(i,j,k,2) = IniVal
+            END DO
+# endif
+# ifdef FABM_TSS_ONLINE
+            DO k=1,N(ng)
+              FORCES(ng) % tss(i,j,k) = IniVal
+            END DO
+# endif
+!!!End insert PWA 13/12/2020
 # ifdef FABM_PCO2ATM
             FORCES(ng) % xCO2atm(i,j) = IniVal
             FORCES(ng) % pCO2atm(i,j) = IniVal
@@ -1350,7 +1392,7 @@
             END DO
 # endif
 #endif
-!!!PWA Inserted 30/10/2015
+!!!End insert PWA 30/10/2015
 
 # if !defined ANA_RAIN && defined BULK_FLUXES
             FORCES(ng) % rainG(i,j,1) = IniVal

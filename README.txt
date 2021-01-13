@@ -1,6 +1,6 @@
 ﻿
 
-%%Phil Wallhead 27/11/2020
+%%Phil Wallhead 04/12/2020
 
 
 GENERAL OVERVIEW
@@ -12,8 +12,9 @@ https://github.com/fabm-model/fabm/wiki
 https://www.myroms.org/
 
 NOTE: It has been developed and tested so far ONLY FOR MPI PARALLEL configurations of ROMS,
-      and only for Hedstrom and Rutgers branches of the ROMS code.
-      COMING SOON! roms_fabm code for ROMS COAWST.
+      and only for Hedstrom, Rutgers, and COAWST branches of the ROMS code.
+NOTE: The Hedstrom ROMS code is no longer maintained, and therefore the FABM coupling code may cease
+      to be maintained in the near future. Users are advised to switch to the Rutgers or COAWST code.
 
 To set up ROMS with FABM coupling you need to:
 
@@ -112,6 +113,8 @@ MASKING             /* MUST be defined to provide input to fabm_set_mask */
 ANA_SPFLUX          /* MUST be defined, or surface bgc fluxes provided in forcing files */
 ANA_BPFLUX          /* MUST be defined, or bottom bgc fluxes provided in forcing files */
 SHORTWAVE           /* MAY be required in order to provide light forcing for FABM model */
+FABM_ADYTRACER      /* use to provide a light attenuation tracer via ROMS (NOT YET TESTED) */
+FABM_ASILT          /* use to provide a 3D forcing field for absorption due to silt (NOT YET TESTED) */
 FABM_PCO2ATM        /* use to provide atmospheric pCO2 forcing via ROMS (need to input xCO2atm) */
 FABM_N3ATMDEPO      /* use to provide atmospheric deposition flux of oxidized nitrogen via ROMS (input N3atmd) */
 FABM_N4ATMDEPO      /* use to provide atmospheric deposition flux of reduced nitrogen via ROMS (input N4atmd) */
@@ -121,7 +124,17 @@ FABM_CHECK_STATE    /* use to cap bgc variable input to FABM */
 FABM_INITIAL        /* use to set all bgc initial conditions to FABM default values (simple constants) */
 FABM_INITIAL_SB     /* use to set initial conditions to FABM defaults only for surface/bottom attached variables */
 
+In addition there is also code under development to allow mass inputs without fluid input, under cpp TS_ISOURCE.
+This will be independent of the FABM coupling, via the ROMS code in step3d_t.F (thanks to John Wilkin at Rutgers for guidance here). 
+However this code is NOT YET TESTED.
+There is also some code under a cpp FABM_ISOURCES to provide bgc sources via the FABM, but this is also
+NOT YET TESTED and may be deleted in future updates.
+
 NOTE 2: If you have a VERY complex FABM model, you may need to increase maximum array size parameters in ROMS.
         See: mod_coupler.F, mod_ncparam.F, lbc.F, base_rfabm_inp.h
+
+NOTE 3: Modified code is provided for ccsm_flux.F to enable the CCSM_ICE_SHORTWAVE parameterization.
+        However this code is still under development: it is NOT YET TESTED and NOT READY FOR USE.
+        (CCSM_ICE_SHORTWAVE has been tested only with BULK_FLUXES cpp).
 
 

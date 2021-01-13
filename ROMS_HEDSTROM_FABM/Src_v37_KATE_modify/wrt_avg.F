@@ -3143,7 +3143,7 @@
 
 
 !!!PWA Inserted 25/04/2017
-#ifdef RFABM
+#if defined RFABM
 #  ifdef SHORTWAVE
 !
 !  Write out shortwave radiation flux in [W/m2].
@@ -3155,9 +3155,9 @@
      &                     AVG(ng)%Vid(idSradWm2),                      &
      &                     AVG(ng)%Rindex, gtype,                       &
      &                     LBi, UBi, LBj, UBj, scale,                   &
-#    ifdef MASKING
+#   ifdef MASKING
      &                     GRID(ng) % rmask,                            &
-#    endif
+#   endif
      &                     AVERAGE(ng) % avgsrfWm2)
         IF (status.ne.nf90_noerr) THEN
           IF (Master) THEN
@@ -3169,7 +3169,7 @@
         END IF
       END IF
 #  endif
-# ifdef FABM_ASILT
+#  ifdef FABM_ASILT
 !
 !  Write out absorption due to silt [m-1]
 !
@@ -3180,9 +3180,9 @@
      &                     AVG(ng)%Vid(idAsilt),                        &
      &                     AVG(ng)%Rindex, gtype,                       &
      &                     LBi, UBi, LBj, UBj, 1, N(ng), scale,         &
-#  ifdef MASKING
+#   ifdef MASKING
      &                     GRID(ng) % rmask,                            &
-#  endif
+#   endif
      &                     AVERAGE(ng) % avgAsilt(:,:,:))
         IF (status.ne.nf90_noerr) THEN
           IF (Master) THEN
@@ -3194,8 +3194,8 @@
           RETURN
         END IF
       END IF
-# endif
-# ifdef FABM_PCO2ATM
+#  endif
+#  ifdef FABM_PCO2ATM
 !
 !  Write out dry molar fraction of CO2 in air [ppm]
 !
@@ -3206,9 +3206,9 @@
      &                     AVG(ng)%Vid(idxCO2atm),                      &
      &                     AVG(ng)%Rindex, gtype,                       &
      &                     LBi, UBi, LBj, UBj, scale,                   &
-#    ifdef MASKING
+#   ifdef MASKING
      &                     GRID(ng) % rmask,                            &
-#    endif
+#   endif
      &                     AVERAGE(ng) % avgxCO2atm)
         IF (status.ne.nf90_noerr) THEN
           IF (Master) THEN
@@ -3229,9 +3229,9 @@
      &                     AVG(ng)%Vid(idpCO2atm),                      &
      &                     AVG(ng)%Rindex, gtype,                       &
      &                     LBi, UBi, LBj, UBj, scale,                   &
-#    ifdef MASKING
+#   ifdef MASKING
      &                     GRID(ng) % rmask,                            &
-#    endif
+#   endif
      &                     AVERAGE(ng) % avgpCO2atm)
         IF (status.ne.nf90_noerr) THEN
           IF (Master) THEN
@@ -3242,8 +3242,8 @@
           RETURN
         END IF
       END IF
-# endif
-# ifdef FABM_ADYTRACER
+#  endif
+#  ifdef FABM_ADYTRACER
 !
 !  Write out absorption due to dissolved+detrital matter [m-1]
 !
@@ -3254,9 +3254,9 @@
      &                     AVG(ng)%Vid(idADY_0),                        &
      &                     AVG(ng)%Rindex, gtype,                       &
      &                     LBi, UBi, LBj, UBj, scale,                   &
-#    ifdef MASKING
+#   ifdef MASKING
      &                     GRID(ng) % rmask,                            &
-#    endif
+#   endif
      &                     AVERAGE(ng) % avgADY_0)
         IF (status.ne.nf90_noerr) THEN
           IF (Master) THEN
@@ -3267,8 +3267,8 @@
           RETURN
         END IF
       END IF
-# endif
-# ifdef FABM_N3ATMDEPO
+#  endif
+#  ifdef FABM_N3ATMDEPO
 !
 !  Write out atmospheric deposition fluxes for oxidized nitrogen [mmol/m2/s].
 !
@@ -3279,9 +3279,9 @@
      &                     AVG(ng)%Vid(idN3atmd),                       &
      &                     AVG(ng)%Rindex, gtype,                       &
      &                     LBi, UBi, LBj, UBj, scale,                   &
-#  ifdef MASKING
+#   ifdef MASKING
      &                     GRID(ng) % rmask,                            &
-#  endif
+#   endif
      &                     AVERAGE(ng) % avgN3atmd)
         IF (status.ne.nf90_noerr) THEN
           IF (Master) THEN
@@ -3292,8 +3292,8 @@
           RETURN
         END IF
       END IF
-# endif
-# ifdef FABM_N4ATMDEPO
+#  endif
+#  ifdef FABM_N4ATMDEPO
 !
 !  Write out atmospheric deposition fluxes for reduced nitrogen [mmol/m2/s].
 !
@@ -3304,9 +3304,9 @@
      &                     AVG(ng)%Vid(idN4atmd),                       &
      &                     AVG(ng)%Rindex, gtype,                       &
      &                     LBi, UBi, LBj, UBj, scale,                   &
-#  ifdef MASKING
+#   ifdef MASKING
      &                     GRID(ng) % rmask,                            &
-#  endif
+#   endif
      &                     AVERAGE(ng) % avgN4atmd)
         IF (status.ne.nf90_noerr) THEN
           IF (Master) THEN
@@ -3329,9 +3329,9 @@
      &                       AVG(ng)%Vid(idSAvar(itrc)),                &
      &                       AVG(ng)%Rindex, gtype,                     &
      &                       LBi, UBi, LBj, UBj, scale,                 &
-# ifdef MASKING
+#  ifdef MASKING
      &                       GRID(ng) % rmask,                          &
-# endif
+#  endif
      &                       AVERAGE(ng) % avgstate_sf(:,:,itrc))
           IF (status.ne.nf90_noerr) THEN
             IF (Master) THEN
@@ -3352,9 +3352,9 @@
      &                       AVG(ng)%Vid(idBAvar(itrc)),                &
      &                       AVG(ng)%Rindex, gtype,                     &
      &                       LBi, UBi, LBj, UBj, scale,                 &
-# ifdef MASKING
+#  ifdef MASKING
      &                       GRID(ng) % rmask,                          &
-# endif
+#  endif
      &                       AVERAGE(ng) % avgstate_bt(:,:,itrc))
           IF (status.ne.nf90_noerr) THEN
             IF (Master) THEN
@@ -3367,7 +3367,7 @@
           END IF
         END IF
       END DO
-#endif
+# endif
 !!!End insert PWA 25/04/2017
 
 

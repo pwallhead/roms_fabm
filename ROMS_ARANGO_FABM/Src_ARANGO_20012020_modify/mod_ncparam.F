@@ -477,6 +477,7 @@
 
         integer  :: idSUV         ! horizontal current speed !!!Inserted PWA 22/10/2018
         integer  :: idbstrPa      ! scalar bottom stress in Pa !!!Inserted PWA 11/09/2020
+        integer  :: idtss         ! total suspended sediment !!!Inserted PWA 13/12/2020
 
 !
 !  State variables indices (order is important). Notice that current
@@ -1793,6 +1794,10 @@
             CASE ('idbstrPa')
               idbstrPa=varid
 !!!End insert PWA 11/09/2020
+!!!Inserted PWA 13/12/2020
+            CASE ('idtss')
+              idtss=varid
+!!!End insert PWA 13/12/2020
 #ifdef DIAGNOSTICS_UV
             CASE ('idDu2d(M2pgrd)')
               idDu2d(M2pgrd)=varid

@@ -219,6 +219,10 @@
 # endif
 !!!End insert PWA 10/02/2020
 
+!!!Inserted PWA 13/12/2020
+          real(r8), pointer :: avgtss(:,:,:)
+!!!End insert PWA 13/12/2020
+
 # if defined FORWARD_WRITE && defined SOLVE3D
 !
 !  Time-averaged 2D/3D coupling terms.
@@ -522,6 +526,13 @@
       END IF
 # endif
 !!!End insert PWA 10/02/2020
+
+!!!Inserted PWA 13/12/2020
+      IF (Aout(idtss,ng)) THEN
+        allocate (AVERAGE(ng)%avgtss(LBi:UBi,LBj:UBj,N(ng)))
+        Dmem(ng)=Dmem(ng)+REAL(N(ng),r8)*size2d
+      END IF
+!!!End insert PWA 13/12/2020
 
 # if defined FORWARD_WRITE && defined SOLVE3D
 !
@@ -1157,6 +1168,18 @@
 # endif
 !!!End insert PWA 10/02/2020
 
+!!!Inserted PWA 13/12/2020
+      IF (Aout(idtss,ng)) THEN
+        DO k=1,N(ng)
+          DO j=Jmin,Jmax
+            DO i=Imin,Imax
+              AVERAGE(ng) % avgtss(i,j,k) = IniVal
+            END DO
+          END DO
+        END DO
+      END IF
+!!!End insert PWA 13/12/2020
+
 # if defined FORWARD_WRITE && defined SOLVE3D
 !
 !  Time-averaged 2D/3D coupling terms.
@@ -1523,7 +1546,7 @@
           END DO
         END DO
       END IF
-      
+
 !!!Inserted PWA 22/10/2018
       IF (Aout(idSUV,ng)) THEN
         DO k=1,N(ng)

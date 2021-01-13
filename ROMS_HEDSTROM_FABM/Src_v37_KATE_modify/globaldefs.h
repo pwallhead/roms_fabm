@@ -781,7 +781,7 @@
 #endif
 
 /*
-** Activate CCSM albedo is using CCSM treatment of shortwave 
+** Activate CCSM albedo if using CCSM treatment of shortwave
 ** interactions with ice/snow
 */
 

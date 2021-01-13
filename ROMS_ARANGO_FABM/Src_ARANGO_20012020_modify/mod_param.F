@@ -471,7 +471,6 @@
         CLASS (type_fabm_model), pointer :: model
       END TYPE type_fabm_model_array
       TYPE T_FABM
-!        CLASS (type_fabm_model), pointer :: fmodel(:)
         TYPE(type_fabm_model_array), dimension(:), allocatable :: f(:)
         TYPE (type_fabm_interior_variable_id), allocatable :: id_temp(:)
         TYPE (type_fabm_interior_variable_id), allocatable :: id_salt(:)

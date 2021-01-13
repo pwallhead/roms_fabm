@@ -621,6 +621,18 @@
       is=LEN_TRIM(Coptions)+1
       Coptions(is:is+12)=' FABM_ASILT,'
 # endif
+# ifdef FABM_TSS
+      IF (Master) WRITE (stdout,20) 'FABM_TSS',                         &
+     &   'Use ROMS to provide Total Suspended Sediment (offline).'
+      is=LEN_TRIM(Coptions)+1
+      Coptions(is:is+11)=' FABM_TSS,'
+# endif
+# ifdef FABM_TSS_ONLINE
+      IF (Master) WRITE (stdout,20) 'FABM_TSS_ONLINE',                  &
+     &   'Use ROMS to provide Total Suspended Sediment (online).'
+      is=LEN_TRIM(Coptions)+1
+      Coptions(is:is+18)=' FABM_TSS_ONLINE,'
+# endif
 # ifdef FABM_PCO2ATM
       IF (Master) WRITE (stdout,20) 'FABM_PCO2ATM',                     &
      &   'Use ROMS to provide atmospheric pCO2 for FABM model.'
@@ -656,6 +668,12 @@
      &   'Cap salinity input to FABM at zero PSU.'
       is=LEN_TRIM(Coptions)+1
       Coptions(is:is+15)=' FABM_NONNEG_S,'
+# endif
+# ifdef FABM_CHECK_STATE
+      IF (Master) WRITE (stdout,20) 'FABM_CHECK_STATE',                 &
+     &   'Use FABM to check (and repair) biological state.'
+      is=LEN_TRIM(Coptions)+1
+      Coptions(is:is+18)=' FABM_CHECK_STATE,'
 # endif
 #endif
 !!!End insertion PWA 23/11/2018

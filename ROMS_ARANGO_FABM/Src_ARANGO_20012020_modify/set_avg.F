@@ -1285,6 +1285,35 @@
           END DO
         END IF
 !!!End PWA insert 11/09/2020
+!!!Inserted PWA 13/12/2020
+#  ifdef SEDIMENT 
+        IF (Aout(idtss,ng)) THEN
+          DO k=1,N(ng)
+            DO j=JstrR,JendR
+              DO i=IstrR,IendR
+                  AVERAGE(ng)%avgtss(i,j,k) = 0.0_r8
+              END DO
+            END DO
+          END DO
+          DO it=1,NST
+            DO k=1,N(ng)
+              DO j=JstrR,JendR
+                DO i=IstrR,IendR
+                  AVERAGE(ng)%avgtss(i,j,k) =                           &
+#   ifdef WET_DRY
+     &            GRID(ng)%rmask_full(i,j)*(AVERAGE(ng)%avgtss(i,j,k) + &
+     &                                OCEAN(ng)%t(i,j,k,Nout,idsed(it)))
+#   else
+     &            AVERAGE(ng)%avgtss(i,j,k) +                           &
+     &                                 OCEAN(ng)%t(i,j,k,Nout,idsed(it))
+#   endif
+                END DO
+              END DO
+            END DO
+          END DO
+        END IF
+#  endif
+!!!End PWA insert 13/12/2020
         IF (Aout(idHUav,ng)) THEN
           DO k=1,N(ng)
             DO j=JstrR,JendR
@@ -2471,6 +2500,25 @@
           END DO
         END IF
 !!!End PWA insert 11/09/2020
+!!!Inserted PWA 13/12/2020
+#  ifdef SEDIMENT 
+        IF (Aout(idtss,ng)) THEN
+          DO it=1,NST
+            DO k=1,N(ng)
+              DO j=JstrR,JendR
+                DO i=IstrR,IendR
+                  AVERAGE(ng)%avgtss(i,j,k)=AVERAGE(ng)%avgtss(i,j,k) + &
+#   ifdef WET_DRY
+     &                                        GRID(ng)%rmask_full(i,j)* &
+#   endif
+     &                                 OCEAN(ng)%t(i,j,k,Nout,idsed(it))
+                END DO
+              END DO
+            END DO
+          END DO
+        END IF
+#  endif
+!!!End insert PWA 13/12/2020
         IF (Aout(idHUav,ng)) THEN
           DO k=1,N(ng)
             DO j=JstrR,JendR
@@ -4363,6 +4411,31 @@
           END IF
         END IF
 !!!End insert PWA 11/09/2020
+
+!!!Inserted PWA 13/12/2020, following avgt
+        IF (Aout(idtss,ng)) THEN
+          DO k=1,N(ng)
+            DO j=JstrR,JendR
+              DO i=IstrR,IendR
+                AVERAGE(ng)%avgtss(i,j,k)=rfac(i,j)*                    &
+     &                                   AVERAGE(ng)%avgtss(i,j,k)
+              END DO
+            END DO
+          END DO
+          IF (EWperiodic(ng).or.NSperiodic(ng)) THEN
+            CALL exchange_r3d_tile (ng, tile,                           &
+     &                              LBi, UBi, LBj, UBj, 1, N(ng),       &
+     &                              AVERAGE(ng)%avgtss)
+#  ifdef DISTRIBUTE
+            CALL mp_exchange3d (ng, tile, iNLM, 1,                      &
+     &                          LBi, UBi, LBj, UBj, 1, N(ng),           &
+     &                          NghostPoints,                           &
+     &                          EWperiodic(ng), NSperiodic(ng),         &
+     &                          AVERAGE(ng)%avgtss)
+#  endif
+          END IF
+        END IF
+!!!End insert PWA 13/12/2020
 
         IF (Aout(idHUav,ng)) THEN
           DO k=1,N(ng)

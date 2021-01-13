@@ -2040,6 +2040,17 @@
 # endif
 #endif
 !!!End insert PWA 23/07/2019
+
+!!!Inserted PWA 13/12/2020
+            CASE ('Hout(idtss)')
+              IF (idtss.eq.0) THEN
+                IF (Master) WRITE (out,280) 'idtss'
+                exit_flag=5
+                RETURN
+              END IF
+              Npts=load_l(Nval, Cval, Ngrids, Lswitch)
+              Hout(idtss,1:Ngrids)=Lswitch(1:Ngrids)
+!!!End insert PWA 13/12/2020
             CASE ('Qout(idUvel)')
               Npts=load_l(Nval, Cval, Ngrids, Lswitch)
               Qout(idUvel,1:Ngrids)=Lswitch(1:Ngrids)
@@ -2823,6 +2834,11 @@
 # endif
 #endif
 !!!End insert PWA 23/07/2019
+!!!Inserted PWA 13/12/2020
+            CASE ('Aout(idtss)')
+              Npts=load_l(Nval, Cval, Ngrids, Lswitch)
+              Aout(idtss,1:Ngrids)=Lswitch(1:Ngrids)
+!!!End insert PWA 13/12/2020
 #ifdef DIAGNOSTICS_UV
             CASE ('Dout(M2rate)')
               IF (M2rate.le.0) THEN
@@ -5304,6 +5320,11 @@
 # endif
 #endif
 !!!End PWA insert 04/05/2017
+!!!Inserted PWA 13/12/2020
+            IF (Hout(idtss,ng)) WRITE (out,170) Hout(idtss,ng),         &
+     &         'Hout(idtss)',                                           &
+     &         'Write out total suspended sediment.'
+!!!End insert PWA 13/12/2020
           END IF
 
           IF ((nQCK(ng).gt.0).and.ANY(Qout(:,ng))) THEN
@@ -5959,6 +5980,11 @@
 # endif
 #endif
 !!!End insert PWA 04/05/2017
+!!!Inserted PWA 13/12/2020
+          IF (Aout(idtss,ng)) WRITE (out,170) Aout(idtss,ng),           &
+     &       'Aout(idtss)',                                             &
+     &       'Write out total suspended sediment.'
+!!!End insert PWA 13/12/2020
 #ifdef DIAGNOSTICS_UV
           IF ((nDIA(ng).gt.0).and.ANY(Dout(:,ng))) THEN
             WRITE (out,'(1x)')

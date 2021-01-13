@@ -567,7 +567,7 @@
           RST(ng)%head(i:i)=blank
           RST(ng)%base(i:i)=blank
           RST(ng)%name(i:i)=blank
-          
+
           STA(ng)%head(i:i)=blank
           STA(ng)%base(i:i)=blank
           STA(ng)%name(i:i)=blank

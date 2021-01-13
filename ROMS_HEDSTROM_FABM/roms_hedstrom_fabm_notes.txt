@@ -35,11 +35,13 @@ FABM_PCO2ATM (14/04/2017)
 FABM_ADYTRACER (07/02/2018)
 CCSM_ICE_SHORTWAVE (14/03/2019) - NOT FABM-RELATED
 ICE_SHORTWAVE_R (01/10/2019) - NOT FABM-RELATED
+ALBEDO_DIRDIFF (???) - NOT FABM-RELATED
 FABM_NONNEG_S cpp to use zero-capped salinity for input to FABM (requires copying tracer array) (11/12/2019)
 FABM_N3ATMDEPO (25/10/2020)
 FABM_N4ATMDEPO (25/10/2020)
 FABM_AICE (25/10/2020)
 FABM_CHECK_STATE (03/11/2020) 
+- Stop with error message if CCSM_FLUXES and CCSM_ICE_SHORTWAVE defined (code not ready) (05/12/2020) - NOT FABM-RELATED
 
 Utility/checkvars.F
 - Modified condition to set get_var to FALSE if FABM_INITIAL defined 18/09/2015
@@ -106,10 +108,10 @@ Compilers/Linux-ifort.mk (for FRAM setup)
 - Modified nc-config -> nf-config following latest Hedstrom code, to avoid missing .mod files (04/12/2018)
 - Modified FFLAGS to agree with Hedstrom latest (04/12/2018)
 
-Nonlinear/lmd_skpp.F (NOT FABM-RELATED)
+Nonlinear/lmd_bkpp.F (NOT FABM-RELATED)
 - Added ICE_MODEL+ICE_SHORTWAVE_R-dependent use of rfaci to pass to lmd_swfrac_tile (26/09/2019)
 
-Nonlinear/lmd_bkpp.F (NOT FABM-RELATED)
+Nonlinear/lmd_skpp.F (NOT FABM-RELATED)
 - Added ICE_MODEL+ICE_SHORTWAVE_R-dependent use of rfaci to pass to lmd_swfrac_tile (26/09/2019)
 
 Nonlinear/lmd_swfrac.F (NOT FABM-RELATED)

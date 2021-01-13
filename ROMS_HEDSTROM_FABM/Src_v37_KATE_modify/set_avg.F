@@ -1165,7 +1165,7 @@
               AVERAGE(ng)%avgfrswp(i,j)=FORCES(ng)%frswpen(i,j)
 #  ifdef WET_DRY
               AVERAGE(ng)%avgfrswp(i,j)=AVERAGE(ng)%avgfrswp(i,j)*      &
-     &                                   GRID(ng)%rmask_full(i,j)
+     &                                  GRID(ng)%rmask_full(i,j)
 #  endif
             END DO
           END DO
@@ -1176,7 +1176,7 @@
               AVERAGE(ng)%avgrfaci(i,j)=ICE(ng)%rfaci(i,j)
 #  ifdef WET_DRY
               AVERAGE(ng)%avgrfaci(i,j)=AVERAGE(ng)%avgrfaci(i,j)*      &
-     &                                   GRID(ng)%rmask_full(i,j)
+     &                                  GRID(ng)%rmask_full(i,j)
 #  endif
             END DO
           END DO

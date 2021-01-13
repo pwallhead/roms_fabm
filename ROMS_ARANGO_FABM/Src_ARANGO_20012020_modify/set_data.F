@@ -937,6 +937,23 @@
      &               __FILE__)) RETURN
 #  endif
 
+!!!Inserted PWA 13/12/2020
+#  ifdef FABM_TSS
+      !
+      !-----------------------------------------------------------------------
+      !  Set Total Suspended Sediment.
+      !-----------------------------------------------------------------------
+      !
+      CALL set_3dfld_tile (ng, tile, iNLM, idtss,                       &
+     &                     LBi, UBi, LBj, UBj, 1, N(ng),                &
+     &                     FORCES(ng)%tssG,                             &
+     &                     FORCES(ng)%tss,                              &
+     &                     update)
+      IF (FoundError(exit_flag, NoError, __LINE__,                      &
+     &               __FILE__)) RETURN
+#  endif
+!!!End insert PWA 13/12/2020
+
 #  ifdef FABM_PCO2ATM
       !
       !-----------------------------------------------------------------------

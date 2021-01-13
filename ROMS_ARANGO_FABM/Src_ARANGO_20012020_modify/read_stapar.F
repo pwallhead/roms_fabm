@@ -196,6 +196,12 @@
 # endif
 !!!End insert PWA 10/02/2020
 
+!!!Inserted PWA 13/12/2020
+            CASE ('Sout(idtss)')
+              Npts=load_l(Nval, Cval, Ngrids, Lswitch)
+              Sout(idtss,1:Ngrids)=Lswitch(1:Ngrids)
+!!!End insert PWA 13/12/2020
+
             CASE ('Sout(idUsms)')
               Npts=load_l(Nval, Cval, Ngrids, Lswitch)
               Sout(idUsms,1:Ngrids)=Lswitch(1:Ngrids)
@@ -694,6 +700,11 @@
             END DO
 # endif
 !!!End insert PWA 14/09/2020
+!!!Inserted PWA 13/12/2020
+            IF (Sout(idtss,ng)) WRITE (out,90) Sout(idtss,ng),          &
+     &          'Sout(idtss)',                                          &
+     &          'Write out total suspended sediment.'
+!!!End insert PWA 13/12/2020
             IF (Sout(idUsms,ng)) WRITE (out,90) Sout(idUsms,ng),        &
      &          'Sout(idUsms)',                                         &
      &          'Write out surface U-momentum stress.'

@@ -3161,5 +3161,19 @@
 #endif
 !!!End insert PWA 25/04/2017
 
+!!!Inserted PWA 05/12/2020
+#if defined CCSM_FLUXES && defined CCSM_ICE_SHORTWAVE
+!
+!  Stop if asking for CCSM_FLUXES and CCSM_ICE_SHORTWAVE (code not ready yet)
+!
+      IF (Master) THEN
+        WRITE (stdout,270)
+ 270    FORMAT (/,' CHECKDEFS - CCSM_ICE_SHORTWAVE code not yet ready', &
+     &            ' for use with CCSM_FLUXES (only for BULK_FLUXES).')
+        exit_flag=5
+      END IF
+#endif
+!!!End insert PWA 05/12/2020
+
       RETURN
       END SUBROUTINE checkdefs

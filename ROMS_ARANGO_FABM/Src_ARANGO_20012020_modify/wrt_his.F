@@ -83,6 +83,11 @@
       real(r8), allocatable :: Ur3d(:,:,:)
       real(r8), allocatable :: Vr3d(:,:,:)
       real(r8), allocatable :: Wr3d(:,:,:)
+!!!Inserted PWA 13/12/2020
+# ifdef SEDIMENT
+      real(r8), allocatable :: wrk1(:,:,:)
+# endif
+!!!End insert PWA 13/12/2020
 #endif
 
 # include "set_bounds.h"
@@ -2936,6 +2941,68 @@
       END DO
 #endif
 !!!End insert PWA 27/07/2019
+
+!!!Inserted PWA 13/12/2020
+!
+!  Write out total suspended sediment.
+!
+      IF (Hout(idtss,ng)) THEN
+#if defined FABM_TSS || defined FABM_TSS_ONLINE
+        scale=1.0_r8
+        gtype=gfactor*r3dvar
+        status=nf_fwrite3d(ng, iNLM, HIS(ng)%ncid,                      &
+                           HIS(ng)%Vid(idtss),                          &
+     &                     HIS(ng)%Rindex, gtype,                       &
+     &                     LBi, UBi, LBj, UBj, 1, N(ng), scale,         &
+# ifdef MASKING
+     &                     GRID(ng) % rmask,                            &
+# endif
+     &                     FORCES(ng) % tss(:,:,:))
+
+#elif defined SEDIMENT
+
+        IF (.not.allocated(wrk1)) THEN
+          allocate (wrk1(LBi:UBi,LBj:UBj,N(ng)))
+          wrk1(LBi:UBi,LBj:UBj,1:N(ng))=0.0_r8
+        END IF
+        DO itrc=1,NST
+          DO k=1,N(ng)
+            DO j=JstrR,JendR
+              DO i=IstrR,IendR
+                wrk1(i,j,k) = wrk1(i,j,k) +                             &
+# ifdef WET_DRY
+     &                                        GRID(ng)%rmask_full(i,j)* &
+# endif
+     &                            OCEAN(ng) % t(i,j,k,NOUT,idsed(itrc))
+              END DO
+            END DO
+          END DO
+        END DO
+        scale=1.0_r8
+        gtype=gfactor*r3dvar
+        status=nf_fwrite3d(ng, iNLM, HIS(ng)%ncid,                      &
+                           HIS(ng)%Vid(idtss),                          &
+     &                     HIS(ng)%Rindex, gtype,                       &
+     &                     LBi, UBi, LBj, UBj, 1, N(ng), scale,         &
+# ifdef MASKING
+     &                     GRID(ng) % rmask,                            &
+# endif
+     &                     wrk1)
+        deallocate (wrk1)
+#endif
+
+        IF (FoundError(status, nf90_noerr, __LINE__,                    &
+     &                 __FILE__)) THEN
+          IF (Master) THEN
+            WRITE (stdout,10) TRIM(Vname(1,idtss)),                     &
+     &                        HIS(ng)%Rindex
+          END IF
+          exit_flag=3
+          ioerror=status
+          RETURN
+        END IF
+      END IF
+!!!End insert PWA 13/12/2020
 
 !
 !-----------------------------------------------------------------------

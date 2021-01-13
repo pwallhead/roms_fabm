@@ -1249,6 +1249,27 @@
      &                   __FILE__)) RETURN
         END IF
 !!!End insert PWA 11/09/2020
+!!!Inserted PWA 12/12/2020
+!
+!  Define Total Suspended Sediments.
+!
+        IF (Aout(idtss,ng)) THEN
+          Vinfo( 1)=Vname(1,idtss)
+          WRITE (Vinfo( 2),'(a,1x,a)') Prefix, TRIM(Vname(2,idtss))
+          Vinfo( 3)=Vname(3,idtss)
+          Vinfo(14)=Vname(4,idtss)
+          Vinfo(16)=Vname(1,idtime)
+#   if defined WRITE_WATER && defined MASKING
+          Vinfo(20)='mask_rho'
+#   endif
+          Vinfo(22)='coordinates'
+          Aval(5)=REAL(Iinfo(1,idtss,ng),r8)
+          status=def_var(ng, model, AVG(ng)%ncid,AVG(ng)%Vid(idtss),    &
+     &                   NF_FOUT, nvd4, t3dgrd, Aval, Vinfo, ncname)
+          IF (FoundError(exit_flag, NoError, __LINE__,                  &
+     &                   __FILE__)) RETURN
+        END IF
+!!!End insert PWA 12/12/2020
 !
 !  Define quadratic <t*t> terms.
 !
@@ -2510,6 +2531,11 @@
             got_var(idbstrPa)=.TRUE.
             AVG(ng)%Vid(idbstrPa)=var_id(i)
 !!!End insert PWA 11/09/2020
+!!!Inserted PWA 12/12/2020
+          ELSE IF (TRIM(var_name(i)).eq.TRIM(Vname(1,idtss))) THEN
+            got_var(idtss)=.TRUE.
+            AVG(ng)%Vid(idtss)=var_id(i)
+!!!End insert PWA 12/12/2020
 #  if defined LMD_MIXING || defined MY25_MIXING || defined GLS_MIXING
           ELSE IF (TRIM(var_name(i)).eq.TRIM(Vname(1,idVvis))) THEN
             got_var(idVvis)=.TRUE.
@@ -3003,6 +3029,14 @@
           RETURN
         END IF
 !!!End insert PWA 11/09/2020
+!!!Inserted PWA 12/12/2020
+        IF (.not.got_var(idtss).and.Aout(idtss,ng)) THEN
+          IF (Master) WRITE (stdout,60) TRIM(Vname(1,idtss)),           &
+     &                                  TRIM(ncname)
+          exit_flag=3
+          RETURN
+        END IF
+!!!End insert PWA 12/12/2020
 #  if defined LMD_MIXING || defined MY25_MIXING || defined GLS_MIXING
         IF (.not.got_var(idVvis).and.Aout(idVvis,ng)) THEN
           IF (Master) WRITE (stdout,60) TRIM(Vname(1,idVvis)),          &

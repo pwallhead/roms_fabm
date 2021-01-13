@@ -200,6 +200,7 @@
 !    time          Model time clock (s).
 !!!PWA Inserted 29/10/2015
 #if defined RFABM
+!    nFABM         No. FABM time steps per baroclinic time step
 !    ydayc         No. days since start of the year (set by call to caldate in rfabm.h)
 #endif
 !!!PWA Inserted 29/10/2015
@@ -227,6 +228,11 @@
 
         integer, allocatable :: ndtfast(:)
         integer, allocatable :: nfast(:)
+!!!PWA Inserted 05/01/2021
+#if defined RFABM
+        integer, allocatable :: nFABM(:)
+#endif
+!!!PWA Inserted 05/01/2021
 
         real(dp), allocatable :: tdays(:)                ! days
         real(dp), allocatable :: time(:)                 ! seconds
@@ -1868,6 +1874,14 @@
         allocate ( nfast(Ngrids) )
         Dmem(1)=Dmem(1)+REAL(Ngrids,r8)
       END IF
+!!!PWA Inserted 05/01/2021
+#if defined RFABM
+      IF (.not.allocated(nFABM)) THEN
+        allocate ( nFABM(Ngrids) )
+        Dmem(1)=Dmem(1)+REAL(Ngrids,r8)
+      END IF
+#endif
+!!!PWA Inserted 05/01/2021
 
       IF (.not.allocated(dt)) THEN
         allocate ( dt(Ngrids) )

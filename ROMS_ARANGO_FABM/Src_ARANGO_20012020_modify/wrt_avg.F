@@ -1398,6 +1398,31 @@
         END IF
       END IF
 !!!End PWA insert 11/09/2020
+!!!Inserted PWA 13/12/2020
+!
+!  Write out total suspended sediment.
+!
+      IF (Aout(idtss,ng)) THEN
+        scale=1.0_r8
+        gtype=gfactor*r3dvar
+        status=nf_fwrite3d(ng, iNLM, AVG(ng)%ncid, AVG(ng)%Vid(idtss),  &
+     &                     AVG(ng)%Rindex, gtype,                       &
+     &                     LBi, UBi, LBj, UBj, 1, N(ng), scale,         &
+#  ifdef MASKING
+     &                     GRID(ng) % rmask,                            &
+#  endif
+     &                     AVERAGE(ng) % avgtss)
+        IF (FoundError(status, nf90_noerr, __LINE__,                    &
+     &                 __FILE__)) THEN
+          IF (Master) THEN
+            WRITE (stdout,10) TRIM(Vname(1,idtss)), AVG(ng)%Rindex
+          END IF
+          exit_flag=3
+          ioerror=status
+          RETURN
+        END IF
+      END IF
+!!!End PWA insert 13/12/2020
 !
 !  Write out quadratic <t*t> term.
 !
@@ -2093,10 +2118,9 @@
         END IF
       END DO
 # endif
-
 !!!PWA Inserted 26/07/2019
-#if defined RFABM
-# ifdef SHORTWAVE
+# if defined RFABM
+#  ifdef SHORTWAVE
 !
 !  Write out shortwave radiation flux in [W/m2].
 !
@@ -2107,9 +2131,9 @@
      &                     AVG(ng)%Vid(idSradWm2),                      &
      &                     AVG(ng)%Rindex, gtype,                       &
      &                     LBi, UBi, LBj, UBj, scale,                   &
-#  ifdef MASKING
+#   ifdef MASKING
      &                     GRID(ng) % rmask,                            &
-#  endif
+#   endif
      &                     AVERAGE(ng) % avgsrfWm2)
         IF (FoundError(status, nf90_noerr, __LINE__,                    &
      &                   __FILE__)) THEN
@@ -2121,8 +2145,8 @@
           RETURN
         END IF
       END IF
-# endif
-# ifdef FABM_ASILT
+#  endif
+#  ifdef FABM_ASILT
 !
 !  Write out absorption due to silt [m-1]
 !
@@ -2133,9 +2157,9 @@
      &                     AVG(ng)%Vid(idAsilt),                        &
      &                     AVG(ng)%Rindex, gtype,                       &
      &                     LBi, UBi, LBj, UBj, 1, N(ng), scale,         &
-#  ifdef MASKING
+#   ifdef MASKING
      &                     GRID(ng) % rmask,                            &
-#  endif
+#   endif
      &                     AVERAGE(ng) % avgAsilt(:,:,:))
         IF (FoundError(status, nf90_noerr, __LINE__,                    &
      &                   __FILE__)) THEN
@@ -2148,8 +2172,8 @@
           RETURN
         END IF
       END IF
-# endif
-# ifdef FABM_PCO2ATM
+#  endif
+#  ifdef FABM_PCO2ATM
 !
 !  Write out dry molar fraction of CO2 in air [ppm]
 !
@@ -2160,9 +2184,9 @@
      &                     AVG(ng)%Vid(idxCO2atm),                      &
      &                     AVG(ng)%Rindex, gtype,                       &
      &                     LBi, UBi, LBj, UBj, scale,                   &
-#  ifdef MASKING
+#   ifdef MASKING
      &                     GRID(ng) % rmask,                            &
-#  endif
+#   endif
      &                     AVERAGE(ng) % avgxCO2atm)
         IF (FoundError(status, nf90_noerr, __LINE__,                    &
      &                   __FILE__)) THEN
@@ -2184,9 +2208,9 @@
      &                     AVG(ng)%Vid(idpCO2atm),                      &
      &                     AVG(ng)%Rindex, gtype,                       &
      &                     LBi, UBi, LBj, UBj, scale,                   &
-#  ifdef MASKING
+#   ifdef MASKING
      &                     GRID(ng) % rmask,                            &
-#  endif
+#   endif
      &                     AVERAGE(ng) % avgpCO2atm)
         IF (FoundError(status, nf90_noerr, __LINE__,                    &
      &                   __FILE__)) THEN
@@ -2198,8 +2222,8 @@
           RETURN
         END IF
       END IF
-# endif
-# ifdef FABM_ADYTRACER
+#  endif
+#  ifdef FABM_ADYTRACER
 !
 !  Write out absorption due to dissolved+detrital matter [m-1]
 !
@@ -2210,9 +2234,9 @@
      &                     AVG(ng)%Vid(idADY_0),                        &
      &                     AVG(ng)%Rindex, gtype,                       &
      &                     LBi, UBi, LBj, UBj, scale,                   &
-#  ifdef MASKING
+#   ifdef MASKING
      &                     GRID(ng) % rmask,                            &
-#  endif
+#   endif
      &                     AVERAGE(ng) % avgADY_0)
         IF (FoundError(status, nf90_noerr, __LINE__,                    &
      &                   __FILE__)) THEN
@@ -2224,8 +2248,8 @@
           RETURN
         END IF
       END IF
-# endif
-# ifdef FABM_N3ATMDEPO
+#  endif
+#  ifdef FABM_N3ATMDEPO
 !
 !  Write out atmospheric deposition fluxes for oxidized nitrogen [mmol/m2/s].
 !
@@ -2236,9 +2260,9 @@
      &                     AVG(ng)%Vid(idN3atmd),                       &
      &                     AVG(ng)%Rindex, gtype,                       &
      &                     LBi, UBi, LBj, UBj, scale,                   &
-#  ifdef MASKING
+#   ifdef MASKING
      &                     GRID(ng) % rmask,                            &
-#  endif
+#   endif
      &                     AVERAGE(ng) % avgN3atmd)
         IF (FoundError(status, nf90_noerr, __LINE__,                    &
      &                   __FILE__)) THEN
@@ -2250,8 +2274,8 @@
           RETURN
         END IF
       END IF
-# endif
-# ifdef FABM_N4ATMDEPO
+#  endif
+#  ifdef FABM_N4ATMDEPO
 !
 !  Write out atmospheric deposition fluxes for reduced nitrogen [mmol/m2/s].
 !
@@ -2262,9 +2286,9 @@
      &                     AVG(ng)%Vid(idN4atmd),                       &
      &                     AVG(ng)%Rindex, gtype,                       &
      &                     LBi, UBi, LBj, UBj, scale,                   &
-#  ifdef MASKING
+#   ifdef MASKING
      &                     GRID(ng) % rmask,                            &
-#  endif
+#   endif
      &                     AVERAGE(ng) % avgN4atmd)
         IF (FoundError(status, nf90_noerr, __LINE__,                    &
      &                   __FILE__)) THEN
@@ -2276,8 +2300,8 @@
           RETURN
         END IF
       END IF
-# endif
-# ifdef FABM_ISOURCES
+#  endif
+#  ifdef FABM_ISOURCES
 !
 !  Write out internal sources of biogeochemical concentrations [concentration/s]
 !
@@ -2289,9 +2313,9 @@
                              AVG(ng)%Vid(idIsource(itrc)),              &
      &                       AVG(ng)%Rindex, gtype,                     &
      &                       LBi, UBi, LBj, UBj, 1, N(ng), scale,       &
-# ifdef MASKING
+#   ifdef MASKING
      &                       GRID(ng) % rmask,                          &
-# endif
+#   endif
      &                       AVERAGE(ng) % avgIsource(:,:,:,itrc))
           IF (FoundError(status, nf90_noerr, __LINE__,                  &
      &                   __FILE__)) THEN
@@ -2305,7 +2329,7 @@
           END IF
         END IF
       END DO
-# endif
+#  endif
 !
 !  Write out surface/bottom attached FABM variables.
 !
@@ -2317,9 +2341,9 @@
      &                       AVG(ng)%Vid(idSAvar(itrc)),                &
      &                       AVG(ng)%Rindex, gtype,                     &
      &                       LBi, UBi, LBj, UBj, scale,                 &
-# ifdef MASKING
+#  ifdef MASKING
      &                       GRID(ng) % rmask,                          &
-# endif
+#  endif
      &                       AVERAGE(ng) % avgstate_sf(:,:,itrc))
           IF (FoundError(status, nf90_noerr, __LINE__,                  &
      &                   __FILE__)) THEN
@@ -2341,9 +2365,9 @@
      &                       AVG(ng)%Vid(idBAvar(itrc)),                &
      &                       AVG(ng)%Rindex, gtype,                     &
      &                       LBi, UBi, LBj, UBj, scale,                 &
-# ifdef MASKING
+#  ifdef MASKING
      &                       GRID(ng) % rmask,                          &
-# endif
+#  endif
      &                       AVERAGE(ng) % avgstate_bt(:,:,itrc))
           IF (FoundError(status, nf90_noerr, __LINE__,                  &
      &                   __FILE__)) THEN
@@ -2357,7 +2381,7 @@
           END IF
         END IF
       END DO
-#endif
+# endif
 !!!End insert PWA 26/07/2019
 
 !

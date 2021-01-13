@@ -1829,9 +1829,51 @@
      &                        varid = STA(ng)%Vid(idbstrPa))
         IF (FoundError(exit_flag, NoError, __LINE__,                    &
      &                 __FILE__)) RETURN
-       END IF
+      END IF
 # endif
 !!!End insert PWA 11/09/2020
+
+!!!Inserted PWA 13/12/2020
+# if defined SOLVE3D
+#  if defined FABM_TSS || defined FABM_TSS_ONLINE || defined SEDIMENT
+!
+!  Write out total suspended sediment.
+!
+      IF (Sout(idtss,ng)) THEN
+        scale=1.0_r8
+#   if defined FABM_TSS || defined FABM_TSS_ONLINE
+        CALL extract_sta3d (ng, iNLM, Cgrid, idtss, r3dvar,             &
+     &                      LBi, UBi, LBj, UBj, 1, N(ng),               &
+     &                      scale, FORCES(ng)%tss,                      &
+     &                      NposR, XposR, YposR, ZposR, rsta2)
+#   elif defined SEDIMENT 
+        DO k=1,Nstation(ng)*(N(ng)+1)
+          rsta2(k) = 0.0_r8
+        END DO
+        DO i=1,NST
+          ifield=idTvar(idsed(i))
+          CALL extract_sta3d (ng, iNLM, Cgrid, ifield, r3dvar,          &
+     &                        LBi, UBi, LBj, UBj, 1, N(ng),             &
+     &                        scale, OCEAN(ng)%t(:,:,:,NOUT,idsed(i)),  &
+     &                        NposR, XposR, YposR, ZposR, rsta)
+          DO k=1,Nstation(ng)*(N(ng)+1)
+            rsta2(k) = rsta2(k) + rsta(k)
+          END DO
+        END DO
+#   endif
+
+        CALL netcdf_put_fvar (ng, iNLM, STA(ng)%name,                   &
+     &                        TRIM(Vname(1,idtss)), rsta2,              &
+     &                        (/1,1,STA(ng)%Rindex/),                   &
+     &                        (/N(ng),Nstation(ng),1/),                 &
+     &                        ncid = STA(ng)%ncid,                      &
+     &                        varid = STA(ng)%Vid(idtss))
+        IF (FoundError(exit_flag, NoError, __LINE__,                    &
+     &                 __FILE__)) RETURN
+      END IF
+#  endif
+# endif
+!!!End insert PWA 13/12/2020
 
 !
 !-----------------------------------------------------------------------

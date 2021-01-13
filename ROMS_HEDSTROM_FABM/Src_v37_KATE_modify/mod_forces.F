@@ -30,7 +30,7 @@
 #ifdef RFABM
 !  bstrPa       Scalar bottom stress for use in FABM models (Pa)       !
 #endif
-!!!PWA Inserted 30/10/2015                                             !
+!!!End insert PWA 30/10/2015                                           !
 !                                                                      !
 !  Surface wind induced waves.                                         !
 !                                                                      !
@@ -67,11 +67,11 @@
 !                 data used for interpolation.                         !
 !                                                                      !
 !!!PWA Inserted 30/10/2015                                             !
-#ifdef RFABM
+#if defined RFABM
 !  srflxWm2     Surface shortwave solar radiation flux                 !
 !                 (Watts/m2) at horizontal RHO-points                  !
 #endif
-!!!PWA Inserted 30/10/2015                                             !
+!!!End insert PWA 30/10/2015                                           !
 !                                                                      !
 !  Cloud fraction.                                                     !
 !                                                                      !
@@ -135,7 +135,7 @@
 !  N4atmd       Atmospheric deposition of reduced nitrogen (mmol/m2/s) !
 # endif
 #endif
-!!!PWA Inserted 16/03/2015                                             !
+!!!End inesrt PWA 16/03/2015                                           !
 !                                                                      !
 !  Rain fall rate.                                                     !
 !                                                                      !
@@ -196,7 +196,7 @@
 !  tsisource    Internal source of tracer (mass/s), where "mass" is    !
 !                 the unit of the corresponding tracer x 1 m3          !
 # endif
-!!!End insert PWA 07/02/2020 
+!!!End insert PWA 07/02/2020
 !                                                                      !
 !=======================================================================
 !
@@ -347,7 +347,7 @@
 #endif
 
 !!!PWA Inserted 16/03/2015
-#ifdef RFABM
+#if defined RFABM
           real(r8), pointer :: srflxWm2(:,:)
           real(r8), pointer :: Swind(:,:)
           real(r8), pointer :: bstrPa(:,:)
@@ -373,7 +373,7 @@
           real(r8), pointer :: N4atmdG(:,:,:)
 # endif
 #endif
-!!!PWA Inserted 16/03/2015
+!!!End insert PWA 16/03/2015
 
 #if defined BULK_FLUXES || defined ECOSIM || defined CCSM_FLUXES2D || \
     (defined SHORTWAVE && defined ANA_SRFLUX)
@@ -815,36 +815,36 @@
 #endif
 
 !!!PWA Inserted 14/04/2017
-# ifdef RFABM
+#if defined RFABM
       allocate ( FORCES(ng) % srflxWm2(LBi:UBi,LBj:UBj) )
       allocate ( FORCES(ng) % Swind(LBi:UBi,LBj:UBj) )
       allocate ( FORCES(ng) % bstrPa(LBi:UBi,LBj:UBj) )
-#  ifdef FABM_ASILT
+# ifdef FABM_ASILT
       allocate ( FORCES(ng) % Asilt(LBi:UBi,LBj:UBj,N(ng)) )
       allocate ( FORCES(ng) % AsiltG(LBi:UBi,LBj:UBj,N(ng),2) )
-#  endif
-#  ifdef FABM_PCO2ATM
+# endif
+# ifdef FABM_PCO2ATM
       allocate ( FORCES(ng) % xCO2atm(LBi:UBi,LBj:UBj) )
       allocate ( FORCES(ng) % pCO2atm(LBi:UBi,LBj:UBj) )
       allocate ( FORCES(ng) % xCO2atmG(LBi:UBi,LBj:UBj,2) )
-#  endif
-#  ifdef FABM_ADYTRACER
+# endif
+# ifdef FABM_ADYTRACER
       allocate ( FORCES(ng) % ADY_0(LBi:UBi,LBj:UBj) )
       allocate ( FORCES(ng) % ADY_0G(LBi:UBi,LBj:UBj,2) )
-#  endif
+# endif
 
-#  ifdef FABM_N3ATMDEPO
+# ifdef FABM_N3ATMDEPO
       allocate ( FORCES(ng) % N3atmd(LBi:UBi,LBj:UBj) )
       allocate ( FORCES(ng) % N3atmdG(LBi:UBi,LBj:UBj,2) )
-#  endif
+# endif
 
-#  ifdef FABM_N4ATMDEPO
+# ifdef FABM_N4ATMDEPO
       allocate ( FORCES(ng) % N4atmd(LBi:UBi,LBj:UBj) )
       allocate ( FORCES(ng) % N4atmdG(LBi:UBi,LBj:UBj,2) )
-#  endif
-
 # endif
-!!!PWA Inserted 14/04/2017
+
+#endif
+!!!End insert PWA 14/04/2017
 
 #if defined BULK_FLUXES || defined ECOSIM || defined CCSM_FLUXES2D ||  \
     (defined SHORTWAVE && defined ANA_SRFLUX)
@@ -1383,7 +1383,7 @@
 #endif
 
 !!!PWA Inserted 30/10/2015
-#ifdef RFABM
+#if defined RFABM
             FORCES(ng) % srflxWm2(i,j) = IniVal
             FORCES(ng) % Swind(i,j) = IniVal
             FORCES(ng) % bstrPa(i,j) = IniVal
@@ -1415,7 +1415,7 @@
             FORCES(ng) % N4atmdG(i,j,2) = IniVal
 # endif
 #endif
-!!!PWA Inserted 30/10/2015
+!!!End insert PWA 30/10/2015
 
 #if defined BULK_FLUXES || defined ECOSIM || defined CCSM_FLUXES2D || \
     (defined SHORTWAVE && defined ANA_SRFLUX)

@@ -1918,6 +1918,27 @@
 #endif
 !!!End PWA insert 24/04/2017
 
+!!!Inserted PWA 13/12/2020
+!
+!  Define total suspended sediment.
+!
+        IF (Hout(idtss,ng)) THEN
+          Vinfo( 1)=Vname(1,idtss)
+          Vinfo( 2)=Vname(2,idtss)
+          Vinfo( 3)=Vname(3,idtss)
+          Vinfo(14)=Vname(4,idtss)
+          Vinfo(16)=Vname(1,idtime)
+# if defined WRITE_WATER && defined MASKING
+          Vinfo(20)='mask_rho'
+# endif
+          Vinfo(22)='coordinates'
+          Aval(5)=REAL(Iinfo(1,idtss,ng),r8)
+          status=def_var(ng, iNLM, HIS(ng)%ncid, HIS(ng)%Vid(idtss),    &
+     &                   NF_FOUT, nvd4, t3dgrd, Aval, Vinfo, ncname)
+          IF (FoundError(exit_flag, NoError, __LINE__,                  &
+     &                   __FILE__)) RETURN
+        END IF
+!!!End insert PWA 13/12/2020
 !
 !  Define surface U-momentum stress.
 !
@@ -3323,6 +3344,12 @@
           END DO
 #endif
 !!!End PWA insert 24/04/2017
+!!!Inserted PWA 13/12/2020
+          IF (TRIM(var_name(i)).eq.TRIM(Vname(1,idtss))) THEN
+            got_var(idtss)=.TRUE.
+            HIS(ng)%Vid(idtss)=var_id(i)
+          END IF
+!!!End insert PWA 13/12/2020
         END DO
 !
 !  Check if history variables are available in input NetCDF file.
@@ -4054,6 +4081,15 @@
         END DO
 #endif
 !!!Inserted PWA 24/04/2017
+!!!Inserted PWA 13/12/2020
+        IF (.not.got_var(idtss).and.                                    &
+     &      Hout(idtss,ng)) THEN
+          IF (Master) WRITE (stdout,60) TRIM(Vname(1,idtss)),           &
+     &                                  TRIM(ncname)
+          exit_flag=3
+          RETURN
+        END IF
+!!!End insert PWA 13/12/2020
 
 !
 !  Set unlimited time record dimension to the appropriate value.

@@ -22,6 +22,8 @@ ANA_SRFLUX && DIURNAL_SRFLUX - these two cpps are logically inconsistent, stop i
 - Added FABM_NONNEG_S cpp to use zero-capped salinity for input to FABM (requires copying tracer array) (11/12/2019)
 - Added TS_ISOURCE cpp to use tracer internal sources (e.g. from fish farms) (07/02/2020) (NOT FABM-RELATED)
 - Added SPECIFIC_HUMIDITY cpp to allow input of specific humidity (converted internally in bulk_flux.F) (18/02/2020) (NOT FABM-RELATED)
+FABM_TSS (13/12/2020)
+FABM_TSS_ONLINE (13/12/2020)
 
 Utility/check_multifile.F (NOT FABM-RELATED):
 - Added code to allow multiple bry/clm/ssf files, following Hedstrom 14092019 code (20/11/2019)
@@ -46,6 +48,7 @@ Utility/def_avg.F:
 - Updated to latest Arango code to include idTair functionality (ticket #844, 11/03/2020) (NOT FABM-RELATED)
 - Added definition of NetCDF averages for scalar bottom stress (idbstrPa) (11/09/2020) (NOT FABM-RELATED)
 - Changed index name idSUVav -> idSUV (11/09/2020)
+- Added definition of NetCDF averages for idtss (total suspended sediments) (13/12/2020)
 
 Utility/def_diags.F:
 - Added RFABM-dependent code to define NetCDF FABM diagnostic variables (07/08/2019)
@@ -56,6 +59,7 @@ Utility/def_his.F:
 (srfWm2,Asilt,xCO2atm,pCO2atm,state_bt,state_sf) (24/04/2017)
 - Added RFABM+FABM_ADYTRACER-dependent code to define NetCDF history variable for ADY_0 (07/02/2018)
 - Added RFABM+(FABM_N3ATMDEPO,FABM_N4ATMDEPO,FABM_ISOURCES)-dependent code to define NetCDF history variables N3atmd, N4atmd, Isources (27/01/2020)
+- Added code to define NetCDF history variable tss (total suspended sediments) (13/12/2020)
 
 Utility/def_info.F (NOT FABM-RELATED):
 - Added code for multiple bry/clm/ssf files, following Hedstrom 14092019 code (20/11/2019)
@@ -74,6 +78,7 @@ Utility/def_station.F:
 - Added RFABM+(FABM_N3ATMDEPO,FABM_N4ATMDEPO,FABM_ISOURCES)-dependent code to define NetCDF station variables N3atmd, N4atmd, Isources (27/01/2020)
 - Added TS_ISOURCE-dependent code to defined NetCDF station variable tsisource (10/02/2020) (NOT FABM-RELATED)
 - Added code to define NetCDF station variables (suv,bstrPa) (14/09/2020) (NOT FABM-RELATED)
+- Added definition of NetCDF station output for idtss (total suspended sediments) (13/12/2020)
 
 Nonlinear/diag.F: (optional, not FABM-related)
 - Transferred Hedstrom/PWA modifications to allow biological output diagnostics, including minimum values (22/07/2019)
@@ -135,6 +140,7 @@ AVERAGE(ng)%avg(srfWm2,Asilt,xCO2atm,pCO2atm,state_bt,state_sf) (21/04/2017)
 - Added TS_ISOURCE-dependent declaration, allocation, and initialization of AVERAGE(ng)%avgtsisource (NOT FABM-RELATED) (10/02/2020)
 - Added declaration, allocation, and initialization of AVERAGE(ng)%avgbstrPa (11/09/2020) (NOT FABM-RELATED)
 - Changed index name idSUVav -> idSUV (11/09/2020)
+- Added AVERAGE(ng)%avgtss (total suspended sediments) (13/12/2020)
 
 Modules/mod_biology.F:
 - Added comments and cpp-contingent include statement for rfabm_mod.F (17/11/2014)
@@ -154,6 +160,7 @@ Modules/mod_forces.F:
 - Added RFABM+FABM_ADYTRACER-dependent declaration, allocation, and initialization of ADY_0 and ADY_0G (07/02/2018)
 - Added RFABM+(FABM_N3ATMDEPO,FABM_N4ATMDEPO,FABM_ISOURCES)-dependent declaration, allocation, and initialization of FORCES(ng)%N3atmd,N4atmd,Isources and FORCES(ng)%N3atmdG,N4atmdG,IsourcesG 
 - Added TS_ISOURCE-dependent declaration, allocation, and initialization of tsisource (07/02/2020) (NOT FABM-RELATED)
+- Added FABM_TSS,FABM_TSS_ONLINE-dependent declaration, allocation, and initialization of tss (total suspended sediments) (13/12/2020)
 
 Modules/mod_iounits.F (NOT FABM-RELATED):
 - Added code to allow for multiple bry/clm/ssf files, following Hedstrom 14092019 code (20/11/2019)
@@ -180,6 +187,7 @@ Modules/mod_ncparam.F
 - Added TS_ISOURCE-dependent declaration and input of netCDF forcing indices idItrc (10/02/2020) (NOT FABM-RELATED)
 - Added declaration and input of netCDF index for scalar bottom stress idbstrPa (11/09/2020) (NOT FABM-RELATED)
 - Changed index name idSUVav -> idSUV (11/09/2020)
+- Added idtss for total suspended sediments (13/12/2020)
 
 Modules/mod_ocean.F
 - Added RFABM-dependent declaration, allocation, and initialization of full density variable rhof and water pressure variable pres (16/03/2015)
@@ -201,6 +209,7 @@ Modules/mod_scalars.F
 - Updated to new Arango code including scalars for HSIMT (24/01/2020)
 - Added TS_ISOURCE-dependent declaration, allocation, and initialization of LtracerISrc (07/02/2020) (NOT FABM-RELATED)
 - Added RFABM+FABM_ISOURCES-dependent declaration, allocation, and initialization of LtracerIbio (10/02/2020)
+- Added nFABM biology superstep parameter (no. DT per FABM step) (05/01/2021)
 
 Modules/mod_sources.F (NOT FABM-RELATED):
 - Added code to allow for multiple ssf files, following Hedstrom 14092019 code (20/11/2019)
@@ -225,14 +234,16 @@ Utility/read_phypar.F
 - Updated using latest Arango code to account for bug fix #845 (and include idTair functionality) (11/03/2020) (NOT FABM-RELATED)
 - Reading in of Aout(idbstrPa) (11/09/2020) (NOT FABM-RELATED)
 - Changed index name idSUVav -> idSUV (11/09/2020)
+- Added Hout,Aout code for idtss (total suspended sediments) (13/12/2020)
 
 Utility/read_stapar.F
 - Added RFABM-dependent reading in of Sout for (srfWm2,Asilt,xCO2atm,pCO2atm,state_bt,state_sf) (07/08/2019)
   Note: It could be necessary to increase dimensions of (Rval,Cval) to allow for complex models (cf. base_rfabm_inp.h).
 - Added RFABM+(FABM_N3ATMDEPO,FABM_N4ATMDEPO,FABM_ISOURCES)-dependent reading in of Sout (28/01/2020)
 - Added TS_ISOURCE-dependent reading in of Sout (10/02/2020) (NOT FABM-RELATED)
+- Added reading of Sout for tss (total suspended sediments) (13/12/2020)
 
-Nonlinear/Biology/rfabm.h (from npzd_Franks.h)
+Nonlinear/Biology/rfabm.h (from npzd_Franks.h, note: COAWST and ARANGO versions should be identical)
 - Added linking calls (pointers that change between time steps) and call to fabm_do (31/03/2015)
 - Removed ITER_LOOP and BioIter (28/07/2015)
 - Added call to fabm_get_vertical_movement to compute sinking velocities in new array "w" (04/08/2015)
@@ -256,11 +267,13 @@ Nonlinear/Biology/rfabm.h (from npzd_Franks.h)
 - Added new cpp FABM_CHECK_STATE so that the FABM-capping can be switched off at compile time (03/11/2020) 
 (maybe desirable e.g. for npzd_Franks module where nonnegativity is internally corrected for) 
 - Modified conditions on diagnostics computations to switch off when NDIA=0 (24/11/2020)
+- Added FABM_TSS_ONLINE-dependent code to enable coupling to online total suspended sediments calculation (04/01/2021)
+- Added IF condition to only compute FABM-biology updates every nFABM time steps (11/01/2021)
 
 Nonlinear/rho_eos.F
 - Added RFABM-dependent update of rhof from rho and water pressure (pres) calculation (16/03/2015)
 
-Nonlinear/Biology/roms_fabm.F (NEW)
+Nonlinear/Biology/roms_fabm.F (NEW, note: COAWST and ARANGO versions should be identical)
 - Wrote initialisation subroutine roms_fabm_init (31/03/2015)
 - Added RFABM-dependent inclusion of module content
 - Added FABM_ASILT-dependent linking to ROMS forcing Asilt (14/04/2017)
@@ -270,6 +283,7 @@ Nonlinear/Biology/roms_fabm.F (NEW)
 - Modified using idfabmD2, idfabmD3 to allow parismonious diagnostic array size (02/09/2019)
 - Added (FABM_N3ATMDEPO,FABM_N4ATMDEPO)-dependent linkage to (FORCES(ng)%N3atmd,FORCES(ng)%N4atmd) (24/01/2020)
 - Major update for compatibility with updated FABM source (29/10/2020)
+- Added FABM_TSS,FABM_TSS_ONLINE linkage to variable tss (total suspended sediments) (13/12/2020)
 
 Nonlinear/set_avg.F
 - Added RFABM-dependent calculation of avgstate_sf and avgstate_bt (23/04/2017)
@@ -279,6 +293,7 @@ Nonlinear/set_avg.F
 - Added RFABM+(FABM_N3ATMDEPO,FABM_N4ATMDEPO,FABM_ISOURCES)-dependent calculation of avgN3atmd, avgN4atmd, avgIsources (27/01/2020)
 - Corrected calculation of average current speed avgSUV for consistency with avgUV (11/09/2020) (NOT FABM-RELATED)
 - Changed index name idSUVav -> idSUV (11/09/2020)
+- Added SEDIMENT-dependent calculation of average Total Suspended Sediment (13/12/2020) (NOT FABM-RELATED)
 
 Nonlinear/set_data.F
 - Added RFABM-dependent update of wind_speed variable Swind (16/03/2015)
@@ -290,9 +305,11 @@ Nonlinear/set_data.F
 - Added TS_ISOURCE-dependent update of tsisource (07/02/2020) (NOT FABM-RELATED)
 - Added RFABM+FABM_ISOURCES-dependent update of Isources (10/02/2020)
 - Tidied calculated of Swind and corrected calculation of bstrPa (accounting for (bustr,bvstr) being defined at (u,v) points, following sed_bed.F) (11/09/2020)
+- Added FABM_TSS-dependent reading of forcing data for total suspended sediments (13/12/2020)
 
 Utility/set_diags.F
 - Added RFABM-dependent setting of FABM diagnostics (30/07/2019)
+- Modified divisor rfacFABM to account for nFABM>1 (biology superstepping) (09/01/2021)
 
 Nonlinear/set_vbc.F
 - Added RFABM-dependent assignment of srflxWm2 from srflx (05/05/2017)
@@ -313,6 +330,7 @@ Utility/wrt_avg.F
 - Updated to latest Arango code to include idTair functionality (ticket #844, 11/03/2020) (NOT FABM-RELATED)
 - Added code to write NetCDF averages for scalar bottom stress (idbstrPa) (11/09/2020) (NOT FABM-RELATED)
 - Changed index name idSUVav -> idSUV (11/09/2020)
+- Added code to write NetCDF averages for idtss (13/12/2020)
 
 Utility/wrt_diags.F
 - Added RFABM-dependent removal of per-second to per-day units conversion (28/04/2017) and dtBIO setting (29/04/2017)
@@ -326,6 +344,7 @@ Utility/wrt_his.F
 - Updated to new Arando code with Fcount set by HIS(ng)%load instead of HIS(ng)%Fcount (24/01/2020)
 - Added RFABM+(FABM_N3ATMDEPO,FABM_N4ATMDEPO,FABM_ISOURCES) code to write NetCDF history variables N3atmd, N4atmd, Isources (27/01/2020)
 - Updated to latest Arango code to include idTair functionality (ticket #844, 11/03/2020) (NOT FABM-RELATED)
+- Added SEDIMENT-dependent writing of tss (total suspended sediments) (13/12/2020)
 
 Utility/wrt_quick.F:
 - Added RFABM+(SHORTWAVE,FABM_ASILT,FABM_PCO2ATM,FABM_N3ATMDEPO,FABM_N4ATMDEPO,FABM_ISOURCES)-dependent code to write NetCDF quick variables:
@@ -340,6 +359,7 @@ Utility/wrt_station.F
 - Added RFABM+(FABM_N3ATMDEPO,FABM_N4ATMDEPO,FABM_ISOURCES)-dependent code to write NetCDF station variables N3atmd, N4atmd, Isources (27/01/2020)
 - Added TS_ISOURCE-dependent to write NetCDF station variable tsisource (10/02/2020)
 - Added code to write NetCDF station variables (suv,bstrPa) (11/09/2020)
+- Added FABM_TSS,FABM_TSS_ONLINE,SEDIMENT-dependent code to write total suspended sediments (13/12/2020)
 
 
 Base files for python-generated input files
