@@ -1,8 +1,5 @@
 ﻿
 
-%%Phil Wallhead 04/12/2020
-
-
 GENERAL OVERVIEW
 ================
 
@@ -131,7 +128,7 @@ This will be independent of the FABM coupling, via the ROMS code in step3d_t.F (
 However this code is NOT YET TESTED.
 There is also some code under a cpp FABM_ISOURCES to provide bgc sources via the FABM, but this is also
 NOT YET TESTED and may be deleted in future updates.
-FABM_TSS and FABM_TSS_ONLINE options are presently only coded for Rutgers (ARANGO) or COAWST branches.
+FABM_TSS and FABM_TSS_ONLINE options are presently only coded for Rutgers (ARANGO) and COAWST branches.
 
 NOTE 2: If you have a VERY complex FABM model, you may need to increase maximum array size parameters in ROMS.
         See: mod_coupler.F, mod_ncparam.F, lbc.F, base_rfabm_inp.h
