@@ -1,6 +1,4 @@
-﻿
-
-GENERAL OVERVIEW
+﻿GENERAL OVERVIEW
 ================
 
 The ROMS-FABM coupling has been developed to allow use of the FABM framework for biogeochemical modelling
