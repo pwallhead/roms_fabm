@@ -111,7 +111,7 @@
 !!!Deleted PWA 08/03/2017 CASE ('BioIter') ... Npts=load_r(Nval, Rval, Ngrids, wDet)
 !!!PWA Inserted 13/12/2020
             CASE ('nFABM')
-                Npts=load_i(Nval, Rval, Ngrids, nFABM)
+              Npts=load_i(Nval, Rval, Ngrids, nFABM)
 !!!End insert PWA 13/12/2020
 !!!PWA Inserted 08/03/2017
             CASE ('icheckmax')

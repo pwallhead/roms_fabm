@@ -571,10 +571,14 @@
 
 !!!Inserted PWA 19/06/2014
 #  ifdef RFABM
+!              WRITE (stdout,25) 'maxT1', 'maxT2', 'maxT3',              &
+!     &                          'maxT4', 'maxT5'
+!              WRITE (stdout,26) 'minT1', 'minT2', 'minT3',              &
+!     &                          'minT4', 'minT5'
               WRITE (stdout,25) 'maxT1', 'maxT2', 'maxT3',              &
-     &                          'maxT4', 'maxT5'
+     &                          'maxT4', 'maxTn'
               WRITE (stdout,26) 'minT1', 'minT2', 'minT3',              &
-     &                          'minT4', 'minT5'
+     &                          'minT4', 'minTn'
 #  endif
             END IF
           END IF
@@ -597,8 +601,10 @@
      &                          maxspeed(ng)
 !!!Inserted PWA 19/06/2014
 # ifdef BIOLOGY
-            WRITE (stdout,50) maxbio(1:5,ng)
-            WRITE (stdout,50) minbio(1:5,ng)
+!            WRITE (stdout,50) maxbio(1:5,ng)
+!            WRITE (stdout,50) minbio(1:5,ng)
+            WRITE (stdout,50) maxbio(1:4,ng), MAXVAL(maxbio(1:NBT,ng))
+            WRITE (stdout,50) minbio(1:4,ng), MINVAL(minbio(1:NBT,ng))
 # endif
 !!!Inserted PWA 19/06/2014
 #else

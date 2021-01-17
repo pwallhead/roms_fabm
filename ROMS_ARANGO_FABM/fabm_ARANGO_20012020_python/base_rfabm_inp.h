@@ -109,6 +109,10 @@
             CASE ('Lbiology')
               Npts=load_l(Nval, Cval, Ngrids, Lbiology)
 !!!Deleted PWA 08/03/2017 CASE ('BioIter') ... Npts=load_r(Nval, Rval, Ngrids, wDet)
+!!!PWA Inserted 13/12/2020
+            CASE ('nFABM')
+              Npts=load_i(Nval, Rval, Ngrids, nFABM)
+!!!End insert PWA 13/12/2020
 !!!PWA Inserted 08/03/2017
             CASE ('icheckmax')
               Npts=load_i(Nval, Rval, Ngrids, icheckmax)
@@ -570,6 +574,8 @@
             WRITE (out,50) ng
 !!!Deleted PWA 08/03/2017 WRITE (out,60) BioIter ... 'Detrital sinking rate (m/day).'
 !!!PWA Inserted 08/03/2017
+            WRITE (out,55) nFABM(ng), 'nFABM',                          &
+     &            'Number of ROMS time steps (DT) per FABM time step.'
             WRITE (out,60) icheckmax(ng), 'icheckmax',                  &
      &            'Initial iterations for which FABM calls checked.'
             WRITE (out,70) dBdt1max(ng), 'dBdt1max',                    &
@@ -968,6 +974,7 @@
   40  FORMAT (/,' read_BioPar - Error while processing line: ',/,a)
   50  FORMAT (/,/,' RFABM Model Parameters, Grid: ',i2.2,               &
      &        /,  ' ===============================',/)
+  55  FORMAT (1x,i10,2x,a,t32,a)
   60  FORMAT (1x,i10,2x,a,t32,a)
   70  FORMAT (1p,e11.4,2x,a,t32,a)
   80  FORMAT (1p,e11.4,2x,a,t32,a,/,t34,a)

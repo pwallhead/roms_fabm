@@ -444,13 +444,13 @@ Utility/wrt_station.F
 Base files for python-generated input files
 -------------------------------------------
 
-base_rfabm.in (from External/npzd_Franks.in)
+base_rfabm.in (from External/npzd_Franks.in, note: COAWST and ARANGO versions should be identical)
 - Copied and renamed ROMS/External/npzd_Franks.in (30/07/2019)
 - Removed all parameter setting and model-specific comments (30/07/2019)
 - All parameters are now initially set within the python script - the base file only provides model-independent comments (30/07/2019)
 - Updated to latest Arango code (adding Hadvection, Vadvection etc.) (27/01/2020)
 
-base_rfabm_inp.h (from Nonlinear/Biology/npzd_Franks_inp.h)
+base_rfabm_inp.h (from Nonlinear/Biology/npzd_Franks_inp.h, note: COAWST and ARANGO versions should be identical)
 - Removed BioIter and wPhy parameters, but still need to input tracer diffusivities etc. (28/07/2015)
 - Migrated to new version based on npzd_Franks_inp.h (09/03/2017)
 - Added icheckmax and dBdt1max as runtime input parameters (in rfabm.in) (09/03/2017)
