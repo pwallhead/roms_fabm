@@ -108,13 +108,13 @@ MASKING             /* MUST be defined to provide input to fabm_set_mask */
 ANA_SPFLUX          /* MUST be defined, or surface bgc fluxes provided in forcing files */
 ANA_BPFLUX          /* MUST be defined, or bottom bgc fluxes provided in forcing files */
 SHORTWAVE           /* MAY be required in order to provide light forcing for FABM model */
-FABM_ADYTRACER      /* use to provide a light attenuation tracer via ROMS (NOT YET TESTED) */
-FABM_ASILT          /* use to provide a 3D forcing field for absorption due to silt (NOT YET TESTED) */
-FABM_PCO2ATM        /* use to provide atmospheric pCO2 forcing via ROMS (need to input xCO2atm) */
+FABM_ADYTRACER      /* use to provide a light attenuation tracer via ROMS (input ADY_0, NOT YET TESTED) */
+FABM_ASILT          /* use to provide a 3D forcing field for absorption due to silt (input Asilt, NOT YET TESTED) */
+FABM_PCO2ATM        /* use to provide atmospheric pCO2 forcing via ROMS (input xCO2atm) */
 FABM_N3ATMDEPO      /* use to provide atmospheric deposition flux of oxidized nitrogen via ROMS (input N3atmd) */
 FABM_N4ATMDEPO      /* use to provide atmospheric deposition flux of reduced nitrogen via ROMS (input N4atmd) */
 FABM_AICE           /* use to provide fractional ice area from ROMS internal ice model (NOT YET TESTED) */
-FABM_TSS            /* use to provide Total Suspended Sediments concentration from input file(s) as a forcing */
+FABM_TSS            /* use to provide Total Suspended Sediments concentration from input file(s) as a forcing (input tss) */
 FABM_TSS_ONLINE     /* use to provide Total Suspended Sediments concentration calculated online by ROMS to FABM (NOT YET TESTED) */ 
 FABM_NONNEG_S       /* use to cap salinity input to FABM at zero PSU */
 FABM_CHECK_STATE    /* use to cap bgc variable input to FABM */
