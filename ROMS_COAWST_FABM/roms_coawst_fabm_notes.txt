@@ -457,7 +457,8 @@ base_rfabm_inp.h (from Nonlinear/Biology/npzd_Franks_inp.h, note: COAWST and ARA
 - Updated to latest Arango code (adding Qout functionality), retaining larger dimensions for Rval,Cval (28/07/2019)
 - Updated to latest Arango code (adding Hadvection, Vadvection etc.) (27/01/2020)
 
-base_varinfo_arango_rfabm.h (from External/varinfo.dat)
+base_varinfo.dat (from External/varinfo.dat)
 - Copied and renamed ROMS/External/varinfo.dat (30/07/2019)
 - Updated to latest Arango code (adding Hadvection, Vadvection etc.) (27/01/2020)
+- Added supplementary non-FABM variables (suv,bstrPa,tss,frswpen,rfaci) (18/01/2021) (NOT FABM RELATED)
 
