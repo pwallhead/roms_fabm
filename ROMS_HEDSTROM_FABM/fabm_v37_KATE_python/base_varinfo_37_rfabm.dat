@@ -1827,6 +1827,24 @@
   'nulvar'
   1.0d0
 
+'frswp'                                             ! Input/Output
+  'fraction of shortwave penetrating into the ice'
+  ''
+  'frswp, scalar, series'
+  'frswp_time'
+  'idfrswp'
+  'r2dvar'
+  1.0d0
+
+'rfaci'                                             ! Input/Output
+  'reduction factor for near-IR fraction of shortwave under ice'
+  ''
+  'rfaci, scalar, series'
+  'rfaci_time'
+  'idrfaci'
+  'r2dvar'
+  1.0d0
+
 !
 !------------------------------------------------------------------------------
 !  Atmospheric forcing variables.
@@ -1852,7 +1870,7 @@
   1.0d0
 
 'Qair'                                             ! Input
-  'surface air relative humidity'
+  'surface air specific humidity'
   'kg/kg'                                          ! [kg/kg]
   'Qair, scalar, series'
   'qair_time'
@@ -7393,12 +7411,21 @@
   1.0d0
 
 'suv'                                              ! Output
-  'time-averaged horizontal current speed'
+  'horizontal current speed'
   'meter second-1'                                 ! [m/s]
   'suv, scalar, series'
   'ocean_time'
-  'idSUVav'
+  'idSUV'
   'r3dvar'
+  1.0d0
+
+'bstrPa'                                           ! Output
+  'bottom stress'
+  'newton meter-2'                                 ! [N/m2]
+  'bstrPa, scalar, series'
+  'ocean_time'
+  'idbstrPa'
+  'r2dvar'
   1.0d0
 
 'tracer2'                                          ! Output

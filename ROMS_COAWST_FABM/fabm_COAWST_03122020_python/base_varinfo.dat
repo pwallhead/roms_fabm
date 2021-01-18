@@ -1913,6 +1913,24 @@
   'nulvar'
   1.0d0
 
+'frswp'                                             ! Input/Output
+  'fraction of shortwave penetrating into the ice'
+  ''
+  'frswp, scalar, series'
+  'frswp_time'
+  'idfrswp'
+  'r2dvar'
+  1.0d0
+
+'rfaci'                                             ! Input/Output
+  'reduction factor for near-IR fraction of shortwave under ice'
+  ''
+  'rfaci, scalar, series'
+  'rfaci_time'
+  'idrfaci'
+  'r2dvar'
+  1.0d0
+
 !
 !------------------------------------------------------------------------------
 !  Atmospheric forcing variables.
@@ -7626,9 +7644,11 @@
   'idTvar(iPigs)'
   'r3dvar'
   1.0d0
+
 !
 !  Diagnostic Ecosim variables.
 !
+
 'surface_irradiance'                               ! Output
   'surface spectral light irradiance'
   'micromole meter-2 s-1 nm-1'                     ! [micromole/m2/s/nm]
@@ -7813,6 +7833,33 @@
   'ocean_time'
   'idVVav'
   'v3dvar'
+  1.0d0
+
+'suv'                                              ! Output
+  'horizontal current speed'
+  'meter second-1'                                 ! [m/s]
+  'suv, scalar, series'
+  'ocean_time'
+  'idSUV'
+  'r3dvar'
+  1.0d0
+
+'bstrPa'                                           ! Output
+  'bottom stress'
+  'newton meter-2'                                 ! [N/m2]
+  'bstrPa, scalar, series'
+  'ocean_time'
+  'idbstrPa'
+  'r2dvar'
+  1.0d0
+
+'tss'                                              ! Input/Output
+  'total suspended sediment'
+  'kilogram meter-3'                               ! [kg/m3]
+  'tss, scalar, series'
+  'ocean_time'
+  'idtss'
+  'r3dvar'
   1.0d0
 
 'tracer2'                                          ! Output

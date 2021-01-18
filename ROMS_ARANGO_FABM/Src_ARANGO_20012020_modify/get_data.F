@@ -774,6 +774,25 @@
      &               __FILE__)) RETURN
 # endif
 
+!!!Inserted PWA 13/12/2020
+# ifdef FABM_TSS
+!
+!-----------------------------------------------------------------------
+!  Total Suspended Sediments
+!-----------------------------------------------------------------------
+!
+      CALL get_3dfld (ng, iNLM, idtss, ncFRCid(idtss,ng),               &
+     &                nFfiles(ng), FRC(1,ng), update(1),                &
+     &                LBi, UBi, LBj, UBj, 1, N(ng), 2, 1,               &
+#  ifdef MASKING
+     &                GRID(ng) % rmask,                                 &
+#  endif
+     &                FORCES(ng) % tssG)
+      IF (FoundError(exit_flag, NoError, __LINE__,                      &
+     &               __FILE__)) RETURN
+# endif
+!!!End insert PWA 13/12/2020
+
 # ifdef FABM_PCO2ATM
 !
 !-----------------------------------------------------------------------
