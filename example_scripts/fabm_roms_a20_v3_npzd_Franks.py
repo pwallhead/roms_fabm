@@ -95,66 +95,30 @@ if roms_branch==1:
 #Default oxygen diagnostics (application-dependent)
 defDoutO2_2d = ['O2_fair']
 defDoutO2_3d = []
-#defDoutO2_3d = ['O2_o_sms','O2_o_w','O2_eO2mO2','O2_osat','O2_AOU',
-#                'P1_O2o_sms','P2_O2o_sms','P3_O2o_sms','P4_O2o_sms','P5_O2o_sms','P6_O2o_sms',
-#                'pel_nit_O2o_sms','Z4_O2o_sms','Z5_O2o_sms','Z6_O2o_sms']
 
 #Default DIC diagnostics (application-dependent)
 defDoutDIC_2d = ['O3_fair']
 defDoutDIC_3d = []
-#defDoutDIC_3d = ['O3_c_sms','O3_c_w','O3_pH','O3_Om_cal','O3_Om_arg',
-#                 'P1_netPI','P1_fO3PIc','P1_fPIO3c','P2_netPI','P2_fO3PIc','P2_fPIO3c',
-#                 'P3_netPI','P3_fO3PIc','P3_fPIO3c','P4_netPI','P4_fO3PIc','P4_fPIO3c',
-#                 'P5_netPI','P5_fO3PIc','P5_fPIO3c','P6_netPI','P6_fO3PIc','P6_fPIO3c',
-#                 'Z4_fZIO3c','Z5_fZIO3c','Z6_fZIO3c','B1_fB1O3c']
 
 #Default TA diagnostics (application-dependent)
 defDoutTA_2d = []
 defDoutTA_3d = []
-#defDoutTA_3d = ['O3_TA_sms','O3_TA_w']
 
 #Default DOM diagnostics (application-dependent)
 defDoutDOM_2d = []
 defDoutDOM_3d = []
-#defDoutDOM_3d = ['B1_fB1R1c','B1_fB1R2c','B1_fB1R3c','B1_fB1R1n','B1_fB1R1p',
-#                 'B1_fNR1B1c','B1_fNR2B1c','B1_fNR3B1c','B1_fNR1B1n','B1_fNR1B1p',
-#                 'B1_fCR1B1c','B1_fCR2B1c','B1_fCR3B1c','B1_fCR1B1n','B1_fCR1B1p',
-#                 'P1_fPIR1c','P1_fPIR2c','P2_fPIR1c','P2_fPIR2c','P3_fPIR1c','P3_fPIR2c',
-#                 'P4_fPIR1c','P4_fPIR2c','P5_fPIR1c','P5_fPIR2c','P6_fPIR1c','P6_fPIR2c',
-#                 'Z4_fZIRDc','Z5_fZIRDc','Z6_fZIRDc']
 
 #Default Aggregrated variable diagnostics (application-dependent)
 defDoutAgg_2d = []
-defDoutAgg_3d = ['light_Chl','light_POC','B1_DOC']
+defDoutAgg_3d = []
 
 #Default Light-related diagnostics (application-dependent)
-defDoutLight_2d = ['zenithAngle_zenithA','daylength_day_length']
-defDoutLight_3d = ['light_PAR0','light_PAR01','light_PAR02','light_PAR03','light_PAR04',
-                   'light_PAR05','light_PAR06','light_UV01','light_UV02']
-# defDoutLight_3d = ['light_iopABSph1','light_iopABSph2','light_iopABSph3','light_iopABSph4',
-#                    'light_iopABSph5','light_iopABSph6','light_iopABSUVph1','light_iopABSUVph2',
-#                    'light_iopABS1','light_iopABS2','light_iopABS3','light_iopABS4',
-#                    'light_iopABS5','light_iopABS6','light_iopABSUV1','light_iopABSUV2',
-#                    'light_iopBBSp1','light_iopBBSp2','light_iopBBSp3','light_iopBBSp4',
-#                    'light_iopBBSp5','light_iopBBSp6','light_iopBBSUVp1','light_iopBBSUVp2',
-#                    'light_iopBBS1','light_iopBBS2','light_iopBBS3','light_iopBBS4',
-#                    'light_iopBBS5','light_iopBBS6','light_iopBBSUV1','light_iopBBSUV2',
-#                    'light_K01','light_K02','light_K03','light_K04',
-#                    'light_K05','light_K06','light_K0UV1','light_K0UV2',
-#                    'light_PAR0','light_PAR01','light_PAR02','light_PAR03','light_PAR04',
-#                    'light_PAR05','light_PAR06','light_UV01','light_UV02',
-#                    'light_fCR1O3c','light_fCR2O3c','light_fCR3O3c','light_fCR1NInphoto',
-#                    'light_fCR1NR1c','light_fCR2NR1c','light_fCR3NR1c',
-#                    'P1_Ae','P2_Ae','P3_Ae','P4_Ae','P5_Ae','P6_Ae']
+defDoutLight_2d = []
+defDoutLight_3d = []
 
 #Default Other diagnostics (application-dependent)
 defDoutOther_2d = []
 defDoutOther_3d = []
-# defDoutOther_3d = ['B1_c_sms','P1_c_sms','P1_c_w','P2_c_sms','P2_c_w','P3_c_sms','P3_c_w',
-#                    'P4_c_sms','P4_c_w','P5_c_sms','P5_c_w','P6_c_sms','P6_c_w',
-#                    'Z4_c_sms','Z5_c_sms','Z6_c_sms',
-#                    'L2_c_sms','L2_c_w','L2_RainR','L2_O3c_sms',
-#                    'R4_c_sms','R4_c_w','R6_c_sms','R6_c_w','R8_c_sms','R8_c_w']
 
 if default_Dout==1:
    #Make diagnostic list variables, subsetting if required
