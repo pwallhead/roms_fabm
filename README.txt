@@ -116,8 +116,8 @@ FABM_N4ATMDEPO      /* use to provide atmospheric deposition flux of reduced nit
 FABM_AICE           /* use to provide fractional ice area from ROMS internal ice model (NOT YET TESTED) */
 FABM_TSS            /* use to provide Total Suspended Sediments concentration from input file(s) as a forcing (input tss) */
 FABM_TSS_ONLINE     /* use to provide Total Suspended Sediments concentration calculated online by ROMS to FABM (NOT YET TESTED) */ 
-FABM_NONNEG_S       /* use to cap salinity input to FABM at zero PSU */
-FABM_CHECK_STATE    /* use to cap bgc variable input to FABM */
+FABM_NONNEG_S       /* use to cap salinity input to FABM at zero PSU (RECOMMENDED IF SALINITY NOT CAPPED WITHIN FABM MODEL) */
+FABM_CHECK_STATE    /* use to cap bgc variable input to FABM (RECOMMENDED) */
 FABM_INITIAL        /* use to set all bgc initial conditions to FABM default values (simple constants) */
 FABM_INITIAL_SB     /* use to set initial conditions to FABM defaults only for surface/bottom attached variables */
 
