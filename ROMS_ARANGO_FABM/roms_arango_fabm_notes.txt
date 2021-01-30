@@ -332,6 +332,9 @@ Utility/wrt_avg.F
 - Changed index name idSUVav -> idSUV (11/09/2020)
 - Added code to write NetCDF averages for idtss (13/12/2020)
 
+Utility/tadv.F
+- RFABM-dependent doubling of the length of tadv_att to allow for ERSEM-type models (30/01/2021)
+
 Utility/wrt_diags.F
 - Added RFABM-dependent removal of per-second to per-day units conversion (28/04/2017) and dtBIO setting (29/04/2017)
 - Added RFABM-dependent removal of optional argument SetFillVal = .FALSE. (07/05/2017)

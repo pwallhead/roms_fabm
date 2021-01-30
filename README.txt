@@ -82,6 +82,12 @@ NOTE: To save time you can do all the cp-ing by sourcing a single shell script, 
       example_scripts/make_fabm_roms_a20_v3_npzd_franks.sh
       (users will need to adapt this script to their folder structures)
 
+TIP: If you get a Segmentation Fault, it could be because you have parameters in the fabm.yaml that
+     are not used by the specified modules. A quicker test (than fabm_roms...py) is for example:
+       python fabm_describe_model_pwa.py fabm.yaml > tmp.cdl
+     If on the other hand you have parameters or couplings that are needed by the specified modules
+     and not provided un the fabm.yaml, then you should get a more informative error message. 
+
 
 
 Compiling ROMS + FABM-model using Src_<version>_modify
@@ -129,7 +135,7 @@ NOT YET TESTED and may be deleted in future updates.
 FABM_TSS and FABM_TSS_ONLINE options are presently only coded for Rutgers (ARANGO) and COAWST branches.
 
 NOTE 2: If you have a VERY complex FABM model, you may need to increase maximum array size parameters in ROMS.
-        See: mod_coupler.F, mod_ncparam.F, lbc.F, base_rfabm_inp.h
+        See: mod_coupler.F, mod_ncparam.F, lbc.F, tadv.F, base_rfabm_inp.h
 
 NOTE 3: Modified code is provided for ccsm_flux.F to enable the CCSM_ICE_SHORTWAVE parameterization.
         However this code is still under development: it is NOT YET TESTED and NOT READY FOR USE.

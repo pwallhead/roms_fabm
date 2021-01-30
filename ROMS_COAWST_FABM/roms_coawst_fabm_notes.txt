@@ -397,6 +397,9 @@ Nonlinear/step3d_t.F (NOT FABM-RELATED)
 - Added TS_ISOURCE-dependent injection of tracer due to internal sources (e.g. fish farm) (07/02/2020)
 - Copied across the above changes from Src_ARANGO_20012020_modify (03/12/2020)
 
+Utility/tadv.F
+- RFABM-dependent doubling of the length of tadv_att to allow for ERSEM-type models (30/01/2021)
+
 Utility/wrt_avg.F
 - Added RFABM-dependent code to write NetCDF averages for:
 (srfWm2,Asilt,xCO2atm,pCO2atm,state_bt,state_sf) (25/04/2017)
