@@ -135,6 +135,8 @@ Nonlinear/SeaIce/ice_mk.h (NOT FABM-RELATED):
 
 Utility/inquiry.F (NOT FABM-RELATED):
 - Added code for multiple ssf files, following Hedstrom 14092019 (08/01/2021)
+- Replaced with modified code from Src_ARANGO_20012020_modify - these branches now have identical inquiry.F (21/02/2021)
+This change was motivated by the COAWST code having problems reading a forcing time variable after restart.
 
 Utility/lbc.F:
 - RFABM-dependent doubling of the length of lbc_att to allow for ERSEM-type models (02/11/2015)

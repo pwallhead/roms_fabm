@@ -123,6 +123,9 @@
               IF (FoundError(exit_flag, NoError, __LINE__,              &
      &                       __FILE__)) RETURN
             END IF
+!!!Inserted PWA 20/11/2019 following Hedstrom code 14092019
+            S(ifile)%ncid = -1
+!!!End insert PWA 20/11/2019
             S(ifile)%Fcount=Fcount
             S(ifile)%name=TRIM(S(ifile)%files(Fcount))
             CALL netcdf_close (ng, model, ncid)
@@ -130,22 +133,18 @@
      &                     __FILE__)) RETURN
             IF (label(1:3).eq.'FRC') THEN
               FRCids(ifile,ng)=-1
-              S(ifile)%ncid=-1
             END IF
+!!!Inserted PWA 20/11/2019 following Hedstrom code 14092019
             IF (label(1:3).eq.'BRY') THEN
               BRYids(ifile,ng)=-1
-              S(ifile)%ncid=-1
             END IF
             IF (label(1:3).eq.'CLM') THEN
               CLMids(ifile,ng)=-1
-              S(ifile)%ncid=-1
             END IF
-!!!Inserted PWA 08/01/2021
             IF (label(1:3).eq.'SSF') THEN
               SSFids(ifile,ng)=-1
-              S(ifile)%ncid=-1
             END IF
-!!!End insert PWA 08/01/2021
+!!!End insert PWA 20/11/2019
             EXIT
           ELSE                       ! S(ifile)%name and Fcount already
             Fcount=S(ifile)%Fcount   ! updated in first field processed
@@ -168,6 +167,9 @@
 !
       foundit=.FALSE.
       QUERY: DO ifile=1,nfiles
+!!!Inserted PWA 20/11/2019 following Hedstrom code 14092019  
+        Fcount=S(ifile)%Fcount
+!!!End insert PWA 20/11/2019
         Fname=S(ifile)%name
 !
 !  Open NetCDF file for reading.
@@ -373,21 +375,10 @@
 !  Terminate execution requested variables are not found.
 !
       IF (.not.got_var) THEN
-        IF ((nfiles.gt.1).and.(label(1:3).eq.'FRC')) THEN
-          IF (Master) THEN
-            WRITE (stdout,50) TRIM(Vname(1,ifield)), 'files:'
-            DO i=1,nfiles
-              WRITE (stdout,'(15x,a)') TRIM(S(i)%name)
-            END DO
-          END IF
-        ELSE IF ((nfiles.gt.1).and.(label(1:3).eq.'BRY')) THEN
-          IF (Master) THEN
-            WRITE (stdout,50) TRIM(Vname(1,ifield)), 'files:'
-            DO i=1,nfiles
-              WRITE (stdout,'(15x,a)') TRIM(S(i)%name)
-            END DO
-          END IF
-        ELSE IF ((nfiles.gt.1).and.(label(1:3).eq.'CLM')) THEN
+!!!Modified PWA 05/08/2019
+        IF (nfiles.gt.1) THEN
+!        IF ((nfiles.gt.1).and.(label(1:3).eq.'FRC')) THEN
+!!!End modified PWA 05/08/2019
           IF (Master) THEN
             WRITE (stdout,50) TRIM(Vname(1,ifield)), 'files:'
             DO i=1,nfiles
@@ -411,21 +402,10 @@
      &                 __FILE__)) RETURN
       END IF
       IF (.not.got_time) THEN
-        IF ((nfiles.gt.1).and.(label(1:3).eq.'FRC')) THEN
-          IF (Master) THEN
-            WRITE (stdout,50) TRIM(Tname(ifield)), 'files:'
-            DO i=1,nfiles
-              WRITE (stdout,'(15x,a)') TRIM(S(i)%name)
-            END DO
-          END IF
-        ELSE IF ((nfiles.gt.1).and.(label(1:3).eq.'BRY')) THEN
-          IF (Master) THEN
-            WRITE (stdout,50) TRIM(Tname(ifield)), 'files:'
-            DO i=1,nfiles
-              WRITE (stdout,'(15x,a)') TRIM(S(i)%name)
-            END DO
-          END IF
-        ELSE IF ((nfiles.gt.1).and.(label(1:3).eq.'CLM')) THEN
+!!!Modified PWA 05/08/2019
+        IF (nfiles.gt.1) THEN
+!        IF ((nfiles.gt.1).and.(label(1:3).eq.'FRC')) THEN
+!!!End modified PWA 05/08/2019
           IF (Master) THEN
             WRITE (stdout,50) TRIM(Tname(ifield)), 'files:'
             DO i=1,nfiles
@@ -448,21 +428,12 @@
         IF (FoundError(exit_flag, NoError, __LINE__,                    &
      &                 __FILE__)) RETURN
       END IF
+!!!Inserted PWA 20/11/2019 following Hedstrom code 14092019
 !
-!  If processing model forcing (multiple files allowed), check if file
+!  If processing model boundaries (multiple files allowed), check if file
 !  for requested field (based on ncid) has been already opened and get
-!  its ID from the association table (FRCids).
+!  its ID from the association table (BRYids).
 !
-      IF (label(1:3).eq.'FRC') THEN
-        DO ifile=1,nfiles
-          IF ((TRIM(ncfile).eq.TRIM(S(ifile)%name)).and.                &
-     &        (FRCids(ifile,ng).ne.-1).and.                             &
-     &        (ncid.ne.FRCids(ifile,ng))) THEN
-            ncid=FRCids(ifile,ng)
-            EXIT
-          END IF
-        END DO
-      END IF
       IF (label(1:3).eq.'BRY') THEN
         DO ifile=1,nfiles
           IF ((TRIM(ncfile).eq.TRIM(S(ifile)%name)).and.                &
@@ -473,6 +444,11 @@
           END IF
         END DO
       END IF
+!
+!  If processing model climatology (multiple files allowed), check if file
+!  for requested field (based on ncid) has been already opened and get
+!  its ID from the association table (CLMids).
+!
       IF (label(1:3).eq.'CLM') THEN
         DO ifile=1,nfiles
           IF ((TRIM(ncfile).eq.TRIM(S(ifile)%name)).and.                &
@@ -484,7 +460,6 @@
         END DO
       END IF
 !
-!!!Inserted PWA 08/01/2021
 !  If processing model river (multiple files allowed), check if file
 !  for requested field (based on ncid) has been already opened and get
 !  its ID from the association table (SSFids).
@@ -516,7 +491,6 @@
         END DO
       END IF
 !
-!!!End insert PWA 08/01/2021
 !  If appropriate, open input NetCDF file for reading.
 !  (HGA: it is not needed since file was already open and
 !        ncid=my_ncid was assigned above.
@@ -529,18 +503,11 @@
           RETURN
         END IF
       END IF
+!!!Modified PWA 20/11/2019 following Hedstrom 14092019 code, but leaving outside of the ncid.eq.-1 condition (24/01/2020)
 !
-!  If processing model forcing, load ID into association table (FRCids).
+!  If processing model boundaries, load ID into association table (BRYids).
 !
-      IF (label(1:3).eq.'FRC') THEN
-        DO ifile=1,nfiles
-          IF (TRIM(ncfile).eq.TRIM(S(ifile)%name)) THEN
-            FRCids(ifile,ng)=ncid
-            S(ifile)%ncid=ncid
-            EXIT
-          END IF
-        END DO
-      ELSE IF (label(1:3).eq.'BRY') THEN
+      IF (label(1:3).eq.'BRY') THEN
         DO ifile=1,nfiles
           IF (TRIM(ncfile).eq.TRIM(S(ifile)%name)) THEN
             BRYids(ifile,ng)=ncid
@@ -548,6 +515,9 @@
             EXIT
           END IF
         END DO
+!
+!  If processing model climatology, load ID into association table (CLMids).
+!
       ELSE IF (label(1:3).eq.'CLM') THEN
         DO ifile=1,nfiles
           IF (TRIM(ncfile).eq.TRIM(S(ifile)%name)) THEN
@@ -556,7 +526,6 @@
             EXIT
           END IF
         END DO
-!!!Inserted PWA 08/01/2021
 !
 !  If processing river files, load ID into association table (SSFids).
 !
@@ -568,7 +537,18 @@
             EXIT
           END IF
         END DO
-!!!End insert PWA 08/01/2021
+!
+!  If processing model forcing, load ID into association table (FRCids).
+!
+      ELSE IF (label(1:3).eq.'FRC') THEN
+!!!End modified PWA 20/11/2019
+        DO ifile=1,nfiles
+          IF (TRIM(ncfile).eq.TRIM(S(ifile)%name)) THEN
+            FRCids(ifile,ng)=ncid
+            S(ifile)%ncid=ncid
+            EXIT
+          END IF
+        END DO
       ELSE
         S(1)%ncid=ncid
       END IF
