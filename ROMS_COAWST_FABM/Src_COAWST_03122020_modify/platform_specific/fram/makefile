@@ -540,7 +540,7 @@ endif
 
 ###PWA Inserted 04/03/2015
 ifdef USE_FABM
- includes +=    ~/local/fabm/roms/include
+ includes +=  $(FABM_INCDIR)
 # This allows access to fabm.h and fabm_driver.h via vpath statement below.
 # Note that a new RFABM-dependent macro definition had to be added to
 # Compilers/make_macros.h; we cannot simply use the cppflag RFABM.

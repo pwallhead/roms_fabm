@@ -45,10 +45,10 @@ If a different/incompatible version of ROMS is to be used:
 For guidance see Src_<version>_modify/notes/roms_<version>_fabm_notes.txt
 2) The base files for python-generated files may need to be updated.
 3) The python script fabm_roms_....py may need to be updated if line numbers have changed.
-NOTE 1: The build script and modified makefile (in Src_<version>_modify) both depend on the FABM installation directory,
-        so may need to be adapted if the installation directory is changed. 
+NOTE 1: The build script depends on FABM installation folders FABM_INCDIR and FABM_LIBDIR.
+        These must be adapted to specify where the user has installed FABM. 
 NOTE 2: Files makefile and Linux-<fortran compiler>.mk are platform/compiler dependent
-        so they probably need to be adapted to the user's specific platform/compiler.
+        so they may need to be adapted to the user's specific platform/compiler.
 See "Compiling ROMS + FABM-model using Src_<version>_modify" below for more details.
 
 Step 7) will involve a job script. Here I recommend to include commands to copy all input files,
