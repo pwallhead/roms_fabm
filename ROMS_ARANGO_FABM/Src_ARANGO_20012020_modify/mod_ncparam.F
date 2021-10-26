@@ -399,6 +399,8 @@
         integer, allocatable :: idRtrc(:)    ! river runoff for tracers
 !!!Inserted PWA 10/02/2020
 #ifdef TS_ISOURCE
+        integer  :: idIxpo        ! internal source XI-positions
+        integer  :: idIepo        ! internal source ETA-positions
         integer, allocatable :: idItrc(:)    ! interior sources for tracers
 #endif
 !!!End insert PWA 10/02/2020
@@ -528,12 +530,18 @@
 !
         integer, allocatable :: ncFRCid(:,:)
 !
-!!!Inserted PWA 20/11/2019 following Hedstrom 14092019 code
+!!!Inserted PWA 19/10/2021 following Hedstrom 14092019 code
 !  Input river NetCDF files IDs.
 !
         integer, allocatable :: ncSSFid(:,:)
 !
-!!!End insert PWA 20/11/2019
+#ifdef TS_ISOURCE
+!  Input internal sources/sinks NetCDF files IDs.
+!
+        integer, allocatable :: ncISSFid(:,:)
+#endif
+!
+!!!End insert PWA 19/10/2021
 !  Flags to create output files.
 !
         integer, allocatable :: idefADJ(:)    ! adjoint file
@@ -873,12 +881,15 @@
         allocate ( idSbry(MAXVAL(NSV)+1) )
         Dmem(1)=Dmem(1)+REAL(MAXVAL(NSV)+1,r8)
       END IF
-!!!Inserted PWA 20/11/2019 following Hedstrom 14092019 code
+!!!Inserted PWA 19/10/2021 following Hedstrom 14092019 code
 
       IF (.not. allocated(ncBRYid)) allocate ( ncBRYid(NV,Ngrids) )
       IF (.not. allocated(ncCLMid)) allocate ( ncCLMid(NV,Ngrids) )
       IF (.not. allocated(ncSSFid)) allocate ( ncSSFid(NV,Ngrids) )
-!!!End insert PWA 20/11/2019
+#ifdef TS_ISOURCE
+      IF (.not. allocated(ncISSFid)) allocate ( ncISSFid(NV,Ngrids) )
+#endif
+!!!End insert PWA 19/10/2021
       IF (.not.allocated(ncFRCid)) THEN
         allocate ( ncFRCid(NV,Ngrids) )
         Dmem(1)=Dmem(1)+REAL(NV*Ngrids,r8)
@@ -1179,12 +1190,15 @@
           Tintrp(2,i,ng)=0.0_dp
           Vtime(1,i,ng)=0.0_dp
           Vtime(2,i,ng)=0.0_dp
-!!!Modified PWA 20/11/2019 following Hedstrom 14092019 code
+!!!Modified PWA 19/10/2021 following Hedstrom 14092019 code
           ncBRYid(i,ng)=-1
           ncCLMid(i,ng)=-1
           ncFRCid(i,ng)=-1
           ncSSFid(i,ng)=-1
-!!!End insert PWA 20/11/2019
+#ifdef TS_ISOURCE
+          ncISSFid(i,ng)=-1
+#endif
+!!!End insert PWA 19/10/2021
         END DO
       END DO
 !
@@ -1565,14 +1579,18 @@
               idRtrc(itemp)=varid
             CASE ('idRtrc(isalt)')
               idRtrc(isalt)=varid
-!!!Inserted PWA 10/02/2020
+!!!Modified PWA 19/10/2021
 #ifdef TS_ISOURCE
+            CASE ('idIxpo')
+              idIxpo=varid
+            CASE ('idIepo')
+              idIepo=varid
             CASE ('idItrc(itemp)')
               idItrc(itemp)=varid
             CASE ('idItrc(isalt)')
               idItrc(isalt)=varid
 #endif
-!!!End insert PWA 10/02/2020
+!!!End modified PWA 19/10/2021
             CASE ('idHsbl')
               idHsbl=varid
             CASE ('idHbbl')

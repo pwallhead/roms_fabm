@@ -179,13 +179,26 @@
 !!!Modified PWA 20/01/2020 to allow multiple SSF files, following FRC template
         max_files=MAXVAL(nSSFfiles)
         CALL multifile_info_s2d (ng, model, file_type, nSSFfiles,       &
-       &                         max_files, SSF)
-!        CALL multifile_info_s1d (ng, model, file_type, SSF)
-!        IF (FoundError(exit_flag, NoError, __LINE__,                    &
-!     &                 __FILE__)) RETURN
+     &                           max_files, SSF)
 !!!End modified 20/01/2020
       END IF
 #endif
+
+!!!Modified PWA 19/10/2021
+#ifdef TS_ISOURCE
+!
+!-----------------------------------------------------------------------
+!  Input Internal Source/Sink data (e.g. fish farm input).
+!-----------------------------------------------------------------------
+!
+      IF (ANY(LtracerISrc(:,ng))) THEN
+        file_type='Internal Sources/Sinks Data'
+        max_files=MAXVAL(nISSFfiles)
+        CALL multifile_info_s2d (ng, model, file_type, nISSFfiles,      &
+     &                           max_files, ISSF)
+      END IF
+#endif
+!!!End modified PWA 19/10/2021
 
 #ifdef FRC_FILE
 !

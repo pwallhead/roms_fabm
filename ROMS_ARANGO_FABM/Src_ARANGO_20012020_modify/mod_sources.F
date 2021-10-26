@@ -40,6 +40,18 @@
 !  TsrcG      Latest two-time snapshots of tracer (tracer units)       !
 !               point Sources/Sinks.                                   !
 !                                                                      !
+!!!Inserted PWA 18/10/2021
+#ifdef TS_ISOURCE
+!  Nisrc      Number of internal tracer point Sources/Sinks.           !
+!  Iisrc      I-grid location of internal point Sources/Sinks,         !
+!               1 =< Iisrc =< Lm(ng).                                  !
+!  Jisrc      J-grid location of internal point Sources/Sinks,         !
+!               1 =< Jisrc =< Mm(ng).                                  !
+!  Tisrc      Tracer (tracer units) internal point Sources/Sinks.      !
+!  TisrcG     Latest two-time snapshots of tracer (tracer units)       !
+!               internal point Sources/Sinks.                          !
+#endif
+!!!End insert PWA 18/10/2021
 !=======================================================================
 !
         USE mod_kinds
@@ -49,11 +61,26 @@
 
         integer, allocatable :: Msrc(:)
         integer, allocatable :: Nsrc(:)
+!!!Inserted PWA 18/10/2021
+#ifdef TS_ISOURCE
+        integer, allocatable :: Nisrc(:)
+#endif
+!!!End insert PWA 18/10/2021
 
         TYPE T_SOURCES
 
           integer, pointer :: Isrc(:)
           integer, pointer :: Jsrc(:)
+!!!Inserted PWA 18/10/2021
+#ifdef TS_ISOURCE
+          integer, pointer :: Iisrc(:)
+          integer, pointer :: Jisrc(:)
+          integer, pointer :: Nisrct(:)
+          integer, pointer :: Iisrct(:,:)
+          integer, pointer :: Jisrct(:,:)
+          integer, pointer :: isrct(:,:)
+#endif
+!!!End insert PWA 18/10/2021
 
           real(r8), pointer :: Dsrc(:)
           real(r8), pointer :: Fsrc(:)
@@ -68,6 +95,15 @@
           real(r8), pointer :: QbarG(:,:)
           real(r8), pointer :: TsrcG(:,:,:,:)
 #endif
+
+!!!Inserted PWA 18/10/2021
+#ifdef TS_ISOURCE
+          real(r8), pointer :: Tisrc(:,:,:)
+          real(r8), pointer :: Xisrc(:)
+          real(r8), pointer :: Yisrc(:)
+          real(r8), pointer :: TisrcG(:,:,:,:)
+#endif
+!!!End insert PWA 18/10/2021
 
         END TYPE T_SOURCES
 
@@ -85,7 +121,8 @@
 !=======================================================================
 !
       USE mod_param
-#ifndef ANA_PSOURCE
+!!!Modified PWA 18/10/2021
+#if !defined ANA_PSOURCE || defined TS_ISOURCE
       USE mod_parallel
       USE mod_iounits
       USE mod_ncparam
@@ -103,12 +140,16 @@
 !
 !  Local variable declarations.
 !
-#ifndef ANA_PSOURCE
+!!!Modified PWA 18/10/2021
+#if !defined ANA_PSOURCE || defined TS_ISOURCE
       logical :: foundit
 
       integer :: Vid, ifile, nvatt, nvdim
 #endif
       integer :: is, itrc, k, mg
+#ifdef TS_ISOURCE
+      integer :: Ntiles 
+#endif
 
       real(r8), parameter :: IniVal = 0.0_r8
 !
@@ -157,6 +198,39 @@
       Msrc(ng)=200
       Nsrc(ng)=Msrc(ng)
 #endif
+
+!!!Inserted PWA 18/10/2021
+#ifdef TS_ISOURCE
+      IF (ng.eq.1) THEN
+        allocate ( Nisrc(Ngrids) )
+      END IF
+!
+!  Inquire about the number of internal tracer point sources.
+!
+      IF (ng.eq.1) THEN
+        DO mg=1,Ngrids
+          foundit=.FALSE.
+          IF (ANY(LtracerISrc(:,mg))) THEN
+            DO i=1,nISSFfiles(ng)
+              CALL netcdf_inq_var (ng, iNLM, ISSF(i,mg)%name,           &
+     &                             MyVarName = TRIM(Vname(1,idIxpo)),   &
+     &                             SearchVar = foundit,                 &
+     &                             VarID = Vid,                         &
+     &                             nVardim = nvdim,                     &
+     &                             nVarAtt = nvatt)
+              IF (FoundError(exit_flag, NoError, __LINE__,              &
+     &                       __FILE__//", allocate_sources")) RETURN
+
+              IF (foundit) THEN
+                Nisrc(mg)=var_Dsize(1)         ! first dimension
+              END IF
+            END DO
+          END IF
+        END DO
+      END IF
+#endif
+!!!End insert PWA 18/10/2021
+
 !
 !  Allocate structure.
 !
@@ -201,6 +275,41 @@
       allocate ( SOURCES(ng) % TsrcG(Nsrc(ng),N(ng),2,NT(ng)) )
       Dmem(ng)=Dmem(ng)+2.0_r8*REAL(Nsrc(ng)*N(ng)*NT(ng),r8)
 #endif
+
+!!!Inserted PWA 18/10/2021
+#ifdef TS_ISOURCE
+      allocate ( SOURCES(ng) % Iisrc(Nisrc(ng)) )
+      Dmem(ng)=Dmem(ng)+REAL(Nisrc(ng),r8)
+
+      allocate ( SOURCES(ng) % Jisrc(Nisrc(ng)) )
+      Dmem(ng)=Dmem(ng)+REAL(Nisrc(ng),r8)
+
+      Ntiles=NtileI(ng)*NtileJ(ng)
+      allocate ( SOURCES(ng) % Nisrct(Ntiles) )
+      Dmem(ng)=Dmem(ng)+REAL(Ntiles,r8)
+
+      allocate ( SOURCES(ng) % Iisrct(Nisrc(ng),Ntiles) )
+      Dmem(ng)=Dmem(ng)+REAL(Nisrc(ng)*Ntiles,r8)
+
+      allocate ( SOURCES(ng) % Jisrct(Nisrc(ng),Ntiles) )
+      Dmem(ng)=Dmem(ng)+REAL(Nisrc(ng)*Ntiles,r8)
+
+      allocate ( SOURCES(ng) % isrct(Nisrc(ng),Ntiles) )
+      Dmem(ng)=Dmem(ng)+REAL(Nisrc(ng)*Ntiles,r8)
+
+      allocate ( SOURCES(ng) % Tisrc(Nisrc(ng),N(ng),NT(ng)) )
+      Dmem(ng)=Dmem(ng)+REAL(Nisrc(ng)*N(ng)*NT(ng),r8)
+
+      allocate ( SOURCES(ng) % Xisrc(Nisrc(ng)) )
+      Dmem(ng)=Dmem(ng)+REAL(Nisrc(ng),r8)
+
+      allocate ( SOURCES(ng) % Yisrc(Nisrc(ng)) )
+      Dmem(ng)=Dmem(ng)+REAL(Nisrc(ng),r8)
+
+      allocate ( SOURCES(ng) % TisrcG(Nisrc(ng),N(ng),2,NT(ng)) )
+      Dmem(ng)=Dmem(ng)+2.0_r8*REAL(Nisrc(ng)*N(ng)*NT(ng),r8)
+#endif
+!!!End insert PWA 18/10/2021
 !
 !-----------------------------------------------------------------------
 !  Initialize module variables.
@@ -236,6 +345,32 @@
           END DO
         END DO
       END DO
+
+!!!Inserted PWA 18/10/2021
+#ifdef TS_ISOURCE
+      DO is=1,Nisrc(ng)
+        SOURCES(ng) % Iisrc(is) = 0
+        SOURCES(ng) % Jisrc(is) = 0
+        SOURCES(ng) % Xisrc(is) = IniVal
+        SOURCES(ng) % Yisrc(is) = IniVal
+        SOURCES(ng) % Nisrct(is) = 0
+        DO k=1,Ntiles
+          SOURCES(ng) % Iisrct(is,k) = 0
+          SOURCES(ng) % Jisrct(is,k) = 0
+          SOURCES(ng) % isrct(is,k) = 0
+        END DO
+      END DO
+      DO itrc=1,NT(ng)
+        DO k=1,N(ng)
+          DO is=1,Nisrc(ng)
+            SOURCES(ng) % Tisrc(is,k,itrc) = IniVal
+            SOURCES(ng) % TisrcG(is,k,1,itrc) = IniVal
+            SOURCES(ng) % TisrcG(is,k,2,itrc) = IniVal
+          END DO
+        END DO
+      END DO
+#endif
+!!!End insert PWA 18/10/2021
 
       RETURN
       END SUBROUTINE allocate_sources

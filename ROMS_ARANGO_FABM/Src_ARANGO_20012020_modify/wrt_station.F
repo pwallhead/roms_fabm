@@ -1745,33 +1745,6 @@
 # endif
 !!!End insert PWA 06/08/2019
 
-!!!Inserted PWA 10/02/2020
-# ifdef SOLVE3D
-#  ifdef TS_ISOURCE
-!
-!  Write out interior sources [mass/s]
-!
-      DO i=1,NT(ng)
-        IF (Sout(idItrc(i),ng)) THEN
-          scale=1.0_r8
-          CALL extract_sta3d (ng, iNLM, Cgrid, ifield, r3dvar,          &
-     &                        LBi, UBi, LBj, UBj, 1, N(ng),             &
-     &                        scale, FORCES(ng)%tsisource(:,:,:,i),     &
-     &                        NposR, XposR, YposR, ZposR, rsta)
-          CALL netcdf_put_fvar (ng, iNLM, STA(ng)%name,                 &
-     &                          TRIM(Vname(1,idItrc(i))), rsta,         &
-     &                          (/1,1,STA(ng)%Rindex/),                 &
-     &                          (/N(ng),Nstation(ng),1/),               &
-     &                          ncid = STA(ng)%ncid,                    &
-     &                          varid = STA(ng)%Vid(idItrc(i)))
-          IF (FoundError(exit_flag, NoError, __LINE__,                  &
-     &                   __FILE__)) RETURN
-        END IF
-      END DO
-#  endif
-# endif
-!!!End insert PWA 10/02/2020
-
 !!!Inserted PWA 11/09/2020
 # ifdef SOLVE3D
 !

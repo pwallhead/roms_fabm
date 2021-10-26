@@ -134,7 +134,7 @@
             IF (label(1:3).eq.'FRC') THEN
               FRCids(ifile,ng)=-1
             END IF
-!!!Inserted PWA 20/11/2019 following Hedstrom code 14092019
+!!!Inserted PWA 19/10/2021 following Hedstrom code 14092019
             IF (label(1:3).eq.'BRY') THEN
               BRYids(ifile,ng)=-1
             END IF
@@ -144,7 +144,12 @@
             IF (label(1:3).eq.'SSF') THEN
               SSFids(ifile,ng)=-1
             END IF
-!!!End insert PWA 20/11/2019
+#ifdef TS_ISOURCE
+            IF (label(1:3).eq.'ISS') THEN
+              ISSFids(ifile,ng)=-1
+            END IF
+#endif
+!!!End insert PWA 19/10/2021
             EXIT
           ELSE                       ! S(ifile)%name and Fcount already
             Fcount=S(ifile)%Fcount   ! updated in first field processed
@@ -428,7 +433,7 @@
         IF (FoundError(exit_flag, NoError, __LINE__,                    &
      &                 __FILE__)) RETURN
       END IF
-!!!Inserted PWA 20/11/2019 following Hedstrom code 14092019
+!!!Modified PWA 19/10/2021 following Hedstrom code 14092019
 !
 !  If processing model boundaries (multiple files allowed), check if file
 !  for requested field (based on ncid) has been already opened and get
@@ -474,7 +479,24 @@
           END IF
         END DO
       END IF
-!!!End insert PWA 20/11/2019
+#ifdef TS_ISOURCE
+!
+!  If processing model internal sources (multiple files allowed), check if file
+!  for requested field (based on ncid) has been already opened and get
+!  its ID from the association table (ISSFids).
+!
+      IF (label(1:3).eq.'ISS') THEN
+        DO ifile=1,nfiles
+          IF ((TRIM(ncfile).eq.TRIM(S(ifile)%name)).and.                &
+     &        (ISSFids(ifile,ng).ne.-1).and.                            &
+     &        (ncid.ne.ISSFids(ifile,ng))) THEN
+            ncid=ISSFids(ifile,ng)
+            EXIT
+          END IF
+        END DO
+      END IF
+#endif
+!!!End modified PWA 19/10/2021
 !
 !  If processing model forcing (multiple files allowed), check if file
 !  for requested field (based on ncid) has been already opened and get
@@ -503,7 +525,7 @@
           RETURN
         END IF
       END IF
-!!!Modified PWA 20/11/2019 following Hedstrom 14092019 code, but leaving outside of the ncid.eq.-1 condition (24/01/2020)
+!!!Modified PWA 19/10/2021 following Hedstrom 14092019 code, but leaving outside of the ncid.eq.-1 condition (24/01/2020)
 !
 !  If processing model boundaries, load ID into association table (BRYids).
 !
@@ -537,11 +559,24 @@
             EXIT
           END IF
         END DO
+#ifdef TS_ISOURCE
+!
+!  If processing internal source files, load ID into association table (ISSFids).
+!
+      ELSE IF (label(1:3).eq.'ISS') THEN
+        DO ifile=1,nfiles
+          IF (TRIM(ncfile).eq.TRIM(S(ifile)%name)) THEN
+            ISSFids(ifile,ng)=ncid
+            S(ifile)%ncid=ncid
+            EXIT
+          END IF
+        END DO
+#endif
 !
 !  If processing model forcing, load ID into association table (FRCids).
 !
       ELSE IF (label(1:3).eq.'FRC') THEN
-!!!End modified PWA 20/11/2019
+!!!End modified PWA 19/10/2021
         DO ifile=1,nfiles
           IF (TRIM(ncfile).eq.TRIM(S(ifile)%name)) THEN
             FRCids(ifile,ng)=ncid

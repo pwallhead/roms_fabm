@@ -860,6 +860,31 @@
       END IF
 # endif
 
+!!!Inserted PWA 19/10/2021
+# ifdef TS_ISOURCE
+!
+!-----------------------------------------------------------------------
+!  Set internal point Sources/Sinks (e.g. fish farms).
+!-----------------------------------------------------------------------
+!
+      IF (DOMAIN(ng)%SouthWest_Test(tile)) THEN
+#  ifdef SOLVE3D
+        DO itrc=1,NT(ng)
+          IF (LtracerISrc(itrc,ng)) THEN
+            CALL set_ngfld (ng, iNLM, idItrc(itrc), 1,Nisrc(ng), N(ng), &
+     &                      1, Nisrc(ng), N(ng),                        &
+     &                      SOURCES(ng) % TisrcG(:,:,:,itrc),           &
+     &                      SOURCES(ng) % Tisrc(:,:,itrc),              &
+     &                      update)
+            IF (FoundError(exit_flag, NoError, __LINE__,                &
+     &                     __FILE__)) RETURN
+          END IF
+        END DO
+#  endif
+      END IF
+# endif
+!!!End insert PWA 19/10/2021
+
 # ifdef HYPOXIA_SRM
 !
 !-----------------------------------------------------------------------
@@ -1048,25 +1073,6 @@
 #  endif
 # endif
 !!!End PWA insertion 14/04/2017
-
-!!!Inserted PWA 07/02/2020
-# ifdef TS_ISOURCE
-      !
-      !-----------------------------------------------------------------------
-      !  Set internal sources (mass/s).
-      !-----------------------------------------------------------------------
-      !
-      DO itrc=1,NT(ng)
-        IF (LtracerISrc(itrc,ng)) THEN
-          CALL set_3dfld_tile (ng, tile, iNLM, idItrc(itrc),            &
-     &                         LBi, UBi, LBj, UBj, 1, N(ng),            &
-     &                         FORCES(ng)%tsisourceG(:,:,:,:,itrc),     &
-     &                         FORCES(ng)%tsisource(:,:,:,itrc),        &
-     &                         update)
-        END IF
-      END DO
-# endif
-!!!End insert PWA 07/02/2020
 
 !
 !-----------------------------------------------------------------------

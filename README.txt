@@ -127,11 +127,14 @@ FABM_CHECK_STATE    /* use to cap bgc variable input to FABM (RECOMMENDED) */
 FABM_INITIAL        /* use to set all bgc initial conditions to FABM default values (simple constants) */
 FABM_INITIAL_SB     /* use to set initial conditions to FABM defaults only for surface/bottom attached variables */
 
-In addition there is also code under development to allow mass inputs without fluid input, under cpp TS_ISOURCE.
-This will be independent of the FABM coupling, via the ROMS code in step3d_t.F (thanks to John Wilkin at Rutgers for guidance here). 
-However this code is NOT YET TESTED.
+In addition there is also code to allow mass inputs without fluid input, under cpp TS_ISOURCE.
+This can be used to simulate inputs from e.g. fish farms, or waste water treatment plants (WWTPs).
+TS_ISOURCE is independent of the FABM (thanks to John Wilkin at Rutgers for guidance) and has been successfully TESTED,
+but is presently only coded for the Rutgers branch (ARANGO).
+
 There is also some code under a cpp FABM_ISOURCES to provide bgc sources via the FABM, but this is also
 NOT YET TESTED and may be deleted in future updates.
+
 FABM_TSS and FABM_TSS_ONLINE options are presently only coded for Rutgers (ARANGO) and COAWST branches.
 
 NOTE 2: If you have a VERY complex FABM model, you may need to increase maximum array size parameters in ROMS.

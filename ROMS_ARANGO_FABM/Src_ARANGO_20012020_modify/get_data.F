@@ -121,26 +121,23 @@
         END IF
       END DO
 
-!!!Inserted PWA 07/02/2020
+!!!Inserted PWA 19/10/2021
 #  ifdef TS_ISOURCE
 !
 !  Tracer Internal Sources/Sinks
 !
       DO i=1,NT(ng)
         IF (LtracerISrc(i,ng)) THEN
-          CALL get_3dfld (ng, iNLM, idItrc(i), ncFRCid(idItrc(i),ng),   &
-     &                    nFfiles(ng), FRC(1,ng), update(1),            &
-     &                    LBi, UBi, LBj, UBj, 1, N(ng), 2, 1,           &
-#   ifdef MASKING
-     &                    GRID(ng) % rmask,                             &
-#   endif
-     &                    FORCES(ng) % tsisourceG(:,:,:,:,i))
+          CALL get_ngfld (ng, iNLM, idItrc(i),ncISSFid(idItrc(i),ng),   &
+     &                    nISSFfiles(ng),ISSF(1,ng),update(1),          &
+     &                    1, Nisrc(ng), N(ng), 2, 1, Nisrc(ng), N(ng),  &
+     &                    SOURCES(ng) % TisrcG(:,:,:,i))
           IF (FoundError(exit_flag, NoError, __LINE__,                  &
      &                   __FILE__)) RETURN
         END IF
       END DO
 #  endif
-!!!End insert PWA 07/02/2020
+!!!End insert PWA 19/10/2021
 # endif
 #endif
 

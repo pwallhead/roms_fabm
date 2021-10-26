@@ -184,18 +184,6 @@
               Sout(idbstrPa,1:Ngrids)=Lswitch(1:Ngrids)
 !!!End insert PWA 14/09/2020
 
-!!!Inserted PWA 10/02/2020
-# ifdef TS_ISOURCE
-            CASE ('Sout(idItrc)')
-              Npts=load_l(Nval, Cval, MT, Ngrids, Ltracer)
-              DO ng=1,Ngrids
-                DO itrc=1,NT(ng)
-                  Sout(idItrc(itrc),ng)=Ltracer(itrc,ng)
-                END DO
-              END DO
-# endif
-!!!End insert PWA 10/02/2020
-
 !!!Inserted PWA 13/12/2020
             CASE ('Sout(idtss)')
               Npts=load_l(Nval, Cval, Ngrids, Lswitch)
@@ -690,14 +678,6 @@
             IF (Sout(idbstrPa,ng)) WRITE (out,90) Sout(idbstrPa,ng),    &
      &          'Sout(idbstrPa)',                                       &
      &          'Write out scalar bottom stress.'
-# endif
-# ifdef TS_ISOURCE
-            DO itrc=1,NT(ng)
-              IF (Sout(idItrc(itrc),ng)) WRITE (out,100)                &
-     &            Sout(idItrc(itrc),ng), 'Sout(idItrc)',                &
-     &            'Write out internal source for tracer ', itrc,        &
-     &            TRIM(Vname(1,idItrc(itrc)))
-            END DO
 # endif
 !!!End insert PWA 14/09/2020
 !!!Inserted PWA 13/12/2020

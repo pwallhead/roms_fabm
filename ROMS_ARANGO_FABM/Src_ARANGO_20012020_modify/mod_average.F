@@ -213,12 +213,6 @@
 # endif
 !!!End PWA insert 21/04/2017
 
-!!!Inserted PWA 10/02/2020
-# ifdef TS_ISOURCE
-          real(r8), pointer :: avgtsisource(:,:,:,:)
-# endif
-!!!End insert PWA 10/02/2020
-
 !!!Inserted PWA 13/12/2020
           real(r8), pointer :: avgtss(:,:,:)
 !!!End insert PWA 13/12/2020
@@ -517,15 +511,6 @@
       END IF
 # endif
 !!!End PWA insert 22/07/2019
-
-!!!Inserted PWA 10/02/2020
-# ifdef TS_ISOURCE
-      IF (ANY(Aout(idItrc(:),ng))) THEN
-        allocate (AVERAGE(ng)%avgtsisource(LBi:UBi,LBj:UBj,N(ng),NT(ng)))
-        Dmem(ng)=Dmem(ng)+REAL(N(ng)*NT(ng),r8)*size2d
-      END IF
-# endif
-!!!End insert PWA 10/02/2020
 
 !!!Inserted PWA 13/12/2020
       IF (Aout(idtss,ng)) THEN
@@ -1151,22 +1136,6 @@
       END IF
 # endif
 !!!End PWA insert 21/04/2017
-
-!!!Inserted PWA 10/02/2020
-# ifdef TS_ISOURCE
-      IF (ANY(Aout(idItrc(:),ng))) THEN
-        DO itrc=1,NT(ng)
-          DO k=1,N(ng)
-            DO j=Jmin,Jmax
-              DO i=Imin,Imax
-                AVERAGE(ng) % avgtsisource(i,j,k,itrc) = IniVal
-              END DO
-            END DO
-          END DO
-        END DO
-      END IF
-# endif
-!!!End insert PWA 10/02/2020
 
 !!!Inserted PWA 13/12/2020
       IF (Aout(idtss,ng)) THEN

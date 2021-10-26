@@ -81,20 +81,26 @@
 
       integer :: Npts, Nval, i, itrc, ivar, k, lstr, ng, nl, status
       integer :: ifield, ifile, igrid, itracer, nline, max_Ffiles
-!!!Inserted PWA 20/11/2019 following Hedstrom 14092019 code
+!!!Inserted PWA 19/10/2021 following Hedstrom 14092019 code
       integer :: ibcfile, iclmfile, issffile
-!!!End insert PWA 20/11/2019
+#ifdef TS_ISOURCE
+      integer :: iissffile
+#endif
+!!!End insert PWA 19/10/2021
       integer :: Cdim, Clen, Rdim
       integer :: OutFiles
       integer :: Ivalue(1)
 
       integer, allocatable :: Nfiles(:)
       integer, allocatable :: Ncount(:,:)
-!!!Inserted PWA 20/11/2019 following Hedstrom 14092019 code
+!!!Inserted PWA 19/10/2021 following Hedstrom 14092019 code
       integer, allocatable :: NBCcount(:,:)
       integer, allocatable :: NCLMcount(:,:)
       integer, allocatable :: NSSFcount(:,:)
-!!!End insert PWA 20/11/2019
+#ifdef TS_ISOURCE
+      integer, allocatable :: NISSFcount(:,:)
+#endif
+!!!End insert PWA 19/10/2021
 
       real(dp), allocatable :: Dtracer(:,:)
       real(r8), allocatable :: Rtracer(:,:)
@@ -118,11 +124,14 @@
 !-----------------------------------------------------------------------
 !
       ifile=1                            ! multiple file counter
-!!!Inserted PWA 20/11/2019 following Hedstrom 14092019 code
+!!!Inserted PWA 19/10/2021 following Hedstrom 14092019 code
       ibcfile=1                          ! multiple BC file counter
       iclmfile=1                         ! multiple CLM file counter
       issffile=1                         ! multiple Rivers file counter
-!!!End insert PWA 20/11/2019
+#ifdef TS_ISOURCE
+      iissffile=1                        ! multiple internal sources/sinks file counter
+#endif
+!!!End insert PWA 19/10/2021
       igrid=1                            ! nested grid counter
       itracer=0                          ! LBC tracer counter
       nline=0                            ! LBC multi-line counter
@@ -3428,7 +3437,7 @@
                 NGCname(i:i)=blank
               END DO
               NGCname=TRIM(ADJUSTL(Cval(Nval)))
-!!!Modified PWA 20/11/2019 following Hedstrom 14092019 code
+!!!Modified PWA 19/10/2021 following Hedstrom 14092019 code
             CASE ('NBCFILES')
               Npts=load_i(Nval, Rval, Ngrids, nBCfiles)
               DO ng=1,Ngrids
@@ -3498,7 +3507,31 @@
               Npts=load_s2d(Nval, Cval, Cdim, line, label, issffile,    &
      &                      igrid, Ngrids, nSSFfiles, NSSFcount,        &
      &                      max_Ffiles, SSF)
-!!!End modified PWA 20/11/2019
+#ifdef TS_ISOURCE
+            CASE ('NISSFFILES')
+              Npts=load_i(Nval, Rval, Ngrids, nISSFfiles)
+              DO ng=1,Ngrids
+                IF (nISSFfiles(ng).le.0) THEN
+                  IF (Master) WRITE (out,260) 'NISSFFILES',             &
+     &               nISSFfiles(ng),                                    &
+     &              'Must be equal or greater than one.'
+                  exit_flag=4
+                  RETURN
+                END IF
+              END DO
+              max_Ffiles=MAXVAL(nISSFfiles)
+              allocate ( ISSF(max_Ffiles,Ngrids) )
+              allocate ( ISSFids(max_Ffiles,Ngrids) )
+              allocate ( NISSFcount(max_Ffiles,Ngrids) )
+              ISSFids(1:max_Ffiles,1:Ngrids)=-1
+              NISSFcount(1:max_Ffiles,1:Ngrids)=0
+            CASE ('ISSFNAME')
+              label='ISSF - Internal Sources/Sinks forcing fields'
+              Npts=load_s2d(Nval, Cval, Cdim, line, label, iissffile,   &
+     &                      igrid, Ngrids, nISSFfiles, NISSFcount,      &
+     &                      max_Ffiles, ISSF)
+#endif
+!!!End modified PWA 19/10/2021
 # if defined SSH_TIDES || defined UV_TIDES
             CASE ('TIDENAME')
               label='TIDE - Tidal forcing fields'
@@ -6417,6 +6450,22 @@
 !!!End modified PWA 20/11/2019
           END IF
 # endif
+!!!Inserted PWA 19/10/2021
+# ifdef TS_ISOURCE
+          DO i=1,nISSFfiles(ng)
+            DO ifile=1,ISSF(i,ng)%Nfiles
+              fname=ISSF(i,ng)%files(ifile)
+              IF (.not.find_file(ng, fname, 'ISSFNAME')) GO TO 30
+              IF (ifile.eq.1) THEN
+                WRITE (out,310) 'Input Internal Sources/Sinks File',i,  &
+     &                          ':  ', TRIM(fname)
+              ELSE
+                WRITE (out,'(37x,a)') TRIM(fname)
+              END IF
+            END DO
+          END DO
+# endif
+!!!End insert PWA 19/10/2021
 # if defined SSH_TIDES || defined UV_TIDES
           IF (ng.eq.1) THEN               ! only tidal forcing on grid 1
             fname=TIDE(ng)%name

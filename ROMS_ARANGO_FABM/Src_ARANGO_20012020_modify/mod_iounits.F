@@ -65,6 +65,11 @@
 !    TLF       Input/output tangent linear model impulse forcing       !
 !    TLM       Output tangent linear model history                     !
 !    SSF       Input Sources/Sinks forcing (river runoff)              !
+!!!Inserted PWA 19/10/2021
+#ifdef TS_ISOURCE
+!    ISSF      Input Internal Sources/Sinks forcing (e.g. fish farms)  !
+#endif
+!!!End insert PWA 19/10/2021
 !    STA       Output station data                                     !
 !    STD       Input error covariance standard deviations              !
 !                STD(1,ng)  initial conditions                         !
@@ -92,17 +97,20 @@
 !                                                                      !
 !  Miscellaneous variables:                                            !
 !                                                                      !
-!!!Modified PWA 20/11/2019
+!!!Modified PWA 19/10/2021
 !  BRYids      NetCDF file ID associated with each boundary field.     !
 !  CLMids      NetCDF file ID associated with each climatology field.  !
 !  FRCids      NetCDF file ID associated with each forcing field.      !
 !  SSFids      NetCDF file ID associated with each river source field. !
+#ifdef TS_ISOURCE
+!  ISSFids     NetCDF file ID associated with each internal source.    !
+#endif
 !  Rerror      Running error messages.                                 !
 !  SourceFile  Current executed filename. It is used for IO error      !
 !                purposes.                                             !
 !  ioerror     IO error flag.                                          !
 !  ncfile      Current NetCDF filename being processed.                !
-!!!End modified PWA 20/11/2019
+!!!End modified PWA 19/10/2021
 !  nFfiles     Number of forcing files.                                !
 !                                                                      !
 !=======================================================================
@@ -162,7 +170,7 @@
       TYPE(T_IO), allocatable :: TIDE(:)    ! tidal forcing
       TYPE(T_IO), allocatable :: TLF(:)     ! TLM impulse fields
       TYPE(T_IO), allocatable :: TLM(:)     ! TLM history fields
-!!!Modified PWA 20/11/2019 following Hedstrom 14092019 code
+!!!Modified PWA 19/10/2021 following Hedstrom 14092019 code
 !
 !  Input boundary condition data.
 !
@@ -191,7 +199,17 @@
       integer, allocatable :: SSFids(:,:)
 
       TYPE(T_IO), allocatable :: SSF(:,:)
-!!!End modified PWA 20/11/2019
+
+#ifdef TS_ISOURCE
+!
+!  Input internal source data.
+!
+      integer, allocatable :: nISSFfiles(:)
+      integer, allocatable :: ISSFids(:,:)
+
+      TYPE(T_IO), allocatable :: ISSF(:,:)
+#endif
+!!!End modified PWA 19/10/2021
 !
 !  Error messages.
 !
@@ -377,6 +395,9 @@
       IF (.not. allocated(nCLMfiles)) allocate ( nCLMfiles(Ngrids) )
       IF (.not. allocated(nFfiles)) allocate ( nFfiles(Ngrids) )
       IF (.not. allocated(nSSFfiles)) allocate ( nSSFfiles(Ngrids) )
+#ifdef TS_ISOURCE
+      IF (.not. allocated(nISSFfiles)) allocate ( nISSFfiles(Ngrids) )
+#endif
 !!!End insert PWA 20/11/2019
 !
 !-----------------------------------------------------------------------

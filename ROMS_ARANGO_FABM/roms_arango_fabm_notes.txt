@@ -29,6 +29,7 @@ Utility/check_multifile.F (NOT FABM-RELATED):
 - Added code to allow multiple bry/clm/ssf files, following Hedstrom 14092019 code (20/11/2019)
   - Note: multiple bry/clm files can be convenient for complex models, helping to avoid large input files
   - Updated following the new Arango call-to-subroutine structure (20/01/2020)
+- Added code to allow TS_ISOURCE-dependent input from multiple internal sources files (19/10/2021)
 
 Utility/checkvars.F:
 - set get_var to TRUE depending on (FABM_INITIAL, FABM_INITIAL_SB) if RFABM defined (23/11/2018)
@@ -91,9 +92,11 @@ Nonlinear/get_data.F:
 - Modified cpps for W4DPSAS_FCT_SENSITIVITY to agree with 26072019 (version 3.8) code (08/08/2019)
 - Added TS_ISOURCE-dependent getting of tsisource data (07/02/2020) (NOT FABM-RELATED)
 - Added RFABM+FABM_ISOURCES-dependent getting of Isources data (10/02/2020)
+- Updated to define TS_ISOURCE input as points sources instead of full-grid forcing (19/10/2021)
 
 Nonlinear/get_idata.F (NOT FABM-RELATED):
 - Added code to allow for multiple ssf files, following Hedstrom 14092019 code (20/11/2019)
+- Added TS_ISOURCE-dependent input of internal point source position data (19/10/2021)
 
 Utility/get_state.F
 - Added RFABM-dependent reading in of surface/bottom-attached initial conditions (09/02/2020)
@@ -109,6 +112,7 @@ Utility/inquiry.F (NOT FABM-RELATED):
 - Added code for multiple bry/clm/ssf files, following Hedstrom 14092019 (20/11/2019)
 NOTE: We do NOT include Kate's automatic conversion of temperature data from Kelvin to Celsius (too dangerous!)
 - Updated with small changes for consistency with new Arango code (24/01/2020)
+- Updated to allow TS_ISOURCE input as points sources instead of full-grid forcing (19/10/2021)
 
 Utility/lbc.F:
 - RFABM-dependent doubling of the length of lbc_att to allow for ERSEM-type models (02/11/2015)
@@ -141,6 +145,7 @@ AVERAGE(ng)%avg(srfWm2,Asilt,xCO2atm,pCO2atm,state_bt,state_sf) (21/04/2017)
 - Added declaration, allocation, and initialization of AVERAGE(ng)%avgbstrPa (11/09/2020) (NOT FABM-RELATED)
 - Changed index name idSUVav -> idSUV (11/09/2020)
 - Added AVERAGE(ng)%avgtss (total suspended sediments) (13/12/2020)
+- Removed TS_ISOURCE-dependent declaration, allocation, and initialization of AVERAGE(ng)%avgtsisource (NOT FABM-RELATED) (19/10/2021)
 
 Modules/mod_biology.F:
 - Added comments and cpp-contingent include statement for rfabm_mod.F (17/11/2014)
@@ -161,10 +166,12 @@ Modules/mod_forces.F:
 - Added RFABM+(FABM_N3ATMDEPO,FABM_N4ATMDEPO,FABM_ISOURCES)-dependent declaration, allocation, and initialization of FORCES(ng)%N3atmd,N4atmd,Isources and FORCES(ng)%N3atmdG,N4atmdG,IsourcesG 
 - Added TS_ISOURCE-dependent declaration, allocation, and initialization of tsisource (07/02/2020) (NOT FABM-RELATED)
 - Added FABM_TSS,FABM_TSS_ONLINE-dependent declaration, allocation, and initialization of tss (total suspended sediments) (13/12/2020)
+- Removed TS_ISOURCE-dependent declaration, allocation, and initialization of tsisource (19/10/2021) (NOT FABM-RELATED)
 
 Modules/mod_iounits.F (NOT FABM-RELATED):
 - Added code to allow for multiple bry/clm/ssf files, following Hedstrom 14092019 code (20/11/2019)
 - Updated to new Arango code with added "head" substructures (24/01/2020)
+- Updated to define TS_ISOURCE input as points sources instead of full-grid forcing (19/10/2021)
 
 Modules/mod_ncparam.F
 - Added comments showing how this code is a likely source of SIGSEGV errors (worth keeping these!)
@@ -188,6 +195,7 @@ Modules/mod_ncparam.F
 - Added declaration and input of netCDF index for scalar bottom stress idbstrPa (11/09/2020) (NOT FABM-RELATED)
 - Changed index name idSUVav -> idSUV (11/09/2020)
 - Added idtss for total suspended sediments (13/12/2020)
+- Updated to define TS_ISOURCE input as points sources instead of full-grid forcing (19/10/2021)
 
 Modules/mod_ocean.F
 - Added RFABM-dependent declaration, allocation, and initialization of full density variable rhof and water pressure variable pres (16/03/2015)
@@ -213,6 +221,7 @@ Modules/mod_scalars.F
 
 Modules/mod_sources.F (NOT FABM-RELATED):
 - Added code to allow for multiple ssf files, following Hedstrom 14092019 code (20/11/2019)
+- Updated to define TS_ISOURCE input as points sources instead of full-grid forcing (19/10/2021)
 
 Master/ocean.h
 - Inserted RFABM-dependent USE statement and call to roms_fabm_init (31/03/2015)
@@ -242,6 +251,7 @@ Utility/read_stapar.F
 - Added RFABM+(FABM_N3ATMDEPO,FABM_N4ATMDEPO,FABM_ISOURCES)-dependent reading in of Sout (28/01/2020)
 - Added TS_ISOURCE-dependent reading in of Sout (10/02/2020) (NOT FABM-RELATED)
 - Added reading of Sout for tss (total suspended sediments) (13/12/2020)
+- Removed TS_ISOURCE-dependent reading in of Sout (19/10/2021) (NOT FABM-RELATED)
 
 Nonlinear/Biology/rfabm.h (from npzd_Franks.h, note: COAWST and ARANGO versions should be identical)
 - Added linking calls (pointers that change between time steps) and call to fabm_do (31/03/2015)
@@ -306,6 +316,7 @@ Nonlinear/set_data.F
 - Added RFABM+FABM_ISOURCES-dependent update of Isources (10/02/2020)
 - Tidied calculated of Swind and corrected calculation of bstrPa (accounting for (bustr,bvstr) being defined at (u,v) points, following sed_bed.F) (11/09/2020)
 - Added FABM_TSS-dependent reading of forcing data for total suspended sediments (13/12/2020)
+- Updated to define TS_ISOURCE input as points sources instead of full-grid forcing (19/10/2021)
 
 Utility/set_diags.F
 - Added RFABM-dependent setting of FABM diagnostics (30/07/2019)
@@ -319,6 +330,7 @@ Nonlinear/step3d_t.F (NOT FABM-RELATED)
 - Corrected following MPDATA bug fix (#842) (07/02/2020)
 - Added TS_ISOURCE-dependent injection of tracer due to internal sources (e.g. fish farm) (07/02/2020)
 - Corrected following HSIMT bug fix (#848) (11/03/2020) (NOT FABM-RELATED)
+- Updated to define TS_ISOURCE input as points sources instead of full-grid forcing (19/10/2021)
 
 Utility/wrt_avg.F
 - Added RFABM-dependent code to write NetCDF averages for:
@@ -360,10 +372,10 @@ Utility/wrt_rst.F
 Utility/wrt_station.F
 - Added RFABM-dependent code to write NetCDF station variables (srfWm2,Asilt,xCO2atm,pCO2atm,state_bt,state_sf) (07/08/2019)
 - Added RFABM+(FABM_N3ATMDEPO,FABM_N4ATMDEPO,FABM_ISOURCES)-dependent code to write NetCDF station variables N3atmd, N4atmd, Isources (27/01/2020)
-- Added TS_ISOURCE-dependent to write NetCDF station variable tsisource (10/02/2020)
+- Added TS_ISOURCE-dependent code to write NetCDF station variable tsisource (10/02/2020)
 - Added code to write NetCDF station variables (suv,bstrPa) (11/09/2020)
 - Added FABM_TSS,FABM_TSS_ONLINE,SEDIMENT-dependent code to write total suspended sediments (13/12/2020)
-
+- Removed TS_ISOURCE-dependent code to write NetCDF station variable tsisource (19/10/2021) (NOT FABM-RELATED)
 
 Base files for python-generated input files
 -------------------------------------------

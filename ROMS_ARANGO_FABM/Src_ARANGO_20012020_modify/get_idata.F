@@ -535,6 +535,33 @@
       END IF
 #endif
 
+!!!Modified PWA 19/10/2021
+#ifdef TS_ISOURCE
+      IF ((iic(ng).eq.0).and.ANY(LtracerISrc(:,ng))) THEN
+        CALL get_ngfld (ng, iNLM, idIxpo, ncISSFid(idIxpo,ng),          &
+     &                  1, ISSF(1,ng), update(1),                       &
+     &                  1, Nisrc(ng), 1, 1, 1, Nisrc(ng), 1,            &
+     &                  SOURCES(ng) % Xisrc)
+        IF (FoundError(exit_flag, NoError, __LINE__,                    &
+     &                 __FILE__)) RETURN
+
+        CALL get_ngfld (ng, iNLM, idIepo, ncISSFid(idIepo,ng),          &
+     &                  1, ISSF(1,ng), update(1),                       &
+     &                  1, Nisrc(ng), 1, 1, 1, Nisrc(ng), 1,            &
+     &                  SOURCES(ng) % Yisrc)
+        IF (FoundError(exit_flag, NoError, __LINE__,                    &
+     &                 __FILE__)) RETURN
+
+        DO is=1,Nisrc(ng)
+          SOURCES(ng)%Iisrc(is)=                                        &
+     &                MAX(1,MIN(NINT(SOURCES(ng)%Xisrc(is)),Lm(ng)+1))
+          SOURCES(ng)%Jisrc(is)=                                        &
+     &                MAX(1,MIN(NINT(SOURCES(ng)%Yisrc(is)),Mm(ng)+1))
+        END DO
+      END IF
+#endif
+!!!End modified PWA 19/10/2021
+
 #ifdef RED_TIDE
 !
 !-----------------------------------------------------------------------

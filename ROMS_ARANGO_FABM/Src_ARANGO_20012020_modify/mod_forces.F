@@ -190,12 +190,6 @@
 !                 5 nm bandwidth.                                      !
 !  avcos        Cosine of average zenith angle of downwelling          !
 !                 spectral photons.                                    !
-!!!Inserted PWA 07/02/2020
-# ifdef TS_ISOURCE
-!  tsisource    Internal source of tracer (mass/s), where "mass" is    !
-!                 the unit of the corresponding tracer x 1 m3          !
-# endif
-!!!End insert PWA 07/02/2020
 !                                                                      !
 !=======================================================================
 !
@@ -430,13 +424,6 @@
           real(r8), pointer :: SpecIr(:,:,:)
           real(r8), pointer :: avcos(:,:,:)
 # endif
-
-!!!Inserted PWA 07/02/2020
-# ifdef TS_ISOURCE
-          real(r8), pointer :: tsisource(:,:,:,:)
-          real(r8), pointer :: tsisourceG(:,:,:,:,:)
-# endif
-!!!End insert PWA 07/02/2020
 #endif
 
 #if defined TANGENT || defined TL_IOMS
@@ -928,16 +915,6 @@
       allocate ( FORCES(ng) % avcos(LBi:UBi,LBj:UBj,NBands) )
       Dmem(ng)=Dmem(ng)+REAL(NBands,r8)*size2d
 # endif
-
-!!!Inserted PWA 07/02/2020
-# ifdef TS_ISOURCE
-      allocate ( FORCES(ng) % tsisource(LBi:UBi,LBj:UBj,N(ng),NT(ng)) )
-      Dmem(ng)=Dmem(ng)+REAL(N(ng)*NT(ng),r8)*size2d
-
-      allocate ( FORCES(ng) % tsisourceG(LBi:UBi,LBj:UBj,N(ng),2,NT(ng)))
-      Dmem(ng)=Dmem(ng)+2.0_r8*REAL(N(ng)*NT(ng),r8)*size2d
-# endif
-!!!End insert PWA 07/02/2020
 #endif
 
 #if defined TANGENT || defined TL_IOMS
@@ -1441,17 +1418,6 @@
               FORCES(ng) % avcos(i,j,itrc) = IniVal
             END DO
 # endif
-!!!Inserted PWA 07/02/2020
-# ifdef TS_ISOURCE
-            DO k=1,N(ng)
-              DO itrc=1,NT(ng)
-                FORCES(ng) % tsisource(i,j,k,itrc) = IniVal
-                FORCES(ng) % tsisourceG(i,j,k,1,itrc) = IniVal
-                FORCES(ng) % tsisourceG(i,j,k,2,itrc) = IniVal
-              END DO
-            END DO
-# endif
-!!!End insert PWA 07/02/2020
 #endif
           END DO
         END DO

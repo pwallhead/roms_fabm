@@ -134,11 +134,6 @@
 # endif
       USE mod_scalars
       USE mod_sources
-!!!Inserted PWA 07/02/2020
-# ifdef TS_ISOURCE
-      USE mod_forces
-# endif
-!!!End insert PWA 07/02/2020
 !
       USE exchange_3d_mod, ONLY : exchange_r3d_tile
 # ifdef DISTRIBUTE
@@ -245,12 +240,12 @@
 # endif
       integer :: IminT, ImaxT, JminT, JmaxT
       integer :: Isrc, Jsrc
+!!!Modified PWA 21/10/2021
+#ifdef TS_ISOURCE
+      integer :: Nisrc1,isrc1
+#endif
+!!!End modified PWA
       integer :: i, ic, ii, is, itrc, j, jj, k, ltrc
-!!!Inserted PWA 07/02/2020
-# ifdef TS_ISOURCE
-      integer :: ic2
-# endif
-!!!End insert PWA 07/02/2020
 # if defined AGE_MEAN && defined T_PASSIVE
       integer :: iage
 # endif
@@ -362,6 +357,27 @@
           END DO
         END DO
       END IF
+
+!!!Modified PWA 21/10/2021
+#ifdef TS_ISOURCE
+      IF (iic(ng).eq.1) THEN
+        ic=0
+        DO is=1,Nisrc(ng)
+          Isrc=SOURCES(ng)%Iisrc(is)
+          Jsrc=SOURCES(ng)%Jisrc(is)
+          IF ((IstrR.le.Isrc).and.(Isrc.le.IendR).and.                  &
+     &        (JstrR.le.Jsrc).and.(Jsrc.le.JendR)) THEN
+            ic=ic+1
+            SOURCES(ng)%Iisrct(ic,tile+1) = Isrc
+            SOURCES(ng)%Jisrct(ic,tile+1) = Jsrc
+            SOURCES(ng)%isrct(ic,tile+1) = is
+          END IF
+        END DO
+        SOURCES(ng)%Nisrct(tile+1) = ic
+      END IF
+      Nisrc1 = SOURCES(ng)%Nisrct(tile+1) ! No. of internal sources in this tile
+#endif
+!!!End modified PWA
 !
 !  Horizontal tracer advection.  It is possible to have a different
 !  advection schme for each tracer.
@@ -1483,6 +1499,38 @@
         END DO
       END DO
 # endif
+!!!Inserted PWA 07/02/2020
+# ifdef TS_ISOURCE
+!
+!  Correct tracer concentrations for interior sources/sinks not associated 
+!  with water fluxes (e.g. fish farms).
+!  NOTE: The code below violates the column-major-friendly order of loop indices 
+!        that is standard in ROMS, but this is overcompensated by the efficiency
+!        gained from assigning the point sources indices at the head of the loop
+!        over point sources (is).  The present code was tested against a
+!        column-major alternative code inserted after the nudge towards climatology,
+!        and gave 15-20% faster run speed on a dense tiling (16x32 tiles, size 30x13x42),
+!        but insignificant difference on a coarser tiling (16x16 tiles, size 30x27x42). 
+!
+      IF (Nisrc1.gt.0) THEN
+        DO is=1,Nisrc1
+          Isrc=SOURCES(ng)%Iisrct(is,tile+1)
+          Jsrc=SOURCES(ng)%Jisrct(is,tile+1)
+          isrc1=SOURCES(ng)%isrct(is,tile+1)
+          DO itrc=1,NT(ng)
+            IF (LtracerISrc(itrc,ng)) THEN
+              DO k=1,N(ng)
+                t(Isrc,Jsrc,k,nnew,itrc) =                              &
+     &             MAX(0.0_r8, t(Isrc,Jsrc,k,nnew,itrc) +               &
+     &             dt(ng)*SOURCES(ng)%Tisrc(isrc1,k,itrc)*              &
+     &             pm(Isrc,Jsrc)*pn(Isrc,Jsrc)*oHz(Isrc,Jsrc,k))
+              END DO
+            END IF
+          END DO
+        END DO
+      END IF
+# endif
+!!!End insert PWA 07/02/2020
 !
 !-----------------------------------------------------------------------
 !  Apply lateral boundary conditions and, if appropriate, nudge
@@ -1494,11 +1542,6 @@
 !  reduce memory.
 !
       ic=0
-!!!Inserted PWA 07/02/2020
-# ifdef TS_ISOURCE
-      ic2=0
-# endif
-!!!End insert PWA 07/02/2020
 !
       DO itrc=1,NT(ng)
 !
@@ -1532,27 +1575,6 @@
             END DO
           END DO
         END IF
-
-!!!Inserted PWA 07/02/2020
-# ifdef TS_ISOURCE
-!
-!  Correct tracer concentrations for interior sources/sinks not associated 
-!  with water fluxes (e.g. fish farms)
-!
-        IF (LtracerISrc(itrc,ng)) THEN
-          ic2=ic2+1
-          DO k=1,N(ng)
-            DO j=JstrR,JendR
-              DO i=IstrR,IendR
-                t(i,j,k,nnew,itrc)=MAX(t(i,j,k,nnew,itrc)+dt(ng)*       &
-     &                             FORCES(ng)%tsisource(i,j,k,ic2)*     &
-     &                             pm(i,j)*pn(i,j)*oHz(i,j,k), 0.0_r8)
-              END DO
-            END DO
-          END DO
-        END IF
-# endif
-!!!End insert PWA 07/02/2020
 # ifdef MASKING
 !
 !  Apply Land/Sea mask.
