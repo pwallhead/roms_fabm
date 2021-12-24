@@ -60,7 +60,7 @@ so that the run can be easily and exactly reproduced if necessary.
 Using pyfabm to generate ROMS files
 -----------------------------------
 
-0. Install the FABM and FABM python front end (see fabm_installation_notes.txt)
+0. Install the FABM and FABM python front end
 1. Copy your fabm_appname.yaml file (e.g. from ~/git/ersem-edge/testcases) to a python directory e.g. fabm_python/
 2. Copy fabm_appname.yaml to runtime directory as fabm.yaml
 (I recommend adding commented-out notes at the top of fabm.yaml to document provenance)
@@ -144,4 +144,18 @@ NOTE 3: Modified code is provided for ccsm_flux.F to enable the CCSM_ICE_SHORTWA
         However this code is still under development: it is NOT YET TESTED and NOT READY FOR USE.
         (CCSM_ICE_SHORTWAVE has been tested only with BULK_FLUXES cpp).
 
-
+NOTE 4: If you are changing between ROMS versions, make sure that all input files are compatible with
+        the new version.  For FABM-coupled configurations you should:
+        i) Rerun the python script with the version switched 'roms_branch' modified.
+           This should ensure that all input files created by the python script are compatible with the new version.
+           If you are using an application-adapted base_varinfo.dat file, make sure that the base file used by
+           the python script is compatible with your application and the new version.
+           For example, cf. base_varinfo_a20_v3_hedstrom.dat and base_varinfo_a20_v3_arango.dat in example_scripts/.
+           Note that you may need to adapt the line_split variables to ensure that the FABM entries
+           are correctly inserted in the base_varinfo.dat.
+        ii) Ensure that the header file is compatible with the new version (some differences in cpps between ROMS branches).
+        iii) Modify your build script to use the new source code, and recompile ROMS.
+        iv) Check that your ocean.in and stations.in files are compatible with the new version, before running.
+            Note that there are major differences in the ocean.in files between Hedstrom and Arango branches;
+            if you do not account for these you will likely see a segmentation fault early in the run.
+            For example, cf. ocean_a20_v3_fabm_npzd_franks_hedstrom.in and ocean_a20_v3_fabm_npzd_franks_arango.in in example_scripts/.

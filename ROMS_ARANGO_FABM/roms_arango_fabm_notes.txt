@@ -398,4 +398,6 @@ base_varinfo.dat (from External/varinfo.dat)
 - Copied and renamed ROMS/External/varinfo.dat (30/07/2019)
 - Updated to latest Arango code (adding Hadvection, Vadvection etc.) (27/01/2020)
 - Added supplementary non-FABM variables (suv,bstrPa,tss) (18/01/2021) (NOT FABM RELATED)
-
+- Updated to use the 20/01/2020 version (995) as basis, adding (suv,bstrPa,tss) (23/12/2021) (NOT FABM RELATED)
+- Corrected typo in suggested units for specific humidity (should be kg/kg, not g/kg, if scale factor = 1.00) (23/12/2021) (NOT FABM RELATED)
+- Corrected srf_time to swrad_time for swrad variables (23/12/2021) (NOT FABM RELATED)

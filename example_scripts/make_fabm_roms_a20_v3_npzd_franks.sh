@@ -2,7 +2,7 @@
 ## This shell script generates and copies across all the FABM files needed to compile and run ROMS-FABM
 ## for A20.
 ## Example usage:
-## ./make_fabm_roms_a20_v3_npzd_Franks.sh fabm_roms_a20_v3_npzd_Franks.py fabm_npzd_Franks.yaml
+## ./make_fabm_roms_a20_v3_npzd_franks.sh fabm_roms_a20_v3_npzd_Franks.py fabm_npzd_Franks.yaml
 ##
 ## Phil Wallhead 29/04/2020
 

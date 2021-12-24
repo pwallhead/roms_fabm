@@ -9,7 +9,7 @@
 #Note: If the ROMS version is updated, you may need to update the base files
 #      and therefore also the line_split variables in this script (see below)
 #
-##Phil Wallhead 22/01/2021
+##Phil Wallhead 24/12/2021
 
 
 import sys, numpy, os
@@ -73,6 +73,9 @@ isforced_bc = numpy.array([0]*NBT) #Test case, use gradient (unforced) BCs
 
 default_LtracerSrc = 0 #1 to use default LtracerSrc, 0 for no point sources
 LtracerSrc = 'T F F F' #Default LtracerSrc
+
+default_LtracerISrc = 0 #1 to use default LtracerISrc, 0 for no internal point sources
+LtracerISrc = 'T F F F' #Default LtracerISrc
 
 default_LtracerSponge = 0 #1 to use default LtracerSponge, 0 for no sponge layers
 LtracerSponge = str(NBT)+'*T' #Default LtracerSponge
@@ -224,6 +227,8 @@ with open(outfile1,'w') as f:
    f.write('\n#if defined DIAGNOSTICS && defined DIAGNOSTICS_BIO\n')
    f.write('!\n!  Biological 2D diagnostic variable IDs.\n!\n')
    f.write(' '*nspace + 'integer, allocatable :: iDbio2(:)\n\n')
+   HDstrfullv = []
+   HDstrv = []
    for i,variable in enumerate(DiaBio_2d,1):
       l1 = len(variable.output_name)
       if l1>lmax:
@@ -231,11 +236,14 @@ with open(outfile1,'w') as f:
          l1 = len(vstr)
       else:
          vstr = variable.output_name
-
+      HDstrfullv.append(variable.output_name)
+      HDstrv.append(vstr)
       f.write(' '*nspace + 'integer :: i' + vstr + ' = ' + str(i) + '\n')
 
    f.write('!\n!  Biological 3D diagnostic variable IDs.\n!\n')
    f.write(' '*nspace + 'integer, allocatable :: iDbio3(:)\n\n')
+   BDstrfullv = []
+   BDstrv = []
    for i,variable in enumerate(DiaBio_3d,1):
       l1 = len(variable.output_name)
       if l1>lmax:
@@ -243,7 +251,8 @@ with open(outfile1,'w') as f:
          l1 = len(vstr)
       else:
          vstr = variable.output_name
-
+      BDstrfullv.append(variable.output_name)
+      BDstrv.append(vstr)
       f.write(' '*nspace + 'integer :: i' + vstr + ' = ' + str(i) + '\n')
    f.write('#endif')
 
@@ -569,9 +578,21 @@ with open(outfile3,'w') as f:
          l1 = len(vstr)
       else:
          vstr = variable.output_name
-
       f.write(' '*nspace2 + 'CASE(\'idRtrc(i' + vstr + ')\')\n')
       f.write(' '*nspace2 + '  idRtrc(i' + vstr + ') = varid\n')
+
+   f.write('\n#ifdef TS_ISOURCE\n/*\n**  Biological tracers internal point Source/Sinks (e.g. fish farms)..\n*/\n')
+   f.write('#ifdef DEBUG\n' + ' '*nspace + 'write(*,*) "Assigning idItrc in rfabm_var.h"\n#endif\n')
+   for i,variable in enumerate(model.interior_state_variables,1):
+      l1 = len(variable.output_name)
+      if l1>lmax:
+         vstr = 'BS' + str(i)
+         l1 = len(vstr)
+      else:
+         vstr = variable.output_name
+      f.write(' '*nspace2 + 'CASE(\'idItrc(i' + vstr + ')\')\n')
+      f.write(' '*nspace2 + '  idItrc(i' + vstr + ') = varid\n')
+   f.write('#endif\n')
 
    f.write('\n#ifdef DIAGNOSTICS_BIO\n')
    f.write('!\n!  FABM horizontal diagnostic variables\n!\n\n')
@@ -615,14 +636,14 @@ with open(outfile3,'w') as f:
 #One such point is after "wet_dry_masking" (Hedstrom) or "Db_zphi" (Arango)
 #or "bndwave_z" (COAWST) and just before Fennel model variables.
 if roms_branch==0:
-   base_varinfo = 'base_v37_KATE/' + base_varinfo_name
-   line_split = 3871 #NOTE: This must be adapted to the user's varinfo.dat file
+   base_varinfo = 'base_v37_KATE/base_varinfo_a20_v3_hedstrom.dat'
+   line_split = 3871 #NOTE: This may need to be adapted to the user's varinfo.dat file
 if roms_branch==1:
-   base_varinfo = 'base_Arango/' + base_varinfo_name
-   line_split = 2862 #NOTE: This must be adapted to the user's varinfo.dat file
+   base_varinfo = 'base_Arango/base_varinfo_a20_v3_arango.dat'
+   line_split = 2862 #NOTE: This may need to be adapted to the user's varinfo.dat file
 if roms_branch==2:
    base_varinfo = 'base_coawst/' + base_varinfo_name
-   line_split = 4291 #NOTE: This must be adapted to the user's varinfo.dat file
+   line_split = 4291 #NOTE: This may need to be adapted to the user's varinfo.dat file
 with open(base_varinfo,'r') as f: 
    data = f.readlines()
    data1 = data[0:line_split]
@@ -819,6 +840,42 @@ with open(outfile4,'w') as f:
    f.write('  1.0d0\n\n')
 
    #Interior sources (e.g. fish farms)
+   f.write('\'isource_Xposition\'' + ' '*nspace + '! Input\n')
+   f.write('  \'internal source XI-positions at RHO-points\'\n')
+   f.write('  \'nondimensional\'\n')
+   f.write('  \'isource_Xposition\'\n')
+   f.write('  \'isource\'\n')
+   f.write('  \'idIxpo\'\n')
+   f.write('  \'nulvar\'\n')
+   f.write('  1.0d0\n\n')
+
+   f.write('\'isource_Eposition\'' + ' '*nspace + '! Input\n')
+   f.write('  \'internal source ETA-positions at RHO-points\'\n')
+   f.write('  \'nondimensional\'\n')
+   f.write('  \'isource_Eposition\'\n')
+   f.write('  \'isource\'\n')
+   f.write('  \'idIepo\'\n')
+   f.write('  \'nulvar\'\n')
+   f.write('  1.0d0\n\n')
+
+   f.write('\'isource_temp\'' + ' '*nspace + '! Input\n')
+   f.write('  \'internal source potential temperature\'\n')
+   f.write('  \'Celsius\'\n')
+   f.write('  \'isource_temp, scalar, series\'\n')
+   f.write('  \'isource_time\'\n')
+   f.write('  \'idItrc(itemp)\'\n')
+   f.write('  \'nulvar\'\n')
+   f.write('  1.0d0\n\n')
+
+   f.write('\'isource_salt\'' + ' '*nspace + '! Input\n')
+   f.write('  \'internal source salinity\'\n')
+   f.write('  \'nondimensional\'\n')
+   f.write('  \'isource_salt, scalar, series\'\n')
+   f.write('  \'isource_time\'\n')
+   f.write('  \'idItrc(isalt)\'\n')
+   f.write('  \'nulvar\'\n')
+   f.write('  1.0d0\n\n')
+
    for i,variable in enumerate(model.interior_state_variables,1):
       l1 = len(variable.output_name)
       if l1>lmax:
@@ -827,11 +884,11 @@ with open(outfile4,'w') as f:
       else:
          vstr = variable.output_name
       f.write('\'isource_' + vstr + '\'' + ' '*nspace + '! Input\n')
-      f.write('  \'interior source ' + variable.long_path + '\'\n')
-      f.write('  \'' + variable.units + '/s\'\n')
+      f.write('  \'internal source ' + variable.long_path + '\'\n')
+      f.write('  \'' + variable.units[0:(len(variable.units)-4)] + '/s\'\n')
       f.write('  \'' + vstr + ', scalar, series\'\n')
       f.write('  \'isource_time\'\n')
-      f.write('  \'idIsources(i' + vstr + ')\'\n')
+      f.write('  \'idItrc(i' + vstr + ')\'\n')
       f.write('  \'nulvar\'\n')
       f.write('  1.0d0\n\n')
 
@@ -998,6 +1055,16 @@ with open(outfile5,'w') as f:
    else:
       f.write('  LtracerSrc == ' + str(NBT) + '*F\n\n')
 
+   f.write('! Logical switches (TRUE/FALSE) to activate biological tracers internal point\n')
+   f.write('! Sources/Sinks (e.g. fish farm inputs) and to specify which tracer variable\n')
+   f.write('! to consider: [NBT,Ngrids] values are expected. See glossary below for\n')
+   f.write('! details.\n\n')
+
+   if default_LtracerISrc==1:
+      f.write('  LtracerISrc == ' + LtracerISrc + '\n\n')
+   else:
+      f.write('  LtracerISrc == ' + str(NBT) + '*F\n\n')
+
    f.write('! Logical switches (TRUE/FALSE) to read and process biological tracer\n')
    f.write('! climatology fields: [NBT,Ngrids] values are expected. See glossary below\n')
    f.write('! for details.\n\n')
@@ -1053,116 +1120,68 @@ with open(outfile5,'w') as f:
 
       f.write('! O2 related\n')
       for i,v in enumerate(defDoutO2_2d,1):
-         if len(v)>lmax:
-            vstr = 'HD' + str(i)
-         else:
-            vstr = v
+         vstr = HDstrv[HDstrfullv.index(v)]
          f.write('Dout(i' + vstr + ') == T\n')
       for i,v in enumerate(defDoutO2_3d,1):
-         if len(v)>lmax:
-            vstr = 'BD' + str(i)
-         else:
-            vstr = v
+         vstr = BDstrv[BDstrfullv.index(v)]
          f.write('Dout(i' + vstr + ') == T\n')
 
       f.write('\n! DIC related\n')
       for i,v in enumerate(defDoutDIC_2d,1):
-         if len(v)>lmax:
-            vstr = 'HD' + str(i)
-         else:
-            vstr = v
+         vstr = HDstrv[HDstrfullv.index(v)]
          f.write('Dout(i' + vstr + ') == T\n')
       for i,v in enumerate(defDoutDIC_3d,1):
-         if len(v)>lmax:
-            vstr = 'BD' + str(i)
-         else:
-            vstr = v
+         vstr = BDstrv[BDstrfullv.index(v)]
          f.write('Dout(i' + vstr + ') == T\n')
 
       f.write('\n! TA related\n')
       for i,v in enumerate(defDoutTA_2d,1):
-         if len(v)>lmax:
-            vstr = 'HD' + str(i)
-         else:
-            vstr = v
+         vstr = HDstrv[HDstrfullv.index(v)]
          f.write('Dout(i' + vstr + ') == T\n')
       for i,v in enumerate(defDoutTA_3d,1):
-         if len(v)>lmax:
-            vstr = 'BD' + str(i)
-         else:
-            vstr = v
+         vstr = BDstrv[BDstrfullv.index(v)]
          f.write('Dout(i' + vstr + ') == T\n')
 
       f.write('\n! DOM related\n')
       for i,v in enumerate(defDoutDOM_2d,1):
-         if len(v)>lmax:
-            vstr = 'HD' + str(i)
-         else:
-            vstr = v
+         vstr = HDstrv[HDstrfullv.index(v)]
          f.write('Dout(i' + vstr + ') == T\n')
       for i,v in enumerate(defDoutDOM_3d,1):
-         if len(v)>lmax:
-            vstr = 'BD' + str(i)
-         else:
-            vstr = v
+         vstr = BDstrv[BDstrfullv.index(v)]
          f.write('Dout(i' + vstr + ') == T\n')
 
       f.write('\n! Aggregate variables\n')
       for i,v in enumerate(defDoutAgg_2d,1):
-         if len(v)>lmax:
-            vstr = 'HD' + str(i)
-         else:
-            vstr = v
+         vstr = HDstrv[HDstrfullv.index(v)]
          f.write('Dout(i' + vstr + ') == T\n')
       for i,v in enumerate(defDoutAgg_3d,1):
-         if len(v)>lmax:
-            vstr = 'BD' + str(i)
-         else:
-            vstr = v
+         vstr = BDstrv[BDstrfullv.index(v)]
          f.write('Dout(i' + vstr + ') == T\n')
 
       f.write('\n! Light related\n')
       for i,v in enumerate(defDoutLight_2d,1):
-         if len(v)>lmax:
-            vstr = 'HD' + str(i)
-         else:
-            vstr = v
+         vstr = HDstrv[HDstrfullv.index(v)]
          f.write('Dout(i' + vstr + ') == T\n')
       for i,v in enumerate(defDoutLight_3d,1):
-         if len(v)>lmax:
-            vstr = 'BD' + str(i)
-         else:
-            vstr = v
+         vstr = BDstrv[BDstrfullv.index(v)]
          f.write('Dout(i' + vstr + ') == T\n')
 
       f.write('\n! Nutrient limitation\n')
       for i,v in enumerate(defDoutNlim_3d,1):
-         if len(v)>lmax:
-            vstr = 'BD' + str(i)
-         else:
-            vstr = v
+         vstr = BDstrv[BDstrfullv.index(v)]
          f.write('Dout(i' + vstr + ') == T\n')
 
       f.write('\n! Benthic diagnostics\n')
       for i,v in enumerate(defDoutBen_2d,1):
-         if len(v)>lmax:
-            vstr = 'HD' + str(i)
-         else:
-            vstr = v
+         vstr = HDstrv[HDstrfullv.index(v)]
          f.write('Dout(i' + vstr + ') == T\n')
 
       f.write('\n! Other diagnostics\n')
       for i,v in enumerate(defDoutOther_2d,1):
-         if len(v)>lmax:
-            vstr = 'HD' + str(i)
-         else:
-            vstr = v
+         vstr = HDstrv[HDstrfullv.index(v)]
          f.write('Dout(i' + vstr + ') == T\n')
       for i,v in enumerate(defDoutOther_3d,1):
-         if len(v)>lmax:
-            vstr = 'BD' + str(i)
-         else:
-            vstr = v
+         vstr = BDstrv[BDstrfullv.index(v)]
          f.write('Dout(i' + vstr + ') == T\n')
 
    if roms_branch==0:
