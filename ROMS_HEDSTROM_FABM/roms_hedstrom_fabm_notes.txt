@@ -62,6 +62,9 @@ Utility/def_avg.F:
 - Added definition of NetCDF averages for scalar bottom stress (idbstrPa) (11/09/2020) (NOT FABM-RELATED)
 - Changed index name idSUVav -> idSUV (11/09/2020)
 
+Utility/def_info
+- Increased dimension of 'string' (1024-8192) to write names of forcings split over MANY files (20/01/2022) (NOT FABM-RELATED)
+
 Utility/def_his.F:
 - Added RFABM-dependent code to define NetCDF history variables:
 (srfWm2,Asilt,xCO2atm,pCO2atm,state_bt,state_sf) (24/04/2017)
@@ -220,6 +223,7 @@ Utility/read_phypar.F
 - Added TS_ISOURCE-dependent input of logical LtracerISrc to switch on internal sources/sinks (30/04/2020) (NOT FABM-RELATED)
 - Reading in of Aout(idbstrPa) (11/09/2020) (NOT FABM-RELATED)
 - Changed index name idSUVav -> idSUV (11/09/2020)
+- Increased dimension of Cval (200->500) to allow for forcings split over MANY files (20/01/2022) (NOT FABM-RELATED)
 
 Utility/read_stapar.F
 - Added RFABM-dependent reading in of Sout for (srfWm2,Asilt,xCO2atm,pCO2atm,state_bt,state_sf) (22/08/2019)

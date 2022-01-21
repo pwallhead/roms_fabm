@@ -66,6 +66,7 @@ Utility/def_info.F (NOT FABM-RELATED):
 - Added code for multiple bry/clm/ssf files, following Hedstrom 14092019 code (20/11/2019)
 - Added TS_ISOURCE-dependent definition of LtracerISrc netcdf info variable (07/02/2020)
 - Added RFABM+FABM_ISOURCES-dependent definition of LtracerIbio netcdf info variable (10/02/2020)
+- Increased dimension of 'string' (4096-8192) to write names of forcings split over MANY files (20/01/2022) (NOT FABM-RELATED)
 
 Utility/def_quick.F:
 - Added RFABM+(SHORTWAVE,FABM_ASILT,FABM_PCO2ATM,FABM_N3ATMDEPO,FABM_N4ATMDEPO,FABM_ISOURCES)-dependent code to define NetCDF quick variables:
@@ -104,6 +105,9 @@ Utility/get_state.F
 Include/globaldefs.h:
 - Modified cpp corrections to switch on BIOLOGY if RFABM activated (27/07/2019)
 - Modified cpp corrections to allow DIAGNOSTICS_BIO if RFABM activated (27/07/2019)
+
+Utility/inp_decode.F
+- Increased nCval (200->500) to allow for forcings split over MANY files (20/01/2022) (NOT FABM-RELATED)
 
 Utility/inp_par.F
 - Updated to latest Arango code to account for bug fix #845 (11/03/2020) (NOT FABM-RELATED)

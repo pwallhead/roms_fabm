@@ -138,7 +138,11 @@ NOT YET TESTED and may be deleted in future updates.
 FABM_TSS and FABM_TSS_ONLINE options are presently only coded for Rutgers (ARANGO) and COAWST branches.
 
 NOTE 2: If you have a VERY complex FABM model, you may need to increase maximum array size parameters in ROMS.
-        See: mod_coupler.F, mod_ncparam.F, lbc.F, tadv.F, base_rfabm_inp.h
+        We have had to increase maximum size parameters in:
+          mod_coupler.F, mod_ncparam.F, lbc.F, tadv.F, base_rfabm_inp.h
+        We have also had to increase some dimensions to permit reading of forcings split over MANY files:
+          read_phypar.F/Cval (dimension 200->500) (Hedstrom) or value of inp_decode/nCval, 
+          def_info/string (dimension 1024->8192 (Hedstrom) or 4096->8192)
 
 NOTE 3: Modified code is provided for ccsm_flux.F to enable the CCSM_ICE_SHORTWAVE parameterization.
         However this code is still under development: it is NOT YET TESTED and NOT READY FOR USE.

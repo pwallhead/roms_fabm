@@ -98,7 +98,7 @@
       character (len=40 ) :: KeyWord, text
       character (len=50 ) :: label
       character (len=256) :: fname, line
-      character (len=256), dimension(200) :: Cval
+      character (len=256), dimension(500) :: Cval !!!Modified PWA 20/01/2022, increased dimension from 200 to 500
 !
 !-----------------------------------------------------------------------
 !  Initialize.

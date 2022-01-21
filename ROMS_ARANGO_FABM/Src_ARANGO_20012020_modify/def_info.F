@@ -126,7 +126,7 @@
 #ifdef BIOLOGY
       character (len=512) :: bio_file
 #endif
-      character (len=4096) :: string
+      character (len=8192) :: string !!!Modified PWA 20/01/2022, increase length from 4096 to 8192
 !
 !-----------------------------------------------------------------------
 !  Set dimension variables.

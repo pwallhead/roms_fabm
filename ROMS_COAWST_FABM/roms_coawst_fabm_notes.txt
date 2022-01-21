@@ -85,6 +85,7 @@ Utility/def_info.F (NOT FABM-RELATED):
 - Added RFABM+ROMS_ISOURCES-dependent definition of LtracerIbio netcdf info variable (10/02/2020)
 - Copied across the above changes from Src_ARANGO_20012020_modify (03/12/2020)
 - Corrected some misalignment (13/01/2021)
+- Increased dimension of 'string' (4096-8192) to write names of forcings split over MANY files (20/01/2022) (NOT FABM-RELATED)
 
 Utility/def_quick.F:
 - Added RFABM+(SHORTWAVE,ROMS_ASILT,ROMS_PCO2ATM,ROMS_N3ATMDEPO,ROMS_N4ATMDEPO,ROMS_ISOURCES)-dependent code to define NetCDF quick variables:
@@ -132,6 +133,9 @@ Include/globaldefs.h:
 
 Nonlinear/SeaIce/ice_mk.h (NOT FABM-RELATED):
 - Removed contributions of obsolete variable SW_thru_ice to stflx (03/12/2020)
+
+Utility/inp_decode.F
+- Increased nCval (200->500) to allow for forcings split over MANY files (20/01/2022) (NOT FABM-RELATED)
 
 Utility/inquiry.F (NOT FABM-RELATED):
 - Added code for multiple ssf files, following Hedstrom 14092019 (08/01/2021)
