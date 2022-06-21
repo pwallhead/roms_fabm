@@ -581,6 +581,84 @@
         IF (FoundError(exit_flag, NoError, __LINE__,                    &
      &                 __FILE__)) RETURN
       END IF
+!!!Inserted PWA 04/06/2022
+#   if defined CALC_TDR || defined CALC_TSR
+!
+!  Write out turbulent energy dissipation rate.
+!
+      IF (Sout(idMtdr,ng)) THEN
+        scale=1.0_r8
+        CALL extract_sta3d (ng, iNLM, Cgrid, idMtdr, r3dvar,            &
+     &                      LBi, UBi, LBj, UBj, 1, N(ng),               &
+     &                      scale, MIXING(ng)%tdr,                      &
+     &                      NposR, XposR, YposR, ZposR, rsta)
+        CALL netcdf_put_fvar (ng, iNLM, STA(ng)%name,                   &
+     &                        TRIM(Vname(1,idMtdr)), rsta,              &
+     &                        (/1,1,STA(ng)%Rindex/),                   &
+     &                        (/N(ng),Nstation(ng),1/),                 &
+     &                        ncid = STA(ng)%ncid,                      &
+     &                        varid = STA(ng)%Vid(idMtdr))
+        IF (FoundError(exit_flag, NoError, __LINE__,                    &
+     &                 __FILE__)) RETURN
+      END IF
+#   endif
+#   ifdef CALC_TSR
+!
+!  Write out dynamic viscosity.
+!
+      IF (Sout(idMmu,ng)) THEN
+        scale=1.0_r8
+        CALL extract_sta3d (ng, iNLM, Cgrid, idMmu, r3dvar,             &
+     &                      LBi, UBi, LBj, UBj, 1, N(ng),               &
+     &                      scale, MIXING(ng)%mu,                       &
+     &                      NposR, XposR, YposR, ZposR, rsta)
+        CALL netcdf_put_fvar (ng, iNLM, STA(ng)%name,                   &
+     &                        TRIM(Vname(1,idMmu)), rsta,               &
+     &                        (/1,1,STA(ng)%Rindex/),                   &
+     &                        (/N(ng),Nstation(ng),1/),                 &
+     &                        ncid = STA(ng)%ncid,                      &
+     &                        varid = STA(ng)%Vid(idMmu))
+        IF (FoundError(exit_flag, NoError, __LINE__,                    &
+     &                 __FILE__)) RETURN
+      END IF
+!
+!  Write out kinematic viscosity.
+!
+      IF (Sout(idMnu,ng)) THEN
+        scale=1.0_r8
+        CALL extract_sta3d (ng, iNLM, Cgrid, idMnu, r3dvar,             &
+     &                      LBi, UBi, LBj, UBj, 1, N(ng),               &
+     &                      scale, MIXING(ng)%nu,                       &
+     &                      NposR, XposR, YposR, ZposR, rsta)
+        CALL netcdf_put_fvar (ng, iNLM, STA(ng)%name,                   &
+     &                        TRIM(Vname(1,idMnu)), rsta,               &
+     &                        (/1,1,STA(ng)%Rindex/),                   &
+     &                        (/N(ng),Nstation(ng),1/),                 &
+     &                        ncid = STA(ng)%ncid,                      &
+     &                        varid = STA(ng)%Vid(idMnu))
+        IF (FoundError(exit_flag, NoError, __LINE__,                    &
+     &                 __FILE__)) RETURN
+      END IF
+!
+!  Write out turbulent shear rate.
+!
+      IF (Sout(idMtsr,ng)) THEN
+        scale=1.0_r8
+        CALL extract_sta3d (ng, iNLM, Cgrid, idMtsr, r3dvar,            &
+     &                      LBi, UBi, LBj, UBj, 1, N(ng),               &
+     &                      scale, MIXING(ng)%tsr,                      &
+     &                      NposR, XposR, YposR, ZposR, rsta)
+        CALL netcdf_put_fvar (ng, iNLM, STA(ng)%name,                   &
+     &                        TRIM(Vname(1,idMtsr)), rsta,              &
+     &                        (/1,1,STA(ng)%Rindex/),                   &
+     &                        (/N(ng),Nstation(ng),1/),                 &
+     &                        ncid = STA(ng)%ncid,                      &
+     &                        varid = STA(ng)%Vid(idMtsr))
+        IF (FoundError(exit_flag, NoError, __LINE__,                    &
+     &                 __FILE__)) RETURN
+      END IF
+#   endif
+!!!End insert PWA 04/06/2022
 #  endif
 #  if defined BULK_FLUXES || defined ECOSIM || defined ATM_PRESS
 !

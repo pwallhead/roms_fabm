@@ -1,6 +1,10 @@
 ﻿GENERAL OVERVIEW
 ================
 
+NEW! 21/06/2022: Cpps (CALC_TDR,CALC_TSR) to calculate turbulent dissipation/shear rates within ROMS
+                 and cpps (FABM_MU,FABM_NU,FABM_TDR,FABM_TSR) to link viscosities and turbulent
+                 dissipation/shear rates with FABM (presently only coded for ARANGO branch).
+
 The ROMS-FABM coupling has been developed to allow use of the FABM framework for biogeochemical modelling
 within the ROMS regional ocean modelling system, see:
 https://github.com/fabm-model/fabm/wiki
@@ -106,36 +110,40 @@ WARNING: Do not attempt to compile multiple versions at the same time!
 
 NOTE 1: The ROMS-FABM coupling code may require certain cpp options to be activated in the ROMS header file:
         (see e.g. a20_v3_fabm_npzd_franks.h):
+ANA_BPFLUX          /* MUST be defined, or bottom bgc fluxes provided in forcing files */
+ANA_SPFLUX          /* MUST be defined, or surface bgc fluxes provided in forcing files */
 BIOLOGY             /* MUST be defined for use of FABM */
+CALC_TDR            /* use to calculate turbulent dissipation rate within ROMS */
+CALC_TSR            /* use to calculate turbulent shear rate within ROMS */
 DEBUGFABM           /* use for RFABM-specific debugging output */
 DIAGNOSTICS         /* MUST be defined for outputting FABM diagnostics (specified in rfabm.in) */
 DIAGNOSTICS_BIO     /* MUST be defined for outputting FABM diagnostics (specified in rfabm.in) */
-MASKING             /* MUST be defined to provide input to fabm_set_mask */
-ANA_SPFLUX          /* MUST be defined, or surface bgc fluxes provided in forcing files */
-ANA_BPFLUX          /* MUST be defined, or bottom bgc fluxes provided in forcing files */
-SHORTWAVE           /* MAY be required in order to provide light forcing for FABM model */
 FABM_ADYTRACER      /* use to provide a light attenuation tracer via ROMS (input ADY_0, NOT YET TESTED) */
-FABM_ASILT          /* use to provide a 3D forcing field for absorption due to silt (input Asilt, NOT YET TESTED) */
-FABM_PCO2ATM        /* use to provide atmospheric pCO2 forcing via ROMS (input xCO2atm) */
-FABM_N3ATMDEPO      /* use to provide atmospheric deposition flux of oxidized nitrogen via ROMS (input N3atmd) */
-FABM_N4ATMDEPO      /* use to provide atmospheric deposition flux of reduced nitrogen via ROMS (input N4atmd) */
 FABM_AICE           /* use to provide fractional ice area from ROMS internal ice model (NOT YET TESTED) */
-FABM_TSS            /* use to provide Total Suspended Sediments concentration from input file(s) as a forcing (input tss) */
-FABM_TSS_ONLINE     /* use to provide Total Suspended Sediments concentration calculated online by ROMS to FABM (NOT YET TESTED) */ 
-FABM_NONNEG_S       /* use to cap salinity input to FABM at zero PSU (RECOMMENDED IF SALINITY NOT CAPPED WITHIN FABM MODEL) */
+FABM_ASILT          /* use to provide a 3D forcing field for absorption due to silt (input Asilt, NOT YET TESTED) */
 FABM_CHECK_STATE    /* use to cap bgc variable input to FABM (RECOMMENDED) */
 FABM_INITIAL        /* use to set all bgc initial conditions to FABM default values (simple constants) */
 FABM_INITIAL_SB     /* use to set initial conditions to FABM defaults only for surface/bottom attached variables */
+FABM_MU             /* use to provide dynamic viscosity calculated in ROMS (ARANGO only) */
+FABM_NONNEG_S       /* use to cap salinity input to FABM at zero PSU (RECOMMENDED IF SALINITY NOT CAPPED WITHIN FABM MODEL) */
+FABM_N3ATMDEPO      /* use to provide atmospheric deposition flux of oxidized nitrogen via ROMS (input N3atmd) */
+FABM_N4ATMDEPO      /* use to provide atmospheric deposition flux of reduced nitrogen via ROMS (input N4atmd) */
+FABM_NU             /* use to provide kinematic viscosity calculated in ROMS (ARANGO only)*/
+FABM_PCO2ATM        /* use to provide atmospheric pCO2 forcing via ROMS (input xCO2atm) */
+FABM_TDR            /* use to turbulent dissipation rate calculated in ROMS (ARANGO only)*/
+FABM_TSS            /* use to provide Total Suspended Sediments concentration from input file(s) as a forcing (ARANGO/COAWST only) */
+FABM_TSS_ONLINE     /* use to provide Total Suspended Sediments concentration calculated online in ROMS (NOT YET TESTED, ARANGO/COAWST only) */
+FABM_TSR            /* use to turbulent shear rate calculated in ROMS (ARANGO only)*/
+MASKING             /* MUST be defined to provide input to fabm_set_mask */
+SHORTWAVE           /* MUST be defined to provide light forcing for FABM model */
 
 In addition there is also code to allow mass inputs without fluid input, under cpp TS_ISOURCE.
 This can be used to simulate inputs from e.g. fish farms, or waste water treatment plants (WWTPs).
-TS_ISOURCE is independent of the FABM (thanks to John Wilkin at Rutgers for guidance) and has been successfully TESTED,
+TS_ISOURCE is independent of the FABM (thanks to John Wilkin at Rutgers for guidance),
 but is presently only coded for the Rutgers branch (ARANGO).
 
 There is also some code under a cpp FABM_ISOURCES to provide bgc sources via the FABM, but this is also
 NOT YET TESTED and may be deleted in future updates.
-
-FABM_TSS and FABM_TSS_ONLINE options are presently only coded for Rutgers (ARANGO) and COAWST branches.
 
 NOTE 2: If you have a VERY complex FABM model, you may need to increase maximum array size parameters in ROMS.
         We have had to increase maximum size parameters in:

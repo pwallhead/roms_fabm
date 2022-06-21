@@ -182,7 +182,7 @@
 
 ! local variables
       real(dp) :: yday ! Modified for updated ARANGO code (30/07/2019)
-      real(r8) :: dtFABM, dBdt1
+      real(r8) :: dBdt1
       real(r8) :: cff, cffL, cffR, cu, dltL, dltR
 
       real(r8), dimension(IminS:ImaxS,N(ng),NT(ng)) :: w      !ROMS vertical sinking velocity [m/s] positive downward
@@ -220,9 +220,6 @@
 ! Chunksize variables for calls to FABM APIs
       nx = Iend-Istr+1
       ny = Jend-Jstr+1
-
-! FABM time step
-      dtFABM = REAL(nFABM(ng),r8)*dt(ng)
 
 !-----------------------------------------------------------------------
 ! If appropriate, initialize time-averaged diagnostic arrays.
@@ -392,6 +389,7 @@
 !-----------------------------------------------------------------------
       CALL caldate (tdays(ng), yd_dp=yday) ! Modified for updated ARANGO code (30/07/2019)
       ydayc(ng) = yday-1.0_r8
+#ifdef DEBUGFABM
       IF (iic(ng).le.icheckmax(ng)) THEN
         write(*,*) "tdays = ", tdays(ng)
         write(*,*) "yday, ydayc = ", yday, ydayc(ng)
@@ -401,6 +399,7 @@
 !     icheckmax = 0  !Maximum time step counter value (iig) for which MIN/MAX dBdt is checked
                      !Set to zero to switch off all checks
                      !Set to large value to check all time steps
+#endif
 
 
 !-----------------------------------------------------------------------
@@ -453,14 +452,16 @@
 !-----------------------------------------------------------------------
 !  Output grid parameters for this tile if req'd
 !-----------------------------------------------------------------------
+#ifdef DEBUGFABM
         IF (iic(ng).le.icheckmax(ng)) THEN
           write(*,*) "Istr,Iend,Jstr,Jend = ",Istr,Iend,Jstr,Jend
           write(*,*) "iic,icheckmax,j,j1 = ",iic(ng),icheckmax(ng),j,j1
-#ifdef MASKING
+# ifdef MASKING
           write(*,*) "MIN,MAX(rmask_full(Istr:Iend,j)) = ",             &
      &  MINVAL(rmask_full(Istr:Iend,j)), MAXVAL(rmask_full(Istr:Iend,j))
-#endif
+# endif
         END IF
+#endif
 
 
 !-----------------------------------------------------------------------
@@ -471,6 +472,7 @@
         !Note: surface fluxes may still be needed even if NSAT = 0
         CALL FMODEL(ng)%f(tile)%model%get_surface_sources(1,nx,j1,      &
      &    flux_sf(Istr:Iend,1:NBT),sms_sf(Istr:Iend,1:NSAT))
+#ifdef DEBUGFABM
         IF (iic(ng).le.icheckmax(ng)) THEN
           write(*,*) "Done fabm_do_surface"
           write(*,*) "MIN,MAX(flux_sf(Istr:Iend,:)) = ",                &
@@ -480,6 +482,7 @@
      &        MINVAL(sms_sf(Istr:Iend,:)), MAXVAL(sms_sf(Istr:Iend,:))
           END IF
         END IF
+#endif
 
 
 !-----------------------------------------------------------------------
@@ -490,6 +493,7 @@
         !Note: bottom fluxes may still be needed even if NBAT = 0
         CALL FMODEL(ng)%f(tile)%model%get_bottom_sources(1,nx,j1,       &
      &    flux_bt(Istr:Iend,1:NBT),sms_bt(Istr:Iend,1:NBAT))
+#ifdef DEBUGFABM
         IF (iic(ng).le.icheckmax(ng)) THEN
           write(*,*) "Done fabm_do_bottom"
           write(*,*) "MIN,MAX(flux_bt(Istr:Iend,:)) = ",                &
@@ -499,6 +503,7 @@
      &      MINVAL(sms_bt(Istr:Iend,:)), MAXVAL(sms_bt(Istr:Iend,:))
           END IF
         END IF
+#endif
 
 
 !-----------------------------------------------------------------------
@@ -510,12 +515,14 @@
      &              dBdt(Istr:Iend,k,1:NBT))
 !Note: the biological tracer indices idbio range over (NAT+NPT+NCS+NNS)+1:NT = NT-NBT+1:NT, see rfabm_mod.h
         END DO
+#ifdef DEBUGFABM
         IF (iic(ng).le.icheckmax(ng)) THEN
           write(*,*) "Done fabm_do"
           write(*,*) "MIN,MAX(dBdt(Istr:Iend,1:N(ng),1:NBT)) = ",       &
      &      MINVAL(dBdt(Istr:Iend,1:N(ng),1:NBT)),                      &
      &      MAXVAL(dBdt(Istr:Iend,1:N(ng),1:NBT))
         END IF
+#endif
 
 
 !-----------------------------------------------------------------------
@@ -535,22 +542,24 @@
 !-----------------------------------------------------------------------
 !  Check the model state and FABM computations in detail if req'd
 !-----------------------------------------------------------------------
+#ifdef DEBUGFABM
         IF (iic(ng).le.icheckmax(ng)) THEN
 
           dBdt1 = MAXVAL(ABS(dBdt(Istr:Iend,:,1:NBT)))
 
           IF (dBdt1.ge.dBdt1max(ng)) THEN
             write(*,*) "dBdt1 = MAX(ABS(dBdt)) = ", dBdt1
-#ifdef DIAGNOSTICS_BIO
+# ifdef DIAGNOSTICS_BIO
             DiaBio3d1(Istr:Iend,Jstr:Jend,1:N(ng)) = FMODEL(ng)%        &
      &       f(tile)%model%get_interior_diagnostic_data(53)
             write(*,*) "MAXVAL(light_PAR0(Istr:Iend,j,N(ng))) = ",      &
      &        MAXVAL(DiaBio3d1(Istr:Iend,j,N(ng)))
             stop
-#endif
+# endif
             write(*,*) "MIN,MAX(Hz) = ", MINVAL(Hz), MAXVAL(Hz)
           END IF
         END IF
+#endif
 
 
 !-----------------------------------------------------------------------
@@ -560,16 +569,18 @@
           DO k=1,N(ng)
             DO i=Istr,Iend
               state1(i,j,k,itrc) = state1(i,j,k,itrc) +                 &
-     &         dBdt(i,k,itrc)*dtFABM
+     &         dBdt(i,k,itrc)*dtFABM(ng)
             END DO
           END DO
         END DO
+#ifdef DEBUGFABM
         IF (iic(ng).le.icheckmax(ng)) THEN
           write(*,*) "Updated water column state with FABM dBdt"
           write(*,*) "MIN,MAX(state1(Istr:Iend,j,1:N(ng),1:NBT))=",     &
             MINVAL(state1(Istr:Iend,j,1:N(ng),1:NBT)),                  &
      &      MAXVAL(state1(Istr:Iend,j,1:N(ng),1:NBT))
         END IF
+#endif
 
 
 !-----------------------------------------------------------------------
@@ -578,10 +589,11 @@
         DO itrc=1,NSAT
           DO i=Istr,Iend
             state_sf(i,j,nnew,itrc) = MAX(state_sf(i,j,nstp,itrc) +     &
-     &                          sms_sf(i,itrc)*dtFABM, 0.0_r8)
+     &                          sms_sf(i,itrc)*dtFABM(ng), 0.0_r8)
           !Note: we DO impose a zero lower bound on non-tracer state variables (cf. "t" below)
           END DO
         END DO
+#ifdef DEBUGFABM
         IF (iic(ng).le.icheckmax(ng)) THEN
           IF (NSAT.gt.0) THEN
             write(*,*) "Updated surface states with FABM sms_sf"
@@ -590,6 +602,7 @@
      &        MAXVAL(state_sf(Istr:Iend,j,nnew,1:NSAT))
           END IF
         END IF
+#endif
 
 
 !-----------------------------------------------------------------------
@@ -598,10 +611,11 @@
         DO itrc=1,NBAT
           DO i=Istr,Iend
             state_bt(i,j,nnew,itrc) = MAX(state_bt(i,j,nstp,itrc) +     &
-     &                          sms_bt(i,itrc)*dtFABM, 0.0_r8)
+     &                          sms_bt(i,itrc)*dtFABM(ng), 0.0_r8)
           !Note: we DO impose a zero lower bound on non-tracer state variables (cf. "t" below)
           END DO
         END DO
+#ifdef DEBUGFABM
         IF (iic(ng).le.icheckmax(ng)) THEN
           IF (NBAT.gt.0) THEN
             write(*,*) "Updated bottom states with FABM sms_bt"
@@ -610,6 +624,7 @@
      &        MAXVAL(state_bt(Istr:Iend,j,nnew,1:NBAT))
           END IF
         END IF
+#endif
 
 
 !-----------------------------------------------------------------------
@@ -623,12 +638,14 @@
      &      w(Istr:Iend,1:N(ng),NT(ng)-NBT+1:NT(ng))
         !FABM outputs vertical velocities in [m/s] positive upward
         !ROMS code below expects w in [m/s] positive downward
+#ifdef DEBUGFABM
         IF (iic(ng).le.icheckmax(ng)) THEN
           write(*,*) "Done fabm get_vertical_movement"
           write(*,*) "MIN,MAX(w(Istr:Iend,1:N(ng),NT-NBT+1:NT)) = ",    &
             MINVAL(w(Istr:Iend,1:N(ng),NT(ng)-NBT+1:NT(ng))),           &
      &      MAXVAL(w(Istr:Iend,1:N(ng),NT(ng)-NBT+1:NT(ng)))
         END IF
+#endif
 
 
 !-----------------------------------------------------------------------
@@ -781,7 +798,7 @@
             DO k=1,N(ng)
               DO i=Istr,Iend
 !!!Inserted PWA 08/03/2017
-                cff=dtFABM*w(i,k,ibio) !Modified 12/11/2020 to allow negative w => buoyant particles
+                cff=dtFABM(ng)*w(i,k,ibio) !Modified 12/11/2020 to allow negative w => buoyant particles
 !!!End insertion PWA 08/03/2017
                 FC(i,k-1)=0.0_r8
                 WL(i,k)=z_w(i,j,k-1)+cff

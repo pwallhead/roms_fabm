@@ -491,6 +491,41 @@
           END DO
         END IF
 #  endif
+!!!Inserted PWA 03/06/2022
+#  if defined MY25_MIXING || defined GLS_MIXING
+#   if defined CALC_TDR || defined CALC_TSR
+        IF (Aout(idMtdr,ng)) THEN
+          DO k=1,N(ng)
+            DO j=JstrR,JendR
+              DO i=IstrR,IendR
+                AVERAGE(ng)%avgtdr(i,j,k)=AVERAGE(ng)%avgtdr(i,j,k)+    &
+#    ifdef WET_DRY
+     &                                    GRID(ng)%rmask_full(i,j)*     &
+#    endif
+     &                                    MIXING(ng)%tdr(i,j,k)
+              END DO
+            END DO
+          END DO
+        END IF
+#   endif
+#   ifdef CALC_TSR
+        IF (Aout(idMtsr,ng)) THEN
+          DO k=1,N(ng)
+            DO j=JstrR,JendR
+              DO i=IstrR,IendR
+                AVERAGE(ng)%avgtsr(i,j,k)=AVERAGE(ng)%avgtsr(i,j,k)+    &
+#    ifdef WET_DRY
+     &                                    GRID(ng)%rmask_full(i,j)*     &
+#    endif
+     &                                    MIXING(ng)%tsr(i,j,k)
+              END DO
+            END DO
+          END DO
+        END IF
+#   endif
+#  endif
+!!!End insert PWA 03/06/2022
+
 #  ifdef LMD_SKPP
         IF (Aout(idHsbl,ng)) THEN
           DO j=JstrR,JendR
@@ -1708,7 +1743,60 @@
             END DO
           END DO
         END IF
+!!!Inserted PWA 02/06/2022
+        IF (Aout(idSUV,ng)) THEN
+          DO k=1,N(ng)
+            DO j=Jstr,Jend
+              DO i=Istr,Iend
+                AVERAGE(ng)%avgSUV(i,j,k)=0.5_r8*SQRT(                  &
+     &   (OCEAN(ng)%u(i,j,k,Nout) + OCEAN(ng)%u(i+1,j,k,Nout))*         &
+     &   (OCEAN(ng)%u(i,j,k,Nout) + OCEAN(ng)%u(i+1,j,k,Nout)) +        &
+     &   (OCEAN(ng)%v(i,j,k,Nout) + OCEAN(ng)%v(i,j+1,k,Nout))*         &
+     &   (OCEAN(ng)%v(i,j,k,Nout) + OCEAN(ng)%v(i,j+1,k,Nout)))
+#  ifdef WET_DRY
+                AVERAGE(ng)%avgSUV(i,j,k)=AVERAGE(ng)%avgSUV(i,j,k)*    &
+     &                                   GRID(ng)%rmask_full(i,j)
 #  endif
+              END DO
+            END DO
+          END DO
+        END IF
+!!!End PWA insert 02/06/2022
+#  endif
+!!!Inserted PWA 03/06/2022
+#  if defined MY25_MIXING || defined GLS_MIXING
+#   if defined CALC_TDR || defined CALC_TSR
+        IF (Aout(idMtdr,ng)) THEN
+          DO k=1,N(ng)
+            DO j=JstrR,JendR
+              DO i=IstrR,IendR
+                AVERAGE(ng)%avgtdr(i,j,k)=AVERAGE(ng)%avgtdr(i,j,k)+    &
+#  ifdef WET_DRY
+     &                                    GRID(ng)%rmask_full(i,j)*     &
+#  endif
+     &                                    MIXING(ng)%tdr(i,j,k)
+              END DO
+            END DO
+          END DO
+        END IF
+#   endif
+#   ifdef CALC_TSR
+        IF (Aout(idMtsr,ng)) THEN
+          DO k=1,N(ng)
+            DO j=JstrR,JendR
+              DO i=IstrR,IendR
+                AVERAGE(ng)%avgtsr(i,j,k)=AVERAGE(ng)%avgtsr(i,j,k)+    &
+#  ifdef WET_DRY
+     &                                    GRID(ng)%rmask_full(i,j)*     &
+#  endif
+     &                                    MIXING(ng)%tsr(i,j,k)
+              END DO
+            END DO
+          END DO
+        END IF
+#   endif
+#  endif
+!!!End insert PWA 03/06/2022
 #  ifdef LMD_SKPP
         IF (Aout(idHsbl,ng)) THEN
           DO j=JstrR,JendR
@@ -3073,6 +3161,59 @@
           END IF
         END IF
 #  endif
+
+!!!Inserted PWA 03/06/2022
+#  if defined MY25_MIXING || defined GLS_MIXING
+#   if defined CALC_TDR || defined CALC_TSR
+        IF (Aout(idMtdr,ng)) THEN
+          DO k=1,N(ng)
+            DO j=JstrR,JendR
+              DO i=IstrR,IendR
+                AVERAGE(ng)%avgtdr(i,j,k)=rfac(i,j)*                    &
+     &                                    AVERAGE(ng)%avgtdr(i,j,k)
+              END DO
+            END DO
+          END DO
+          IF (EWperiodic(ng).or.NSperiodic(ng)) THEN
+            CALL exchange_r3d_tile (ng, tile,                           &
+     &                              LBi, UBi, LBj, UBj, 1, N(ng),       &
+     &                              AVERAGE(ng)%avgtdr)
+#  ifdef DISTRIBUTE
+            CALL mp_exchange3d (ng, tile, iNLM, 1,                      &
+     &                          LBi, UBi, LBj, UBj, 1, N(ng),           &
+     &                          NghostPoints,                           &
+     &                          EWperiodic(ng), NSperiodic(ng),         &
+     &                          AVERAGE(ng)%avgtdr)
+#  endif
+          END IF
+        END IF
+#   endif
+#   ifdef CALC_TSR
+        IF (Aout(idMtsr,ng)) THEN
+          DO k=1,N(ng)
+            DO j=JstrR,JendR
+              DO i=IstrR,IendR
+                AVERAGE(ng)%avgtsr(i,j,k)=rfac(i,j)*                    &
+     &                                    AVERAGE(ng)%avgtsr(i,j,k)
+              END DO
+            END DO
+          END DO
+          IF (EWperiodic(ng).or.NSperiodic(ng)) THEN
+            CALL exchange_r3d_tile (ng, tile,                           &
+     &                              LBi, UBi, LBj, UBj, 1, N(ng),       &
+     &                              AVERAGE(ng)%avgtsr)
+#  ifdef DISTRIBUTE
+            CALL mp_exchange3d (ng, tile, iNLM, 1,                      &
+     &                          LBi, UBi, LBj, UBj, 1, N(ng),           &
+     &                          NghostPoints,                           &
+     &                          EWperiodic(ng), NSperiodic(ng),         &
+     &                          AVERAGE(ng)%avgtsr)
+#  endif
+          END IF
+        END IF
+#   endif
+#  endif
+!!!End insert PWA 03/06/2022
 
 #  ifdef LMD_SKPP
         IF (Aout(idHsbl,ng)) THEN

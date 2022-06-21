@@ -735,6 +735,22 @@
       Coptions(is:is+12)=' BVF_MIXING,'
       ivmix=ivmix+1
 #endif
+!!!Inserted PWA 03/06/2022
+#ifdef CALC_TDR
+!
+      IF (Master) WRITE (stdout,20) 'CALC_TDR',                         &
+     &   'Calculate turbulent energy dissipation rate'
+      is=LEN_TRIM(Coptions)+1
+      Coptions(is:is+10)=' CALC_TDR,'
+#endif
+#ifdef CALC_TSR
+!
+      IF (Master) WRITE (stdout,20) 'CALC_TSR',                         &
+     &   'Calculate turbulent shear rate'
+      is=LEN_TRIM(Coptions)+1
+      Coptions(is:is+10)=' CALC_TSR,'
+#endif
+!!!End insert PWA 03/06/2022
 #if defined CANUTO_A && defined GLS_MIXING
 !
       IF (Master) WRITE (stdout,20) 'CANUTO_A',                         &

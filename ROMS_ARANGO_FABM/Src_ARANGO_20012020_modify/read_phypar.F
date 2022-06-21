@@ -1954,6 +1954,46 @@
               END IF
               Npts=load_l(Nval, Cval, Ngrids, Lswitch)
               Hout(idMtls,1:Ngrids)=Lswitch(1:Ngrids)
+!!!Inserted PWA 03/06/2022
+#if defined GLS_MIXING || defined MY25_MIXING
+# if defined CALC_TDR || defined CALC_TSR
+            CASE ('Hout(idMtdr)')
+              IF (idMtdr.eq.0) THEN
+                IF (Master) WRITE (out,280) 'idMtdr'
+                exit_flag=5
+                RETURN
+              END IF
+              Npts=load_l(Nval, Cval, Ngrids, Lswitch)
+              Hout(idMtdr,1:Ngrids)=Lswitch(1:Ngrids)
+# endif
+# ifdef CALC_TSR
+            CASE ('Hout(idMmu)')
+              IF (idMmu.eq.0) THEN
+                IF (Master) WRITE (out,280) 'idMmu'
+                exit_flag=5
+                RETURN
+              END IF
+              Npts=load_l(Nval, Cval, Ngrids, Lswitch)
+              Hout(idMmu,1:Ngrids)=Lswitch(1:Ngrids)
+            CASE ('Hout(idMnu)')
+              IF (idMnu.eq.0) THEN
+                IF (Master) WRITE (out,280) 'idMnu'
+                exit_flag=5
+                RETURN
+              END IF
+              Npts=load_l(Nval, Cval, Ngrids, Lswitch)
+              Hout(idMnu,1:Ngrids)=Lswitch(1:Ngrids)
+            CASE ('Hout(idMtsr)')
+              IF (idMtsr.eq.0) THEN
+                IF (Master) WRITE (out,280) 'idMtsr'
+                exit_flag=5
+                RETURN
+              END IF
+              Npts=load_l(Nval, Cval, Ngrids, Lswitch)
+              Hout(idMtsr,1:Ngrids)=Lswitch(1:Ngrids)
+# endif
+#endif
+!!!End insert PWA 03/06/2022
 #if defined SOLVE3D && defined T_PASSIVE
             CASE ('Hout(inert)')
               Npts=load_l(Nval, Cval, NPT, Ngrids, Linert)
@@ -2695,6 +2735,30 @@
               Npts=load_l(Nval, Cval, Ngrids, Lswitch)
               Aout(idbstrPa,1:Ngrids)=Lswitch(1:Ngrids)
 !!!End insert PWA 11/09/2020
+!!!Inserted PWA 03/06/2022
+#  if defined GLS_MIXING || defined MY25_MIXING
+#   if defined CALC_TDR || defined CALC_TSR
+            CASE ('Aout(idMtdr)')
+              IF (idMtdr.eq.0) THEN
+                IF (Master) WRITE (out,280) 'idMtdr'
+                exit_flag=5
+                RETURN
+              END IF
+              Npts=load_l(Nval, Cval, Ngrids, Lswitch)
+              Aout(idMtdr,1:Ngrids)=Lswitch(1:Ngrids)
+#   endif
+#   ifdef CALC_TSR
+            CASE ('Aout(idMtsr)')
+              IF (idMtsr.eq.0) THEN
+                IF (Master) WRITE (out,280) 'idMtsr'
+                exit_flag=5
+                RETURN
+              END IF
+              Npts=load_l(Nval, Cval, Ngrids, Lswitch)
+              Aout(idMtsr,1:Ngrids)=Lswitch(1:Ngrids)
+#   endif
+#  endif
+!!!End insert PWA 03/06/2022
 # endif
             CASE ('Aout(idU2av)')
               IF (idU2av.eq.0) THEN
@@ -5308,6 +5372,24 @@
             IF (Hout(idMtls,ng)) WRITE (out,170) Hout(idMtls,ng),       &
      &         'Hout(idMtls)',                                          &
      &         'Write out turbulent generic length-scale.'
+!!!Inserted PWA 03/06/2022
+#  if defined CALC_TDR || defined CALC_TSR
+            IF (Hout(idMtdr,ng)) WRITE (out,170) Hout(idMtdr,ng),       &
+     &         'Hout(idMtdr)',                                          &
+     &         'Write out turbulent energy dissipation rate.'
+#  endif
+#  ifdef CALC_TSR
+            IF (Hout(idMmu,ng)) WRITE (out,170) Hout(idMmu,ng),         &
+     &         'Hout(idMmu)',                                           &
+     &         'Write out dynamic viscosity.'
+            IF (Hout(idMnu,ng)) WRITE (out,170) Hout(idMnu,ng),         &
+     &         'Hout(idMnu)',                                           &
+     &         'Write out kinematic viscosity.'
+            IF (Hout(idMtsr,ng)) WRITE (out,170) Hout(idMtsr,ng),       &
+     &         'Hout(idMtsr)',                                          &
+     &         'Write out turbulent shear rate.'
+#  endif
+!!!End insert PWA 03/06/2022
 # endif
 #endif
 !!!PWA Inserted 04/05/2017
@@ -5860,6 +5942,20 @@
      &         'Aout(idHbbl)',                                          &
      &         'Write out averaged depth of bottom boundary layer.'
 #  endif
+!!!Inserted PWA 03/06/2022
+#  if defined MY25_MIXING || defined GLS_MIXING
+#   if defined CALC_TDR || defined CALC_TSR
+            IF (Aout(idMtdr,ng)) WRITE (out,170) Aout(idMtdr,ng),       &
+     &         'Aout(idMtdr)',                                          &
+     &         'Write out averaged turbulent energy dissipation rate.'
+#   endif
+#   ifdef CALC_TSR
+            IF (Aout(idMtsr,ng)) WRITE (out,170) Aout(idMtsr,ng),       &
+     &         'Aout(idMtsr)',                                          &
+     &         'Write out averaged turbulent shear rate.'
+#   endif
+#  endif
+!!!End insert PWA 03/06/2022
 # endif
             IF (Aout(id2dRV,ng)) WRITE (out,170) Aout(id2dRV,ng),       &
      &         'Aout(id2dRV)',                                          &

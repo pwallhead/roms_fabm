@@ -375,6 +375,24 @@
             CASE ('Sout(idMtls)')
               Npts=load_l(Nval, Cval, Ngrids, Lswitch)
               Sout(idMtls,1:Ngrids)=Lswitch(1:Ngrids)
+!!!Inserted PWA 04/06/2022
+#  if defined CALC_TDR || defined CALC_TSR
+            CASE ('Sout(idMtdr)')
+              Npts=load_l(Nval, Cval, Ngrids, Lswitch)
+              Sout(idMtdr,1:Ngrids)=Lswitch(1:Ngrids)
+#  endif
+#  ifdef CALC_TSR
+            CASE ('Sout(idMmu)')
+              Npts=load_l(Nval, Cval, Ngrids, Lswitch)
+              Sout(idMmu,1:Ngrids)=Lswitch(1:Ngrids)
+            CASE ('Sout(idMnu)')
+              Npts=load_l(Nval, Cval, Ngrids, Lswitch)
+              Sout(idMnu,1:Ngrids)=Lswitch(1:Ngrids)
+            CASE ('Sout(idMtsr)')
+              Npts=load_l(Nval, Cval, Ngrids, Lswitch)
+              Sout(idMtsr,1:Ngrids)=Lswitch(1:Ngrids)
+#  endif
+!!!End insert PWA 04/06/2022
 #  if defined BBL_MODEL || defined SEDIMENT
             CASE ('Sout(isd50)')
               Npts=load_l(Nval, Cval, Ngrids, Lswitch)
@@ -900,6 +918,24 @@
             IF (Sout(idMtls,ng)) WRITE (out,90) Sout(idMtls,ng),        &
      &          'Sout(idMtls)',                                         &
      &          'Write out turbulent generic length-scale.'
+!!!Inserted PWA 04/06/2022
+#   if defined CALC_TDR || defined CALC_TSR
+            IF (Sout(idMtdr,ng)) WRITE (out,90) Sout(idMtdr,ng),        &
+     &          'Sout(idMtdr)',                                         &
+     &          'Write out turbulent energy dissipation rate.'
+#   endif
+#   ifdef CALC_TSR
+            IF (Sout(idMmu,ng)) WRITE (out,90) Sout(idMmu,ng),          &
+     &          'Sout(idMmu)',                                          &
+     &          'Write out dynamic viscosity.'
+            IF (Sout(idMnu,ng)) WRITE (out,90) Sout(idMnu,ng),          &
+     &          'Sout(idMnu)',                                          &
+     &          'Write out kinematic viscosity.'
+            IF (Sout(idMtsr,ng)) WRITE (out,90) Sout(idMtsr,ng),        &
+     &          'Sout(idMtsr)',                                         &
+     &          'Write out turbulent shear rate.'
+#   endif
+!!!End insert PWA 04/06/2022
 #  endif
 # endif
             WRITE (out,*)

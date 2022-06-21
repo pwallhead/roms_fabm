@@ -225,6 +225,16 @@
         integer  :: idMOMf        ! final model-observation misfit
         integer  :: idMtke        ! turbulent kinetic energy
         integer  :: idMtls        ! turbulent length scale
+!!!Inserted PWA 03/06/2022
+#if defined CALC_TDR || defined CALC_TSR
+        integer  :: idMtdr        ! turbulent energy dissipation rate
+#endif
+#ifdef CALC_TSR
+        integer  :: idMmu         ! dynamic viscosity
+        integer  :: idMnu         ! kinematic viscosity
+        integer  :: idMtsr        ! turbulent shear rate
+#endif
+!!!End insert PWA 03/06/2022
         integer  :: idM2nc        ! 2D momentum nudging coefficients
         integer  :: idM3nc        ! 2D momentum nudging coefficients
         integer  :: idNLmi        ! initial NLM at observation locations
@@ -1395,6 +1405,20 @@
               idMtke=varid
             CASE ('idMtls')
               idMtls=varid
+!!!Inserted PWA 03/06/2022
+#if defined CALC_TDR || defined CALC_TSR
+            CASE ('idMtdr')
+              idMtdr=varid
+#endif
+#ifdef CALC_TSR
+            CASE ('idMmu')
+              idMmu=varid
+            CASE ('idMnu')
+              idMnu=varid
+            CASE ('idMtsr')
+              idMtsr=varid
+#endif
+!!!End insert PWA 03/06/2022
             CASE ('idVvis')
               idVvis=varid
             CASE ('idTdif')

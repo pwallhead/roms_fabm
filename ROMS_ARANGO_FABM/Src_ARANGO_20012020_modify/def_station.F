@@ -610,6 +610,76 @@
           IF (FoundError(exit_flag, NoError, __LINE__,                  &
      &                   __FILE__)) RETURN
         END IF
+!!!Inserted PWA 04/06/2022
+#   if defined CALC_TDR || defined CALC_TSR
+!
+!  Define turbulent energy dissipation rate.
+!
+        IF (Sout(idMtdr,ng)) THEN
+          Vinfo( 1)=Vname(1,idMtdr)
+          Vinfo( 2)=Vname(2,idMtdr)
+          Vinfo( 3)=Vname(3,idMtdr)
+          Vinfo(14)=Vname(4,idMtdr)
+          Vinfo(16)=Vname(1,idtime)
+          status=def_var(ng, iNLM, STA(ng)%ncid, STA(ng)%Vid(idMtdr),   &
+     &                   NF_FOUT, 3, rgrd, Aval, Vinfo, ncname,         &
+     &                   SetFillVal = .TRUE.,                           &
+     &                   SetParAccess = .TRUE.)
+          IF (FoundError(exit_flag, NoError, __LINE__,                  &
+     &                   __FILE__)) RETURN
+        END IF
+#   endif
+#   ifdef CALC_TSR
+!
+!  Define dynamic viscosity.
+!
+        IF (Sout(idMmu,ng)) THEN
+          Vinfo( 1)=Vname(1,idMmu)
+          Vinfo( 2)=Vname(2,idMmu)
+          Vinfo( 3)=Vname(3,idMmu)
+          Vinfo(14)=Vname(4,idMmu)
+          Vinfo(16)=Vname(1,idtime)
+          status=def_var(ng, iNLM, STA(ng)%ncid, STA(ng)%Vid(idMmu),    &
+     &                   NF_FOUT, 3, rgrd, Aval, Vinfo, ncname,         &
+     &                   SetFillVal = .TRUE.,                           &
+     &                   SetParAccess = .TRUE.)
+          IF (FoundError(exit_flag, NoError, __LINE__,                  &
+     &                   __FILE__)) RETURN
+        END IF
+!
+!  Define kinematic viscosity.
+!
+        IF (Sout(idMnu,ng)) THEN
+          Vinfo( 1)=Vname(1,idMnu)
+          Vinfo( 2)=Vname(2,idMnu)
+          Vinfo( 3)=Vname(3,idMnu)
+          Vinfo(14)=Vname(4,idMnu)
+          Vinfo(16)=Vname(1,idtime)
+          status=def_var(ng, iNLM, STA(ng)%ncid, STA(ng)%Vid(idMnu),    &
+     &                   NF_FOUT, 3, rgrd, Aval, Vinfo, ncname,         &
+     &                   SetFillVal = .TRUE.,                           &
+     &                   SetParAccess = .TRUE.)
+          IF (FoundError(exit_flag, NoError, __LINE__,                  &
+     &                   __FILE__)) RETURN
+        END IF
+!
+!  Define turbulent shear rate.
+!
+        IF (Sout(idMtsr,ng)) THEN
+          Vinfo( 1)=Vname(1,idMtsr)
+          Vinfo( 2)=Vname(2,idMtsr)
+          Vinfo( 3)=Vname(3,idMtsr)
+          Vinfo(14)=Vname(4,idMtsr)
+          Vinfo(16)=Vname(1,idtime)
+          status=def_var(ng, iNLM, STA(ng)%ncid, STA(ng)%Vid(idMtsr),   &
+     &                   NF_FOUT, 3, rgrd, Aval, Vinfo, ncname,         &
+     &                   SetFillVal = .TRUE.,                           &
+     &                   SetParAccess = .TRUE.)
+          IF (FoundError(exit_flag, NoError, __LINE__,                  &
+     &                   __FILE__)) RETURN
+        END IF
+#   endif
+!!!End inserted PWA 04/06/2022
 #  endif
 #  if defined BULK_FLUXES || defined ECOSIM || defined ATM_PRESS
 !
@@ -1927,6 +1997,24 @@
           ELSE IF (TRIM(var_name(i)).eq.TRIM(Vname(1,idMtls))) THEN
             got_var(idMtls)=.TRUE.
             STA(ng)%Vid(idMtls)=var_id(i)
+!!!Inserted PWA 04/06/2022
+#   if defined CALC_TDR || defined CALC_TSR
+          ELSE IF (TRIM(var_name(i)).eq.TRIM(Vname(1,idMtdr))) THEN
+            got_var(idMtdr)=.TRUE.
+            STA(ng)%Vid(idMtdr)=var_id(i)
+#   endif
+#   ifdef CALC_TSR
+          ELSE IF (TRIM(var_name(i)).eq.TRIM(Vname(1,idMmu))) THEN
+            got_var(idMmu)=.TRUE.
+            STA(ng)%Vid(idMmu)=var_id(i)
+          ELSE IF (TRIM(var_name(i)).eq.TRIM(Vname(1,idMnu))) THEN
+            got_var(idMnu)=.TRUE.
+            STA(ng)%Vid(idMnu)=var_id(i)
+          ELSE IF (TRIM(var_name(i)).eq.TRIM(Vname(1,idMtsr))) THEN
+            got_var(idMtsr)=.TRUE.
+            STA(ng)%Vid(idMtsr)=var_id(i)
+#   endif
+!!!End insert PWA 04/06/2022
 #  endif
 #  if defined BULK_FLUXES || defined ECOSIM || defined ATM_PRESS
           ELSE IF (TRIM(var_name(i)).eq.TRIM(Vname(1,idPair))) THEN
@@ -2372,6 +2460,36 @@
           exit_flag=3
           RETURN
         END IF
+!!!Inserted PWA 04/06/2022
+#   if defined CALC_TDR || defined CALC_TSR
+        IF (.not.got_var(idMtdr).and.Sout(idMtdr,ng)) THEN
+          IF (Master) WRITE (stdout,60) TRIM(Vname(1,idMtdr)),          &
+     &                                  TRIM(ncname)
+          exit_flag=3
+          RETURN
+        END IF
+#   endif
+#   ifdef CALC_TSR
+        IF (.not.got_var(idMmu).and.Sout(idMmu,ng)) THEN
+          IF (Master) WRITE (stdout,60) TRIM(Vname(1,idMmu)),           &
+     &                                  TRIM(ncname)
+          exit_flag=3
+          RETURN
+        END IF
+        IF (.not.got_var(idMnu).and.Sout(idMnu,ng)) THEN
+          IF (Master) WRITE (stdout,60) TRIM(Vname(1,idMnu)),           &
+     &                                  TRIM(ncname)
+          exit_flag=3
+          RETURN
+        END IF
+        IF (.not.got_var(idMtsr).and.Sout(idMtsr,ng)) THEN
+          IF (Master) WRITE (stdout,60) TRIM(Vname(1,idMtsr)),          &
+     &                                  TRIM(ncname)
+          exit_flag=3
+          RETURN
+        END IF
+#   endif
+!!!End insert PWA 04/06/2022
 #  endif
 #  if defined BULK_FLUXES || defined ECOSIM || defined ATM_PRESS
         IF (.not.got_var(idPair).and.Sout(idPair,ng)) THEN

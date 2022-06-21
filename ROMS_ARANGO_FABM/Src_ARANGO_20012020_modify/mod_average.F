@@ -46,6 +46,14 @@
 #  ifdef LMD_BKPP
 !  avghbbl    Depth of oceanic bottom boundary layer (m).              !
 #  endif
+!!!Inserted PWA 03/06/2022
+#  if defined CALC_TDR || defined CALC_TSR
+!  avgtdr     Turbulent energy dissipation rate (m2/s3).               !
+#  endif
+#  if defined CALC_TSR
+!  avgtsr     Turbulent shear rate (1/s).                              !
+#  endif
+!!!End insert PWA 03/06/2022
 # endif
 # if defined FORWARD_WRITE && defined SOLVE3D
 !                                                                      !
@@ -182,6 +190,16 @@
 #  ifdef LMD_BKPP
           real(r8), pointer :: avghbbl(:,:)
 #  endif
+!!!Inserted PWA 03/06/2022
+#  if defined MY25_MIXING || defined GLS_MIXING
+#   if defined CALC_TDR || defined CALC_TSR
+          real(r8), pointer :: avgtdr(:,:,:)
+#   endif
+#   ifdef CALC_TSR
+          real(r8), pointer :: avgtsr(:,:,:)
+#   endif
+#  endif
+!!!End insert PWA 03/06/2022
 # endif
 
 !!!PWA Inserted 21/04/2017
@@ -451,6 +469,24 @@
         Dmem(ng)=Dmem(ng)+size2d
       END IF
 #  endif
+!!!Inserted PWA 03/06/2022
+#  if defined MY25_MIXING || defined GLS_MIXING
+#   if defined CALC_TDR || defined CALC_TSR
+      IF (Aout(idMtdr,ng)) THEN
+        allocate ( AVERAGE(ng) % avgtdr(LBi:UBi,LBj:UBj,N(ng)) )
+        Dmem(ng)=Dmem(ng)+REAL(N(ng),r8)*size2d
+      END IF
+#   endif
+#   ifdef CALC_TSR
+      IF (Aout(idMtsr,ng)) THEN
+        allocate ( AVERAGE(ng) % avgtsr(LBi:UBi,LBj:UBj,N(ng)) )
+        Dmem(ng)=Dmem(ng)+REAL(N(ng),r8)*size2d
+      END IF
+#   endif
+#  endif
+!!!End insert PWA 03/06/2022
+
+
 # endif
 
 !!!PWA Inserted 22/07/2019
@@ -1036,6 +1072,33 @@
         END DO
       END IF
 #  endif
+
+!!!Inserted PWA 03/06/2022
+#  if defined MY25_MIXING || defined GLS_MIXING
+#   if defined CALC_TDR || defined CALC_TSR
+      IF (Aout(idMtdr,ng)) THEN
+        DO k=1,N(ng)
+          DO j=Jmin,Jmax
+            DO i=Imin,Imax
+              AVERAGE(ng) % avgtdr(i,j,k) = IniVal
+            END DO
+          END DO
+        END DO
+      END IF
+#   endif
+#   ifdef CALC_TSR
+      IF (Aout(idMtsr,ng)) THEN
+        DO k=1,N(ng)
+          DO j=Jmin,Jmax
+            DO i=Imin,Imax
+              AVERAGE(ng) % avgtsr(i,j,k) = IniVal
+            END DO
+          END DO
+        END DO
+      END IF
+#   endif
+#  endif
+!!!End insert PWA 03/06/2022
 # endif
 
 !!!PWA Inserted 21/04/2017
