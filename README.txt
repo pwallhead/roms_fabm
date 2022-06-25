@@ -1,6 +1,8 @@
 ﻿GENERAL OVERVIEW
 ================
 
+NEW! 25/06/2022: Cpp CAP_WSINK_CFL to limit sinking velocity using maximum CFL parameter maxCFLwsink
+                 input via rfabm.in (presently only coded for ARANGO branch).
 NEW! 21/06/2022: Cpps (CALC_TDR,CALC_TSR) to calculate turbulent dissipation/shear rates within ROMS
                  and cpps (FABM_MU,FABM_NU,FABM_TDR,FABM_TSR) to link viscosities and turbulent
                  dissipation/shear rates with FABM (presently only coded for ARANGO branch).
