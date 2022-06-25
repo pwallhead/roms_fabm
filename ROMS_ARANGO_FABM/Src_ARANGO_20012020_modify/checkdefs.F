@@ -598,11 +598,35 @@
       is=LEN_TRIM(Coptions)+1
       Coptions(is:is+7)=' RFABM,'
       ibiology=ibiology+1
+# ifdef CAP_WSINK_CFL
+      IF (Master) WRITE (stdout,20) 'CAP_WSINK_CFL',                    &
+     &   'Cap sinking velocity using maximum allowed CFL number'
+      is=LEN_TRIM(Coptions)+1
+      Coptions(is:is+15)=' CAP_WSINK_CFL,'
+# endif
 # ifdef DEBUGFABM
       IF (Master) WRITE (stdout,20) 'DEBUGFABM',                        &
      &   'RFABM debugging switch activated'
       is=LEN_TRIM(Coptions)+1
       Coptions(is:is+11)=' DEBUGFABM,'
+# endif
+# ifdef FABM_ADYTRACER
+      IF (Master) WRITE (stdout,20) 'FABM_ADYTRACER',                   &
+     &   'Use ROMS to advect and diffusive an attenuation tracer.'
+      is=LEN_TRIM(Coptions)+1
+      Coptions(is:is+16)=' FABM_ADYTRACER,'
+# endif
+# ifdef FABM_ASILT
+      IF (Master) WRITE (stdout,20) 'FABM_ASILT',                       &
+     &   'Use ROMS to provide silt aborption for FABM model.'
+      is=LEN_TRIM(Coptions)+1
+      Coptions(is:is+12)=' FABM_ASILT,'
+# endif
+# ifdef FABM_CHECK_STATE
+      IF (Master) WRITE (stdout,20) 'FABM_CHECK_STATE',                 &
+     &   'Use FABM to check (and repair) biological state.'
+      is=LEN_TRIM(Coptions)+1
+      Coptions(is:is+18)=' FABM_CHECK_STATE,'
 # endif
 # if defined FABM_INITIAL
       IF (Master) WRITE (stdout,20) 'FABM_INITIAL',                     &
@@ -615,35 +639,23 @@
       is=LEN_TRIM(Coptions)+1
       Coptions(is:is+17)=' FABM_INITIAL_SB,'
 # endif
-# ifdef FABM_ASILT
-      IF (Master) WRITE (stdout,20) 'FABM_ASILT',                       &
-     &   'Use ROMS to provide silt aborption for FABM model.'
+# ifdef FABM_ISOURCES
+      IF (Master) WRITE (stdout,20) 'FABM_ISOURCES',                    &
+     &   'Use ROMS to provide internal sources data.'
       is=LEN_TRIM(Coptions)+1
-      Coptions(is:is+12)=' FABM_ASILT,'
+      Coptions(is:is+15)=' FABM_ISOURCES,'
 # endif
-# ifdef FABM_TSS
-      IF (Master) WRITE (stdout,20) 'FABM_TSS',                         &
-     &   'Use ROMS to provide Total Suspended Sediment (offline).'
+# ifdef FABM_MU
+      IF (Master) WRITE (stdout,20) 'FABM_MU',                          &
+     &   'Use ROMS to provide dynamic viscosity (online).'
       is=LEN_TRIM(Coptions)+1
-      Coptions(is:is+11)=' FABM_TSS,'
+      Coptions(is:is+9)=' FABM_MU,'
 # endif
-# ifdef FABM_TSS_ONLINE
-      IF (Master) WRITE (stdout,20) 'FABM_TSS_ONLINE',                  &
-     &   'Use ROMS to provide Total Suspended Sediment (online).'
+# ifdef FABM_NONNEG_S
+      IF (Master) WRITE (stdout,20) 'FABM_NONNEG_S',                    &
+     &   'Cap salinity input to FABM at zero PSU.'
       is=LEN_TRIM(Coptions)+1
-      Coptions(is:is+18)=' FABM_TSS_ONLINE,'
-# endif
-# ifdef FABM_PCO2ATM
-      IF (Master) WRITE (stdout,20) 'FABM_PCO2ATM',                     &
-     &   'Use ROMS to provide atmospheric pCO2 for FABM model.'
-      is=LEN_TRIM(Coptions)+1
-      Coptions(is:is+14)=' FABM_PCO2ATM,'
-# endif
-# ifdef FABM_ADYTRACER
-      IF (Master) WRITE (stdout,20) 'FABM_ADYTRACER',                   &
-     &   'Use ROMS to advect and diffusive an attenuation tracer.'
-      is=LEN_TRIM(Coptions)+1
-      Coptions(is:is+16)=' FABM_ADYTRACER,'
+      Coptions(is:is+15)=' FABM_NONNEG_S,'
 # endif
 # ifdef FABM_N3ATMDEPO
       IF (Master) WRITE (stdout,20) 'FABM_N3ATMDEPO',                   &
@@ -657,23 +669,41 @@
       is=LEN_TRIM(Coptions)+1
       Coptions(is:is+16)=' FABM_N4ATMDEPO,'
 # endif
-# ifdef FABM_ISOURCES
-      IF (Master) WRITE (stdout,20) 'FABM_ISOURCES',                    &
-     &   'Use ROMS to provide internal sources data.'
+# ifdef FABM_NU
+      IF (Master) WRITE (stdout,20) 'FABM_NU',                          &
+     &   'Use ROMS to provide kinematic viscosity (online).'
       is=LEN_TRIM(Coptions)+1
-      Coptions(is:is+15)=' FABM_ISOURCES,'
+      Coptions(is:is+9)=' FABM_NU,'
 # endif
-# ifdef FABM_NONNEG_S
-      IF (Master) WRITE (stdout,20) 'FABM_NONNEG_S',                    &
-     &   'Cap salinity input to FABM at zero PSU.'
+# ifdef FABM_PCO2ATM
+      IF (Master) WRITE (stdout,20) 'FABM_PCO2ATM',                     &
+     &   'Use ROMS to provide atmospheric pCO2 for FABM model.'
       is=LEN_TRIM(Coptions)+1
-      Coptions(is:is+15)=' FABM_NONNEG_S,'
+      Coptions(is:is+14)=' FABM_PCO2ATM,'
 # endif
-# ifdef FABM_CHECK_STATE
-      IF (Master) WRITE (stdout,20) 'FABM_CHECK_STATE',                 &
-     &   'Use FABM to check (and repair) biological state.'
+# ifdef FABM_TDR
+      IF (Master) WRITE (stdout,20) 'FABM_TDR',                         &
+     & 'Use ROMS to provide turbulent energy dissipation rate (online).'
       is=LEN_TRIM(Coptions)+1
-      Coptions(is:is+18)=' FABM_CHECK_STATE,'
+      Coptions(is:is+10)=' FABM_TDR,'
+# endif
+# ifdef FABM_TSS
+      IF (Master) WRITE (stdout,20) 'FABM_TSS',                         &
+     &   'Use ROMS to provide Total Suspended Sediment (offline).'
+      is=LEN_TRIM(Coptions)+1
+      Coptions(is:is+11)=' FABM_TSS,'
+# endif
+# ifdef FABM_TSS_ONLINE
+      IF (Master) WRITE (stdout,20) 'FABM_TSS_ONLINE',                  &
+     &   'Use ROMS to provide Total Suspended Sediment (online).'
+      is=LEN_TRIM(Coptions)+1
+      Coptions(is:is+18)=' FABM_TSS_ONLINE,'
+# endif
+# ifdef FABM_TSR
+      IF (Master) WRITE (stdout,20) 'FABM_TSR',                         &
+     &   'Use ROMS to provide turbulent shear rate (online).'
+      is=LEN_TRIM(Coptions)+1
+      Coptions(is:is+10)=' FABM_TSR,'
 # endif
 #endif
 !!!End insertion PWA 23/11/2018

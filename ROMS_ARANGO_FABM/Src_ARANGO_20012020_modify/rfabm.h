@@ -170,10 +170,6 @@
 !
 !  Local variable declarations.
 !
-!!!PWA Modified 08/03/2017
-!      integer, parameter :: Nsink = 1
-!      ...
-!      real(r8), dimension(IminS:ImaxS,N(ng)) :: qc
       integer :: ibio, itrc, ivar, i, j, k, ks, nx, ny
       integer :: i1, j1 !These indices range strictly over (1,nx), (1,ny), while (i,j) range over (Istr,Iend), (Jstr,Jend)
 
@@ -203,7 +199,7 @@
       real(r8), dimension(IminS:ImaxS,N(ng)) :: bR
       real(r8), dimension(IminS:ImaxS,N(ng)) :: qc
 
-      logical,parameter :: repair = .TRUE.
+      logical, parameter :: repair = .TRUE.
       logical :: valid_int,valid_sf,valid_bt
 #ifdef DIAGNOSTICS_BIO
       real(r8), dimension(IminS:ImaxS,JminS:JmaxS) :: DiaBio2d1
@@ -212,7 +208,6 @@
 #ifdef FABM_NONNEG_S
       real(r8), target, dimension(IminS:ImaxS,JminS:JmaxS,N(ng)) :: Snn    !Non-negative salinity for input to FABM
 #endif
-!!!End modification PWA 08/03/2017
 
 #include "set_bounds.h"
 !PWA: Sets Istr,Iend etc. using BOUNDS (note that LBi,UBi etc. are passed through subroutine args)
@@ -259,7 +254,7 @@
 # ifdef WET_DRY
       IF (iic(ng).eq.1) THEN
         CALL FMODEL(ng)%f(tile)%model%set_mask(                         &
-     &                                rmask_full(Istr:Iend,Jstr:Jend))
+     &         rmask_full(Istr:Iend,Jstr:Jend))
       END IF
 # endif
 
@@ -329,12 +324,12 @@
 !-----------------------------------------------------------------------
       DO itrc=1,NSAT
         CALL FMODEL(ng)%f(tile)%model%link_surface_state_data(          &
-     &   itrc,state_sf(Istr:Iend,Jstr:Jend,nstp,itrc))
+     &           itrc,state_sf(Istr:Iend,Jstr:Jend,nstp,itrc))
       END DO
 
       DO itrc=1,NBAT
         CALL FMODEL(ng)%f(tile)%model%link_bottom_state_data(           &
-     &   itrc,state_bt(Istr:Iend,Jstr:Jend,nstp,itrc))
+     &           itrc,state_bt(Istr:Iend,Jstr:Jend,nstp,itrc))
       END DO
 
 
@@ -366,19 +361,19 @@
         DO j1=1,ny
           DO k=1,N(ng)
             CALL FMODEL(ng)%f(tile)%model%check_interior_state(1,nx,j1, &
-     &                          k,repair,valid_int)   !This will cap state1(Istr:Iend,Jstr+j1,k,1:NBT)
+     &        k,repair,valid_int)   !This will cap state1(Istr:Iend,Jstr+j1,k,1:NBT)
           END DO
         END DO
         IF (NSAT.gt.0) THEN
           DO j1=1,ny
             CALL FMODEL(ng)%f(tile)%model%check_surface_state(1,nx,j1,  &
-     &                          repair,valid_sf)      !This will cap state_sf(Istr:Iend,Jstr+j1,nstp,1:NSAT)
+     &        repair,valid_sf)      !This will cap state_sf(Istr:Iend,Jstr+j1,nstp,1:NSAT)
           END DO
         END IF
         IF (NBAT.gt.0) THEN
           DO j1=1,ny
             CALL FMODEL(ng)%f(tile)%model%check_bottom_state(1,nx,j1,   &
-     &                          repair,valid_bt)      !This will cap state_bt(Istr:Iend,Jstr+j1,nstp,1:NBAT)
+     &        repair,valid_bt)      !This will cap state_bt(Istr:Iend,Jstr+j1,nstp,1:NBAT)
           END DO
         END IF
 #endif
@@ -465,13 +460,32 @@
 
 
 !-----------------------------------------------------------------------
+!  Generate SMS terms for pelagic variables
+!-----------------------------------------------------------------------
+        DO k=1,N(ng)
+          dBdt(Istr:Iend,k,1:NBT)=0.0_r8
+          CALL FMODEL(ng)%f(tile)%model%get_interior_sources(1,nx,j1,k, &
+     &                                        dBdt(Istr:Iend,k,1:NBT))
+!Note: the biological tracer indices idbio range over (NAT+NPT+NCS+NNS)+1:NT = NT-NBT+1:NT, see rfabm_mod.h
+        END DO
+#ifdef DEBUGFABM
+        IF (iic(ng).le.icheckmax(ng)) THEN
+          write(*,*) "Done fabm_do"
+          write(*,*) "MIN,MAX(dBdt(Istr:Iend,1:N(ng),1:NBT)) = ",       &
+     &      MINVAL(dBdt(Istr:Iend,1:N(ng),1:NBT)),                      &
+     &      MAXVAL(dBdt(Istr:Iend,1:N(ng),1:NBT))
+        END IF
+#endif
+
+
+!-----------------------------------------------------------------------
 !  Generate surface fluxes and SMS for surface-attached variables
 !-----------------------------------------------------------------------
         flux_sf = 0.0_r8
         sms_sf = 0.0_r8
         !Note: surface fluxes may still be needed even if NSAT = 0
         CALL FMODEL(ng)%f(tile)%model%get_surface_sources(1,nx,j1,      &
-     &    flux_sf(Istr:Iend,1:NBT),sms_sf(Istr:Iend,1:NSAT))
+     &         flux_sf(Istr:Iend,1:NBT),sms_sf(Istr:Iend,1:NSAT))
 #ifdef DEBUGFABM
         IF (iic(ng).le.icheckmax(ng)) THEN
           write(*,*) "Done fabm_do_surface"
@@ -492,7 +506,7 @@
         sms_bt = 0.0_r8
         !Note: bottom fluxes may still be needed even if NBAT = 0
         CALL FMODEL(ng)%f(tile)%model%get_bottom_sources(1,nx,j1,       &
-     &    flux_bt(Istr:Iend,1:NBT),sms_bt(Istr:Iend,1:NBAT))
+     &        flux_bt(Istr:Iend,1:NBT),sms_bt(Istr:Iend,1:NBAT))
 #ifdef DEBUGFABM
         IF (iic(ng).le.icheckmax(ng)) THEN
           write(*,*) "Done fabm_do_bottom"
@@ -507,33 +521,14 @@
 
 
 !-----------------------------------------------------------------------
-!  Generate SMS terms for pelagic variables
-!-----------------------------------------------------------------------
-        DO k=1,N(ng)
-          dBdt(Istr:Iend,k,1:NBT)=0.0_r8
-          CALL FMODEL(ng)%f(tile)%model%get_interior_sources(1,nx,j1,k, &
-     &              dBdt(Istr:Iend,k,1:NBT))
-!Note: the biological tracer indices idbio range over (NAT+NPT+NCS+NNS)+1:NT = NT-NBT+1:NT, see rfabm_mod.h
-        END DO
-#ifdef DEBUGFABM
-        IF (iic(ng).le.icheckmax(ng)) THEN
-          write(*,*) "Done fabm_do"
-          write(*,*) "MIN,MAX(dBdt(Istr:Iend,1:N(ng),1:NBT)) = ",       &
-     &      MINVAL(dBdt(Istr:Iend,1:N(ng),1:NBT)),                      &
-     &      MAXVAL(dBdt(Istr:Iend,1:N(ng),1:NBT))
-        END IF
-#endif
-
-
-!-----------------------------------------------------------------------
 !  Add contributions from surface and bottom fluxes
 !-----------------------------------------------------------------------
         DO itrc=1,NBT
           DO i=Istr,Iend
             dBdt(i,N(ng),itrc) = dBdt(i,N(ng),itrc) +                   &
-     &            flux_sf(i,itrc)*Hz_inv(i,N(ng))
+     &              flux_sf(i,itrc)*Hz_inv(i,N(ng))
             dBdt(i,1,itrc) = dBdt(i,1,itrc) +                           &
-     &            flux_bt(i,itrc)*Hz_inv(i,1)
+     &              flux_bt(i,itrc)*Hz_inv(i,1)
           !E.g surface/bottom attached variables may have [mass/m2] while pelagic variables may have [mass/m3]
           END DO
         END DO
@@ -544,6 +539,7 @@
 !-----------------------------------------------------------------------
 #ifdef DEBUGFABM
         IF (iic(ng).le.icheckmax(ng)) THEN
+          ! This is just an example of some old debugging code, to be adapted as required
 
           dBdt1 = MAXVAL(ABS(dBdt(Istr:Iend,:,1:NBT)))
 
@@ -551,9 +547,9 @@
             write(*,*) "dBdt1 = MAX(ABS(dBdt)) = ", dBdt1
 # ifdef DIAGNOSTICS_BIO
             DiaBio3d1(Istr:Iend,Jstr:Jend,1:N(ng)) = FMODEL(ng)%        &
-     &       f(tile)%model%get_interior_diagnostic_data(53)
+     &            f(tile)%model%get_interior_diagnostic_data(53)
             write(*,*) "MAXVAL(light_PAR0(Istr:Iend,j,N(ng))) = ",      &
-     &        MAXVAL(DiaBio3d1(Istr:Iend,j,N(ng)))
+     &                       MAXVAL(DiaBio3d1(Istr:Iend,j,N(ng)))
             stop
 # endif
             write(*,*) "MIN,MAX(Hz) = ", MINVAL(Hz), MAXVAL(Hz)
@@ -569,7 +565,7 @@
           DO k=1,N(ng)
             DO i=Istr,Iend
               state1(i,j,k,itrc) = state1(i,j,k,itrc) +                 &
-     &         dBdt(i,k,itrc)*dtFABM(ng)
+     &                      dBdt(i,k,itrc)*dtFABM(ng)
             END DO
           END DO
         END DO
@@ -589,7 +585,7 @@
         DO itrc=1,NSAT
           DO i=Istr,Iend
             state_sf(i,j,nnew,itrc) = MAX(state_sf(i,j,nstp,itrc) +     &
-     &                          sms_sf(i,itrc)*dtFABM(ng), 0.0_r8)
+     &                         sms_sf(i,itrc)*dtFABM(ng), 0.0_r8)
           !Note: we DO impose a zero lower bound on non-tracer state variables (cf. "t" below)
           END DO
         END DO
@@ -611,7 +607,7 @@
         DO itrc=1,NBAT
           DO i=Istr,Iend
             state_bt(i,j,nnew,itrc) = MAX(state_bt(i,j,nstp,itrc) +     &
-     &                          sms_bt(i,itrc)*dtFABM(ng), 0.0_r8)
+     &                         sms_bt(i,itrc)*dtFABM(ng), 0.0_r8)
           !Note: we DO impose a zero lower bound on non-tracer state variables (cf. "t" below)
           END DO
         END DO
@@ -632,10 +628,10 @@
 !-----------------------------------------------------------------------
         DO k=1,N(ng)
           CALL FMODEL(ng)%f(tile)%model%get_vertical_movement(          &
-     &              1,nx,j1,k,w(Istr:Iend,k,NT(ng)-NBT+1:NT(ng)))
+     &           1,nx,j1,k,w(Istr:Iend,k,NT(ng)-NBT+1:NT(ng)))
         END DO
         w(Istr:Iend,1:N(ng),NT(ng)-NBT+1:NT(ng)) = -1*                  &
-     &      w(Istr:Iend,1:N(ng),NT(ng)-NBT+1:NT(ng))
+     &        w(Istr:Iend,1:N(ng),NT(ng)-NBT+1:NT(ng))
         !FABM outputs vertical velocities in [m/s] positive upward
         !ROMS code below expects w in [m/s] positive downward
 #ifdef DEBUGFABM
@@ -676,7 +672,6 @@
                 qc(i,k)=state1(i,j,k,itrc) !PWA: Note this uses the bgc-updated state (hence operator splitting), consistent with ROMS biology modules
               END DO
             END DO
-  !
             DO k=N(ng)-1,1,-1
               DO i=Istr,Iend
                 FC(i,k)=(qc(i,k+1)-qc(i,k))*Hz_inv2(i,k)
@@ -797,9 +792,22 @@
 !!!End modification PWA 08/03/2017
             DO k=1,N(ng)
               DO i=Istr,Iend
-!!!Inserted PWA 08/03/2017
+!!!Modified PWA 21/06/2022
+#ifdef CAP_WSINK_CFL
+                cff=MIN(maxCFLwsink(ng)*Hz(i,j,k),                      &
+     &                    dtFABM(ng)*w(i,k,ibio)) !Cap vertical velocity using maximum CFL number
+!Note: Although this algorithm may be designed to be CFL-free (as per
+!      the comment above), in practice it is not, and high CFL numbers
+!      do lead to numerical instability.  By limiting the sinking velocity
+!      using the CFL criterion, we improve stability while also minimizing
+!      impact on realism (since mostly thin vertical layers that are
+!      anyway rapidly traversed will be affected).
+!Note: Imposing the limit here rather than in a separate loop after
+!      retrieval from FABM gives a small performance advantage (~5% speedup in tests).
+#else
                 cff=dtFABM(ng)*w(i,k,ibio) !Modified 12/11/2020 to allow negative w => buoyant particles
-!!!End insertion PWA 08/03/2017
+#endif
+!!!End modified PWA 21/06/2022
                 FC(i,k-1)=0.0_r8
                 WL(i,k)=z_w(i,j,k-1)+cff
                 WR(i,k)=Hz(i,j,k)*qc(i,k)

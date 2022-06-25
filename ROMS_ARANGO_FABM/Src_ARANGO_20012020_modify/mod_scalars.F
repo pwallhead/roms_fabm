@@ -203,6 +203,7 @@
 !    nFABM         No. FABM time steps per baroclinic time step
 !    dtFABM        FABM time step (s) = nFABM * dt
 !    ydayc         No. days since start of the year (set by call to caldate in rfabm.h)
+!    maxCFLwink    Maximum allowed CFL number for vertical sinking velocity
 #endif
 !!!PWA Inserted 29/10/2015
 !    time_code     Model time clock (string, YYYY-MM-DD hh:mm:ss.ss)
@@ -241,6 +242,7 @@
 #if defined RFABM
         real(dp), allocatable :: dtFABM(:)               ! FABM time step
         real(dp), allocatable :: ydayc(:)                ! year day starting from 0
+        real(dp), allocatable :: maxCFLwsink(:)          ! maximum CFL number for capping wsink
 #endif
 !!!PWA Inserted 23/07/2019
 !$OMP THREADPRIVATE (tdays, time)
@@ -1884,6 +1886,10 @@
       END IF
       IF (.not.allocated(dtFABM)) THEN
         allocate ( dtFABM(Ngrids) )
+        Dmem(1)=Dmem(1)+REAL(Ngrids,r8)
+      END IF
+      IF (.not.allocated(maxCFLwsink)) THEN
+        allocate ( maxCFLwsink(Ngrids) )
         Dmem(1)=Dmem(1)+REAL(Ngrids,r8)
       END IF
 #endif

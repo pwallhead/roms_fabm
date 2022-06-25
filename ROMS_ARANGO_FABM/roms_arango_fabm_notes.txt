@@ -303,6 +303,7 @@ Nonlinear/Biology/rfabm.h (from npzd_Franks.h, note: COAWST and ARANGO versions 
 - Added IF condition to only compute FABM-biology updates every nFABM time steps (11/01/2021)
 - Annexed debugging screen output (under icheckmax etc.) to under DEBUGFABM cpp (03/06/2022)
 - Modified to use parameters dtFABM(ng) from mod_scalars (03/06/2022)
+- Introduced optional CFL-based limit on sinking velocity under CAP_WSINK_CFL, using parameter maxCFLwsink from rfabm.in (25/06/2022)
 
 Nonlinear/rho_eos.F
 - Added RFABM-dependent update of rhof from rho and water pressure (pres) calculation (16/03/2015)
