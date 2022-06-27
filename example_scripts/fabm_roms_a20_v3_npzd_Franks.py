@@ -106,7 +106,7 @@ if roms_branch==0:
    rfabm_in_line_split2 = 74
 if roms_branch==1:
    base_inp = 'base_Arango/base_rfabm_inp.h'
-   rfabm_inp_line_split = 557 #This should be after all other diagnostics (last Dout(iTvdif))
+   rfabm_inp_line_split = 560 #This should be after all other diagnostics (last Dout(iTvdif))
    base_varinfo = 'base_Arango/base_varinfo_a20_v3_arango.dat'
    varinfo_line_split = 2862 #This should be after "Db_zphi", and before Fennel model variables.
    base_in = 'base_Arango/base_rfabm.in'

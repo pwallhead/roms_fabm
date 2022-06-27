@@ -113,13 +113,16 @@
             CASE ('nFABM')
               Npts=load_i(Nval, Rval, Ngrids, nFABM)
 !!!End insert PWA 13/12/2020
+!!!PWA Inserted 21/06/2022
+            CASE ('maxCFLwsink')
+              Npts=load_r(Nval, Rval, Ngrids, maxCFLwsink)
+!!!End insert PWA 21/06/2022
 !!!PWA Inserted 08/03/2017
             CASE ('icheckmax')
               Npts=load_i(Nval, Rval, Ngrids, icheckmax)
 !Note: the function load_i expects real-valued input vector Rval (see inp_par.F)
             CASE ('dBdt1max')
               Npts=load_r(Nval, Rval, Ngrids, dBdt1max)
-!            write(*,*) "Done input of icheckmax, dBdt1max"
 !!!End insertion PWA 08/03/2017
             CASE ('TNU2')
               Npts=load_r(Nval, Rval, NBT, Ngrids, Rbio)
@@ -576,6 +579,8 @@
 !!!PWA Inserted 08/03/2017
             WRITE (out,55) nFABM(ng), 'nFABM',                          &
      &            'Number of ROMS time steps (DT) per FABM time step.'
+            WRITE (out,70) maxCFLwsink(ng), 'maxCFLwsink',              &
+     &            'Cap limit for vertical sinking CFL number.'
             WRITE (out,60) icheckmax(ng), 'icheckmax',                  &
      &            'Initial iterations for which FABM calls checked.'
             WRITE (out,70) dBdt1max(ng), 'dBdt1max',                    &

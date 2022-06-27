@@ -1097,6 +1097,42 @@
   'w3dvar'
   1.0d0
 
+'tdr'                                              ! Output
+  'turbulent energy dissipation rate'
+  'meter2 second-3'                                ! [m2/s3]
+  'tdr, scalar, series'
+  'ocean_time'
+  'idMtdr'
+  'r3dvar'
+  1.0d0
+
+'mu'                                               ! Output
+  'dynamic viscosity'
+  'kg/m/s'                                         ! [kg/m/s]
+  'mu, scalar, series'
+  'ocean_time'
+  'idMmu'
+  'r3dvar'
+  1.0d0
+
+'nu'                                               ! Output
+  'kinematic viscosity'
+  'm2/s'                                           ! [m2/s]
+  'nu, scalar, series'
+  'ocean_time'
+  'idMnu'
+  'r3dvar'
+  1.0d0
+
+'tsr'                                              ! Output
+  'turbulent shear rate'
+  'second-1'                                       ! [1/s]
+  'tsr, scalar, series'
+  'ocean_time'
+  'idMtsr'
+  'r3dvar'
+  1.0d0
+
 !
 !------------------------------------------------------------------------------
 !  Boundary variables.
