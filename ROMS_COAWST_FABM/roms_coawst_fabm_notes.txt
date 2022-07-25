@@ -183,6 +183,9 @@ makefile (PLATFORM DEPENDENT)
 Compilers/make_macros.h
 - Added RFABM-dependent definition of USE_FABM macro (04/03/2015)
 
+Master/mct_driver.h
+- Inserted RFABM-dependent USE statement and call to roms_fabm_init (as in ocean.h) following Iva Tojcic suggestion (25/07/2022)
+
 Modules/mod_average.F
 - Added RFABM-dependent declaration, allocation, and initialization of:
 AVERAGE(ng)%avg(srfWm2,Asilt,xCO2atm,pCO2atm,state_bt,state_sf) (21/04/2017)
