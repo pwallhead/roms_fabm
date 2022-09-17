@@ -149,7 +149,7 @@ NOT YET TESTED and may be deleted in future updates.
 
 NOTE 2: If you have a VERY complex FABM model, you may need to increase maximum array size parameters in ROMS.
         We have had to increase maximum size parameters in:
-          mod_coupler.F, mod_ncparam.F, lbc.F, tadv.F, base_rfabm_inp.h
+          mod_coupler.F, mod_ncparam.F, mod_netcdf.F, lbc.F, tadv.F, base_rfabm_inp.h
         We have also had to increase some dimensions to permit reading of forcings split over MANY files:
           read_phypar.F/Cval (dimension 200->500) (Hedstrom) or value of inp_decode/nCval, 
           def_info/string (dimension 1024->8192 (Hedstrom) or 4096->8192)

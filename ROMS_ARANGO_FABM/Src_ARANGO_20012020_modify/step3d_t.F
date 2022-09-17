@@ -374,6 +374,9 @@
           END IF
         END DO
         SOURCES(ng)%Nisrct(tile+1) = ic
+        !Note: The variables (Iisrct,Jisrct,isrct,Nisrct) have tile index ranging over 1:Ntiles
+        !      (where Ntiles is the total number of tiles) while the ROMS variable 'tile' ranges 
+        !      over 0:Ntiles-1.  Hence the index values 'tile+1'.
       END IF
       Nisrc1 = SOURCES(ng)%Nisrct(tile+1) ! No. of internal sources in this tile
 #endif

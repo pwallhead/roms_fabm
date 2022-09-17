@@ -184,6 +184,9 @@ Modules/mod_ncparam.F
 - Added declaration and input of netCDF index for scalar bottom stress idbstrPa (11/09/2020) (NOT FABM-RELATED)
 - Changed index name idSUVav -> idSUV (11/09/2020)
 
+Modules/mod_netcdf.F
+- Increase maximum no. netcdf variables Mvars from 900 to 2000 to avoid segmentation fault with complex model (16/09/2022)
+
 Modules/mod_ocean.F
 - Added RFABM-dependent declaration, allocation, and initialization of full density variable rhof and water pressure variable pres (16/03/2015)
 - Added RFABM-dependent declaration, allocation, and initialization of state_sf and state_bt (16/03/2015)
