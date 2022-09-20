@@ -935,7 +935,11 @@
           FORCES(ng)%Swind(i,j) = SQRT(                                 &
      &      FORCES(ng)%Uwind(i,j)*FORCES(ng)%Uwind(i,j) +               &
      &      FORCES(ng)%Vwind(i,j)*FORCES(ng)%Vwind(i,j))
+        END DO
+      END DO
 
+      DO j=Jstrm1,Jendp1
+        DO i=Istrm1,Iendp1
           FORCES(ng)%bstrPa(i,j) = OCEAN(ng)%rhof(i,j,1)*0.5_r8*SQRT(   &
      &      (FORCES(ng)%bustr(i,j)+FORCES(ng)%bustr(i+1,j))*            &
      &      (FORCES(ng)%bustr(i,j)+FORCES(ng)%bustr(i+1,j)) +           &
@@ -944,6 +948,8 @@
           !Bottom stress in Pa given by (full density at bottom)*(scalar kinematic stress)
           !Note: Use of OCEAN at this point (start of time step) will violate
           !      operator splitting since biology is called later in the time step (see main3d.F).
+          !Note: Here we follow the calculation for tau_w implemented in sed_fluxes.F, using
+          !      end points (Jstrm1,Jendp1,Istrm1,Iendp1).
         END DO
       END DO
 

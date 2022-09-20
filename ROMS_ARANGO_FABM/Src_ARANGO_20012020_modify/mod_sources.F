@@ -353,14 +353,14 @@
         SOURCES(ng) % Jisrc(is) = 0
         SOURCES(ng) % Xisrc(is) = IniVal
         SOURCES(ng) % Yisrc(is) = IniVal
-        DO k=1,Ntiles
+      END DO
+      DO k=1,Ntiles
+        SOURCES(ng) % Nisrct(k) = 0
+        DO is=1,Nisrc(ng)
           SOURCES(ng) % Iisrct(is,k) = 0
           SOURCES(ng) % Jisrct(is,k) = 0
           SOURCES(ng) % isrct(is,k) = 0
         END DO
-      END DO
-      DO k=1,Ntiles
-        SOURCES(ng) % Nisrct(k) = 0
       END DO
       DO itrc=1,NT(ng)
         DO k=1,N(ng)
