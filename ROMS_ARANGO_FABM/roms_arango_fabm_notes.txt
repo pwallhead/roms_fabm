@@ -77,6 +77,7 @@ Utility/def_quick.F:
 
 Utility/def_rst.F:
 - Added RFABM-dependent code to define surface/bottom attached restart values (24/04/2017)
+- Removed spurious Hout condition on definition of surface/bottom attached restart variables (01/10/2022)
 
 Utility/def_station.F:
 - Added RFABM-dependent code to define NetCDF station variables (srfWm2,Asilt,xCO2atm,pCO2atm,state_bt,state_sf) (06/08/2019)
