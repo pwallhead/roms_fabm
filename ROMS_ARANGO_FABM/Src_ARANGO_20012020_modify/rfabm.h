@@ -796,12 +796,6 @@
 #ifdef CAP_WSINK_CFL
                 cff=MIN(maxCFLwsink(ng)*Hz(i,j,k),                      &
      &                    dtFABM(ng)*w(i,k,ibio)) !Cap vertical velocity using maximum CFL number
-!Note: Although this algorithm may be designed to be CFL-free (as per
-!      the comment above), in practice it is not, and high CFL numbers
-!      do lead to numerical instability.  By limiting the sinking velocity
-!      using the CFL criterion, we improve stability while also minimizing
-!      impact on realism (since mostly thin vertical layers that are
-!      anyway rapidly traversed will be affected).
 !Note: Imposing the limit here rather than in a separate loop after
 !      retrieval from FABM gives a small performance advantage (~5% speedup in tests).
 #else

@@ -31,6 +31,9 @@
       USE mod_biology !Provides access to idbio, iDbio2 etc. via rfabm_mod.h
       USE mod_scalars !Provides access to ydayc = No. days since start of year
       USE mod_iounits !Provides access to stdout
+# ifdef ICE_MODEL
+      USE mod_ice     !Provides access to ICE
+# endif
 
       integer :: ng, tile, Istr, Iend, Jstr, Jend, nx, ny, i, j, k
       integer :: itrc, ibio, NDbio2dmax, NDbio3dmax 
@@ -281,7 +284,7 @@
 # endif
 # ifdef FABM_AICE
         CALL FMODEL(ng)%f(tile)%model%link_horizontal_data(             & !fraction of cell covered by ice from internal sea-ice module (Hedstrom code only) []
-     &   'aice',ICE(ng)%ai(Istr:Iend,Jstr:Jend,:))
+     &   'aice',ICE(ng)%ai(Istr:Iend,Jstr:Jend,1))
 # endif
 
 # ifdef DEBUGFABM

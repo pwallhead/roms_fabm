@@ -290,7 +290,7 @@
 # endif
 # ifdef FABM_AICE
         CALL FMODEL(ng)%f(tile)%model%link_horizontal_data(             & !fraction of cell covered by ice from internal sea-ice module (Hedstrom code only) []
-     &   'aice',ICE(ng)%ai(Istr:Iend,Jstr:Jend,:))
+     &   'aice',ICE(ng)%ai(Istr:Iend,Jstr:Jend,1))
 # endif
 # if defined CALC_TDR && defined CALC_TSR
 #  ifdef FABM_TDR
@@ -312,7 +312,7 @@
 # endif
 # ifdef FABM_DT
         CALL FMODEL(ng)%f(tile)%model%link_scalar('dtFABM', dtFABM(ng))   !FABM time step [s]
-# endif 
+# endif
 
 # ifdef DEBUGFABM
         IF (Master) write(stdout,*) "Done fabm_link_data calls"

@@ -230,6 +230,7 @@
 !!!PWA Inserted 29/10/2015
 #if defined RFABM
 !    nFABM         No. FABM time steps per baroclinic time step
+!    dtFABM        FABM time step (s) = nFABM * dt
 !    ydayc         No. days since start of the year (set by call to caldate in rfabm.h)
 #endif
 !!!PWA Inserted 29/10/2015
@@ -274,6 +275,7 @@
         real(dp), allocatable :: time(:)                 ! seconds
 !!!PWA Inserted 23/07/2019
 #if defined RFABM
+        real(dp), allocatable :: dtFABM(:)               ! FABM time step
         real(dp), allocatable :: ydayc(:)                ! year day starting from 0
 #endif
 !!!PWA Inserted 23/07/2019
@@ -2051,6 +2053,10 @@
 #if defined RFABM
       IF (.not.allocated(nFABM)) THEN
         allocate ( nFABM(Ngrids) )
+        Dmem(1)=Dmem(1)+REAL(Ngrids,r8)
+      END IF
+      IF (.not.allocated(dtFABM)) THEN
+        allocate ( dtFABM(Ngrids) )
         Dmem(1)=Dmem(1)+REAL(Ngrids,r8)
       END IF
 #endif

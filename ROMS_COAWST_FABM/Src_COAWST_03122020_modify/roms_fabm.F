@@ -29,8 +29,11 @@
       USE mod_grid    !Provides access to GRID
       USE mod_ocean   !Provides access to OCEAN (hence "t")
       USE mod_biology !Provides access to idbio, iDbio2 etc. via rfabm_mod.h
-      USE mod_scalars !Provides access to ydayc = No. days since start of year
+      USE mod_scalars !Provides access to ydayc = No. days since start of year, dtFABM = FABM time step (Euler)
       USE mod_iounits !Provides access to stdout
+# ifdef ICE_MODEL
+      USE mod_ice     !Provides access to ICE
+# endif
 
       integer :: ng, tile, Istr, Iend, Jstr, Jend, nx, ny, i, j, k
       integer :: itrc, ibio, NDbio2dmax, NDbio3dmax 
@@ -103,6 +106,9 @@
         nx = Iend-Istr+1
         ny = Jend-Jstr+1
 
+        ! FABM time step
+        dtFABM(ng) = REAL(nFABM(ng),r8)*dt(ng)
+
         CALL FMODEL(ng)%f(tile)%model%set_domain(nx,ny,N(ng))
 # ifdef DEBUGFABM
         IF (Master) write(stdout,*) "Done fabm set_domain"
@@ -153,13 +159,13 @@
      &   fabm_standard_variables%cell_thickness)) THEN
           CALL FMODEL(ng)%f(tile)%model%link_interior_data(             & !cell thickness (m)
      &     fabm_standard_variables%cell_thickness,                      &
-     &     GRID(ng)%Hz(Istr:Iend,Jstr:Jend,:))
+     &     GRID(ng)%Hz(Istr:Iend,Jstr:Jend,1:N(ng)))
         END IF
         IF (FMODEL(ng)%f(tile)%model%variable_needs_values(             &
      &   fabm_standard_variables%depth)) THEN
           CALL FMODEL(ng)%f(tile)%model%link_interior_data(             & !depth of layer midpoints (m)
      &     fabm_standard_variables%depth,                               &
-     &     GRID(ng)%z_r(Istr:Iend,Jstr:Jend,:))
+     &     GRID(ng)%z_r(Istr:Iend,Jstr:Jend,1:N(ng)))
         END IF
         IF (FMODEL(ng)%f(tile)%model%variable_needs_values(             &
      &   fabm_standard_variables%temperature)) THEN
@@ -286,7 +292,10 @@
 # endif
 # ifdef FABM_AICE
         CALL FMODEL(ng)%f(tile)%model%link_horizontal_data(             & !fraction of cell covered by ice from internal sea-ice module (Hedstrom code only) []
-     &   'aice',ICE(ng)%ai(Istr:Iend,Jstr:Jend,:))
+     &   'aice',ICE(ng)%ai(Istr:Iend,Jstr:Jend,1))
+# endif
+# ifdef FABM_DT
+        CALL FMODEL(ng)%f(tile)%model%link_scalar('dtFABM', dtFABM(ng))   !FABM time step [s]
 # endif
 
 # ifdef DEBUGFABM

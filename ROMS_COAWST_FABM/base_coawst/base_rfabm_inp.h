@@ -119,7 +119,6 @@
 !Note: the function load_i expects real-valued input vector Rval (see inp_par.F)
             CASE ('dBdt1max')
               Npts=load_r(Nval, Rval, Ngrids, dBdt1max)
-!            write(*,*) "Done input of icheckmax, dBdt1max"
 !!!End insertion PWA 08/03/2017
             CASE ('TNU2')
               Npts=load_r(Nval, Rval, NBT, Ngrids, Rbio)

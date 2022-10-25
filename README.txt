@@ -121,7 +121,7 @@ DEBUGFABM           /* use for RFABM-specific debugging output */
 DIAGNOSTICS         /* MUST be defined for outputting FABM diagnostics (specified in rfabm.in) */
 DIAGNOSTICS_BIO     /* MUST be defined for outputting FABM diagnostics (specified in rfabm.in) */
 FABM_ADYTRACER      /* use to provide a light attenuation tracer via ROMS (input ADY_0, NOT YET TESTED) */
-FABM_AICE           /* use to provide fractional ice area from ROMS internal ice model (NOT YET TESTED) */
+FABM_AICE           /* use to provide fractional ice area from ROMS internal ice model */
 FABM_ASILT          /* use to provide a 3D forcing field for absorption due to silt (input Asilt, NOT YET TESTED) */
 FABM_CHECK_STATE    /* use to cap bgc variable input to FABM (RECOMMENDED) */
 FABM_INITIAL        /* use to set all bgc initial conditions to FABM default values (simple constants) */
