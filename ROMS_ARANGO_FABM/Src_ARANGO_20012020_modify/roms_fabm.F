@@ -105,7 +105,7 @@
         ny = Jend-Jstr+1
 
         ! FABM time step
-        dtFABM(ng) = REAL(nFABM(ng),r8)*dt(ng)
+        dtFABM(ng) = DBLE(nFABM(ng))*dt(ng)
 
         CALL FMODEL(ng)%f(tile)%model%set_domain(nx,ny,N(ng))
 # ifdef DEBUGFABM

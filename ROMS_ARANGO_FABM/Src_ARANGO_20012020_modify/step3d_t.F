@@ -1507,6 +1507,9 @@
 !
 !  Correct tracer concentrations for interior sources/sinks not associated 
 !  with water fluxes (e.g. fish farms).
+!  NOTE: It is assumed that, at this point, t(:,:,:,nnew,:) is in concentration units (Tunits)
+!        (otherwise the nudging towards climatology below would be wrong, because
+!        CLIMA(ng)%tclm is definitely in Tunits (see mod_clima.F and set_data.F)).
 !  NOTE: The code below violates the column-major-friendly order of loop indices 
 !        that is standard in ROMS, but this is overcompensated by the efficiency
 !        gained from assigning the point sources indices at the head of the loop
