@@ -162,12 +162,6 @@
 #  ifdef DISTRIBUTE
       USE mp_exchange_mod, ONLY : mp_exchange2d, mp_exchange3d
 #  endif
-!!!PWA Inserted 16/03/2015
-#  ifdef RFABM
-      USE fabm
-      USE fabm_config
-#  endif
-!!!PWA Inserted 16/03/2015
 !
 !  Imported variable declarations.
 !

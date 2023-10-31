@@ -105,12 +105,11 @@
 !=======================================================================
 !
       USE mod_kinds
-!!!PWA Inserted 27/02/2015
+!!!PWA Modified 31/10/2023
 #ifdef RFABM
-      USE fabm
-      USE fabm_config
+      USE fabm, only: type_fabm_model, type_fabm_interior_variable_id
 #endif
-!!!End PWA inserted 27/02/2015
+!!!End PWA modified 31/10/2023
 !
       implicit none
 !

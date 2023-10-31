@@ -230,6 +230,7 @@ Modules/mod_param.F
 - Updated to new Arango code including switches for tracer-specific advection schemes (24/01/2020)
 - Updated declaration of fabm model structure vector fmodels(:) (type->class) and names of fabm types (29/10/2020)
 - Updated fabm objects (e.g. FMODEL(ng)%f(tile)%model) for compatibility with updated FABM source (29/10/2020)
+- Restricted use fabm statement (using 'only') and removed use of fabm_config (redundant) (31/10/2023)
 
 Modules/mod_scalars.F
 - Added RFABM-dependent declaration and allocation of scalar ydayc(ng) = No. days since start of year (29/10/2015)
@@ -312,6 +313,7 @@ Nonlinear/Biology/rfabm.h (from npzd_Franks.h, note: COAWST and ARANGO versions 
 
 Nonlinear/rho_eos.F
 - Added RFABM-dependent update of rhof from rho and water pressure (pres) calculation (16/03/2015)
+- Removed redundant use of modules (fabm,fabm_config) (31/10/2023)
 
 Nonlinear/Biology/roms_fabm.F (NEW, note: COAWST and ARANGO versions should be identical)
 - Wrote initialisation subroutine roms_fabm_init (31/03/2015)

@@ -263,6 +263,7 @@ Modules/mod_param.F
 - Added RFABM-dependent declaration and allocation of:
   ndiagi(Ngrids), idiagimin(Ngrids), ndiagimax(Ngrids), ndiagh(Ngrids), idiaghmin(Ngrids), ndiaghmax(Ngrids) (04/11/2015)
 - Copied across the above changes from Src_ARANGO_20012020_modify (03/12/2020)
+- Restricted use fabm statement (using 'only') and removed use of fabm_config (redundant) (31/10/2023)
 
 Modules/mod_scalars.F
 - Added RFABM-dependent declaration and allocation of scalar ydayc(ng) = No. days since start of year (29/10/2015)
@@ -333,6 +334,7 @@ Nonlinear/Biology/rfabm.h (from npzd_Franks.h, note: COAWST and ARANGO versions 
 Nonlinear/rho_eos.F
 - Added RFABM-dependent update of rhof from rho and water pressure (pres) calculation (16/03/2015)
 - Copied across the above changes from Src_ARANGO_20012020_modify (03/12/2020)
+- Removed redundant use of modules (fabm,fabm_config) (31/10/2023)
 
 Nonlinear/Biology/roms_fabm.F (NEW, note: COAWST and ARANGO versions should be identical)
 - Wrote initialisation subroutine roms_fabm_init (31/03/2015)
