@@ -444,6 +444,7 @@
           real(r8), pointer :: avghice(:,:)
           real(r8), pointer :: avgtice(:,:)
           real(r8), pointer :: avgtimid(:,:)
+          real(r8), pointer :: avgt2ice(:,:) !!!Inserted PWA 17/12/2024
           real(r8), pointer :: avghsno(:,:)
 #   ifdef MELT_PONDS
           real(r8), pointer :: avgapond(:,:)
@@ -1167,6 +1168,12 @@
         allocate ( AVERAGE(ng) % avgtimid(LBi:UBi,LBj:UBj) )
         Dmem(ng)=Dmem(ng)+size2d
       END IF
+!!!Inserted PWA 17/12/2024
+      IF (Aout(idT2ice,ng)) THEN
+        allocate ( AVERAGE(ng) % avgt2ice(LBi:UBi,LBj:UBj) )
+        Dmem(ng)=Dmem(ng)+size2d
+      END IF
+!!!End inserted PWA 17/12/2024
       IF (Aout(idHsno,ng)) THEN
         allocate ( AVERAGE(ng) % avghsno(LBi:UBi,LBj:UBj) )
         Dmem(ng)=Dmem(ng)+size2d

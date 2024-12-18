@@ -1844,7 +1844,7 @@
   'idrfaci'
   'r2dvar'
   1.0d0
-  
+
 !
 !------------------------------------------------------------------------------
 !  Atmospheric forcing variables.
@@ -7427,7 +7427,7 @@
   'idbstrPa'
   'r2dvar'
   1.0d0
-  
+
 'tracer2'                                          ! Output
   'time-averaged squared tracer'
   'tracer2'                                        ! [tracer2]

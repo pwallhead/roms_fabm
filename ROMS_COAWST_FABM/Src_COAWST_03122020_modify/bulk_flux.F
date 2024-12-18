@@ -1122,7 +1122,7 @@
      &             (Tstar(i)*(1.0_r8+0.61_r8*Q(i))+                     &
      &                        0.61_r8*TairK(i)*Qstar(i))/               &
      &             (TairK(i)*Wstar(i)*Wstar(i)*                         &
-     &              (1.0_r8+0.61_r8*Q(i))+eps)
+     &             (1.0_r8+0.61_r8*Q(i))+eps)
             L(i)=blk_ZW(ng)/(ZoL(i)+eps)
 !
 !  Evaluate stability functions at Z/L.
@@ -1164,7 +1164,7 @@
 !  Cool skin correction constants. Clam: part of Saunders constant
 !  lambda; Cwet: slope of saturation vapor.
 !
-            Clam=16.0_r8*g*blk_Cpw*(rhoSea(i)*blk_visw)**3.0_r8/        &
+            Clam=16.0_r8*g*blk_Cpw*(rhoSea(i)*blk_visw)**3/             &
      &           (blk_tcw*blk_tcw*rhoAir(i)*rhoAir(i))
 !
 !  Set initial guesses for cool-skin layer thickness (Hcool).
@@ -1191,7 +1191,7 @@
             IF ((Qcool.gt.0.0_r8).and.(Qbouy.gt.0.0_r8)) THEN
               lambd=6.0_r8/                                             &
      &              (1.0_r8+                                            &
-     &               (Clam*Qbouy/(Wstar(i)+eps)**4.0_r8)**0.75_r8)**r3
+     &               (Clam*Qbouy/(Wstar(i)+eps)**4)**0.75_r8)**r3
               Hcool=lambd*blk_visw/(SQRT(rhoAir(i)/rhoSea(i))*          &
      &                              Wstar(i)+eps)
               delTc(i)=Qcool*Hcool/blk_tcw

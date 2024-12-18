@@ -686,7 +686,7 @@
           qswi_n(i,j) = srflx(i,j)*Hscale
 # endif
 
-!!! Modified PWA 25/09/2019 to allow correction of SRad for ice and correction of srflx for ice/snow albedo
+!!! Modified PWA 25/09/2019 to allow correction of SRad and srflx for ice/snow and water albedo
 ! This code has been moved to earlier in the file to allow ice correction of SRad
 ! Note that qswi is corrected separately for ice albedo below
 # ifdef CICE_MODEL
@@ -1202,16 +1202,17 @@
           qsh_i = sensible_MU(month)
           RHS_Ice(i,j) = RHS_Ice(i,j) + qsh_i
 #   else
-          qsh_i = rhoAir(i)*blk_Cpa*Ch_i*delW(i)*                         &
+          qsh_i = rhoAir(i)*blk_Cpa*Ch_i*delW(i)*                       &
      &            (TairK(i)+0.0098*blk_ZT(ng)-sfc_temp)
           Coef_Ice(i,j) = Coef_Ice(i,j) +                               &
      &          rhoAir(i)*blk_Cpa*Ch_i*delW(i)
           RHS_Ice(i,j) = RHS_Ice(i,j) +                                 &
-     &        rhoAir(i)*blk_Cpa*Ch_i*delW(i)*(TairK(i)+0.0098*blk_ZT(ng))
+     &          rhoAir(i)*blk_Cpa*Ch_i*delW(i)*                         &
+     &                   (TairK(i)+0.0098*blk_ZT(ng))
 #   endif
 
-! Latent heat flux over ice
-          le_i=2.834E+6_r8    ! Latent heat of sublimation
+! Latent heat of sublimation
+          le_i=2.834E+6_r8
 
 #   ifdef ICE_BOX
           qlh_i = latent_MU(month)

@@ -51,6 +51,7 @@
 # if (defined ALBEDO_DIRDIFF || defined NCEP_FLUXES) && \
      !defined BENCHMARK
 !!! End modification PWA 07/03/2019
+      USE cawdir_eval_mod, ONLY : cawdir_eval
 # endif
 # if defined ALBEDO && defined SHORTWAVE
 #  if !defined NCEP_FLUXES && !defined ANA_ALBEDO

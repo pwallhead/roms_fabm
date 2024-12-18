@@ -19,6 +19,7 @@ Nonlinear/Biology/biology.F:
 Nonlinear/bulk_flux.F (NOT FABM-RELATED):
 - Merged in latest PWA-modifications to Hedstrom code, removing SW_thru_ice and adding frswpen, rfaci (05/11/2020)
 - Corrected use of ALBEDO_CLOUD instead of ALBEDO_DIRDIFF (05/12/2020)
+- Changed some real-valued integer exponents to integers for numerical efficiency (17/12/2024)
 
 Nonlinear/ccsm_flux.F (NOT FABM-RELATED):
 - Merged in latest PWA-modifications to Hedstrom code, removing SW_thru_ice and adding frswpen, rfaci (05/11/2020)
@@ -174,6 +175,7 @@ Nonlinear/main3d.F (NOT FABM-RELATED)
 - Modified cpp conditions to account for ALBEDO_DIRDIFF (07/03/2019)
 - Copied across the above changes from Src_v37_KATE_modify (COAWST code was still using ALBEDO_CLOUD) (05/12/2020)
   Surprisingly, the COAWST code had correctly used ALBEDO_DIRDIFF in main3d_offline.F
+- Corrected missing USE statement for cawdir_eval_mod (17/12/2024) (NOT FABM-RELATED)
 
 makefile (PLATFORM DEPENDENT)
 - Added FABM include directory to includes list (for locating .h files), dependent on USE_FABM macro (04/03/2015)
@@ -199,10 +201,14 @@ AVERAGE(ng)%avg(srfWm2,Asilt,xCO2atm,pCO2atm,state_bt,state_sf) (21/04/2017)
 - Copied across the above changes from Src_ARANGO_20012020_modify (03/12/2020)
 - Added AVERAGE(ng)%avgfrswp, AVERAGE(ng)%avgrfaci (05/12/2020) following Hedstrom code (NOT FABM-RELATED)
 - Added AVERAGE(ng)%avgtss (total suspended sediments) (13/12/2020)
+- Corrected missing declaration of avgt2ice variable (17/12/2024) (NOT FABM-RELATED)
 
 Modules/mod_biology.F:
 - Added comments and cpp-contingent include statement for rfabm_mod.F (17/11/2014)
 - Copied across the above changes from Src_ARANGO_20012020_modify (03/12/2020)
+
+Modules/mod_boundary.F:
+- Adjusted cpp condition on declaration etc. of (UBij,LBij,XYsize) to include ICE_MODEL (17/12/2024) (NOT FABM-RELATED)
 
 Modules/mod_coupler.F:
 - Increased MaxNumberFields from 50 to 100 to allow for ERSEM-level complexity (05/10/2015)
@@ -225,6 +231,9 @@ Modules/mod_forces.F:
 - Corrected use of ALBEDO_CLOUD instead of ALBEDO_DIRDIFF (05/12/2020)
 - Added ALBEDO_CSIM-dependent declaration, allocation, and initialization of frswpen (05/12/2020) (NOT FABM-RELATED)
 - Added FABM_TSS,FABM_TSS_ONLINE-dependent declaration, allocation, and initialization of tss (total suspended sediments) (13/12/2020)
+
+Modules/mod_ice.F
+- Added declaration, allocation, and initialization of rfaci (17/12/2024, back-dated to 25/09/2019 to simplify diff wrt Hedstrom) (NOT FABM-RELATED)
 
 Modules/mod_iounits.F (NOT FABM-RELATED):
 - Added code to allow for multiple ssf files, following Hedstrom 14092019 code (08/01/2021)
@@ -381,6 +390,7 @@ Nonlinear/set_avg.F
 - Copied across the above changes from Src_ARANGO_20012020_modify (03/12/2020)
 - Added calculation of averages for idfrswp and idrfaci from Hedstrom code (05/12/2020) (NOT FABM-RELATED)
 - Added SEDIMENT-dependent calculation of average Total Suspended Sediment (13/12/2020) (NOT FABM-RELATED)
+- Corrected missing code for idfrswp and idrfaci (17/12/2024, back-dated to 02/10/2019 to simplify diff with Hedstrom) (NOT FABM-RELATED)
 
 Nonlinear/set_data.F
 - Added RFABM-dependent update of wind_speed variable Swind (16/03/2015)
