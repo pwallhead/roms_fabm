@@ -534,6 +534,9 @@
       END DO
 # endif
 !!!End insert PWA 03/06/2022
+!!!Added condition PWA 13/08/2025 to ensure that (tke,gls) are not modified
+!!!in offline simulations forced by (tke,gls) input.
+# if !defined OFFLINE || !defined MIXCLIMATOLOGY
 !
 !-----------------------------------------------------------------------
 !  Time-step advective terms.
@@ -1124,10 +1127,24 @@
 !
             ql=sqrt2*0.5_r8*(Ls_lmt*SQRT(tke(i,j,k,nnew))+              &
      &                       Lscale(i,j,k)*SQRT(tke(i,j,k,nstp)))
+!!!Added OFFLINE conditions PWA 13/08/2025
+# ifdef OFFLINE
+#  if !defined AKVCLIMATOLOGY && !defined AKXCLIMATOLOGY
+            Akv(i,j,k)=Akv_bak(ng)+Sm*ql
+#  endif
+#  if !defined AKTCLIMATOLOGY && !defined AKXCLIMATOLOGY
+            Akt(i,j,k,itemp)=Akt_bak(itemp,ng)+Sh*ql
+#  endif
+#  if !defined AKSCLIMATOLOGY && !defined AKXCLIMATOLOGY
+            Akt(i,j,k,isalt)=Akt_bak(isalt,ng)+Sh*ql
+#  endif
+# else
             Akv(i,j,k)=Akv_bak(ng)+Sm*ql
             DO itrc=1,NAT
               Akt(i,j,k,itrc)=Akt_bak(itrc,ng)+Sh*ql
             END DO
+# endif
+
 !
 !  Compute vertical mixing (m2/s) coefficents of turbulent kinetic
 !  energy and generic statistical field.
@@ -1158,20 +1175,35 @@
 !  Compute vertical mixing coefficients at the surface and bottom.
 !
 !
+!!!Added OFFLINE condition PWA 13/08/2025
+# if !(defined OFFLINE && (defined AKVCLIMATOLOGY || defined AKXCLIMATOLOGY))
           Akv(i,j,N(ng))=Akv_bak(ng)+L_sft*Zos_eff(i)*gls_cmu0(ng)*     &
      &                   SQRT(tke(i,j,N(ng),nnew))
           Akv(i,j,0)=Akv_bak(ng)+vonKar*Zob_min(i,j)*gls_cmu0(ng)*      &
      &               SQRT(tke(i,j,0,nnew))
+# endif
 !
           Akk(i,j,N(ng))=Akk_bak(ng)+Akv(i,j,N(ng))/gls_sigk(ng)
           Akk(i,j,0)=Akk_bak(ng)+Akv(i,j,0)/gls_sigk(ng)
           Akp(i,j,N(ng))=Akp_bak(ng)+Akv(i,j,N(ng))*ogls_sigp
           Akp(i,j,0)=Akp_bak(ng)+Akv(i,j,0)/gls_sigp(ng)
 !
+!!!Added OFFLINE conditions PWA 13/08/2025
+# ifdef OFFLINE
+#  if !defined AKTCLIMATOLOGY && !defined AKXCLIMATOLOGY
+          Akt(i,j,N(ng),itemp)=Akt_bak(itemp,ng)
+          Akt(i,j,0,itemp)=Akt_bak(itemp,ng)
+#  endif
+#  if !defined AKSCLIMATOLOGY && !defined AKXCLIMATOLOGY
+          Akt(i,j,N(ng),isalt)=Akt_bak(isalt,ng)
+          Akt(i,j,0,isalt)=Akt_bak(isalt,ng)
+#  endif
+# else
           DO itrc=1,NAT
             Akt(i,j,N(ng),itrc)=Akt_bak(itrc,ng)
             Akt(i,j,0,itrc)=Akt_bak(itrc,ng)
           END DO
+# endif
 
 # if defined LIMIT_VDIFF || defined LIMIT_VVISC
 !
@@ -1193,6 +1225,7 @@
 # endif
         END DO
       END DO
+# endif
 !
 !-----------------------------------------------------------------------
 !  Set lateral boundary conditions.

@@ -119,9 +119,14 @@
 # ifdef SOLVE3D
           get_var(idUvel)=.TRUE.
           get_var(idVvel)=.TRUE.
+!!!Modified PWA 09/08/2025
+#  if !defined OFFLINE || (defined OFFLINE && defined ATCLIMATOLOGY)
+! KMT don't look for salt/temp if running offline, unless ATCLIMATOLOGY
           DO itrc=1,NAT
             get_var(idTvar(itrc))=.TRUE.
           END DO
+#  endif
+!!!End modified PWA 09/08/2025
 # endif
         END IF
 #else
@@ -131,9 +136,14 @@
 # ifdef SOLVE3D
         get_var(idUvel)=.TRUE.
         get_var(idVvel)=.TRUE.
+!!!Modified PWA 09/08/2025
+#  if !defined OFFLINE || (defined OFFLINE && defined ATCLIMATOLOGY)
+! KMT don't look for salt/temp if running offline, unless ATCLIMATOLOGY
         DO itrc=1,NAT
           get_var(idTvar(itrc))=.TRUE.
         END DO
+#  endif
+!!!End modified PWA 09/08/2025
 # endif
 #endif
 #ifdef SOLVE3D

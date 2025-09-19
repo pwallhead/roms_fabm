@@ -432,6 +432,9 @@
       END DO
 # endif
 !!!End insert PWA 03/06/2022
+!!!Added condition PWA 13/08/2025 to ensure that (tke,gls) are not modified
+!!!in offline simulations forced by (tke,gls) input.
+# if !defined OFFLINE || !defined MIXCLIMATOLOGY
 !
 !-----------------------------------------------------------------------
 !  Time-step advective terms.
@@ -831,10 +834,23 @@
 !
             ql=0.5_r8*(Ls_lmt*SQRT(tke(i,j,k,nnew))+                    &
      &                 Lscale(i,j,k)*SQRT(tke(i,j,k,nstp)))
+!!!Added OFFLINE conditions PWA 13/08/2025
+# ifdef OFFLINE
+#  if !defined AKVCLIMATOLOGY && !defined AKXCLIMATOLOGY
+            Akv(i,j,k)=Akv_bak(ng)+ql*Sm
+#  endif
+#  if !defined AKTCLIMATOLOGY && !defined AKXCLIMATOLOGY
+            Akt(i,j,k,itemp)=Akt_bak(itemp,ng)+ql*Sh
+#  endif
+#  if !defined AKSCLIMATOLOGY && !defined AKXCLIMATOLOGY
+            Akt(i,j,k,isalt)=Akt_bak(isalt,ng)+ql*Sh
+#  endif
+# else
             Akv(i,j,k)=Akv_bak(ng)+ql*Sm
             DO itrc=1,NAT
               Akt(i,j,k,itrc)=Akt_bak(itrc,ng)+ql*Sh
             END DO
+# endif
 !
 !  Compute vertical mixing (m2/s) coefficient of turbulent kinetic
 !  energy.  Use original formulation (Mellor and Yamada 1982;
@@ -865,6 +881,7 @@
           END DO
         END DO
       END DO
+# endif
 !
 !-----------------------------------------------------------------------
 !  Set lateral boundary conditions.

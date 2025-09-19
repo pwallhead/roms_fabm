@@ -145,6 +145,11 @@
       USE nesting_mod, ONLY : bry_fluxes
 # endif
       USE t3dbc_mod, ONLY : t3dbc_tile
+!!!Inserted PWA 09/08/2025
+# if defined OFFLINE_BIOLOGY
+      USE mod_biology
+# endif
+!!!End insert PWA 09/08/2025
 !
 !  Imported variable declarations.
 !
@@ -245,7 +250,7 @@
       integer :: Nisrc1,isrc1
 #endif
 !!!End modified PWA
-      integer :: i, ic, ii, is, itrc, j, jj, k, ltrc
+      integer :: i, ic, ii, is, itrc, ibt, j, jj, k, ltrc !!!Modified PWA 09/08/2025
 # if defined AGE_MEAN && defined T_PASSIVE
       integer :: iage
 # endif
@@ -385,7 +390,16 @@
 !  Horizontal tracer advection.  It is possible to have a different
 !  advection schme for each tracer.
 !
+!!!Modified PWA 09/08/2025
+# ifdef OFFLINE_BIOLOGY
+      T_LOOP1 : DO ibt=1,NBT
+        itrc=idbio(ibt)
+# elif defined OFFLINE_TPASSIVE
+      T_LOOP1 : DO itrc=NAT+1,NAT+NPT
+# else
       T_LOOP1 : DO itrc=1,NT(ng)
+# endif
+!!!End modified PWA 09/08/2025
 !
 !  The MPDATA and HSIMT algorithms requires a three-point footprint, so
 !  exchange boundary data on t(:,:,:,nnew,:) so other processes computed
@@ -900,7 +914,16 @@
 !  Time-step vertical advection term.
 !-----------------------------------------------------------------------
 !
+!!!Modified PWA 09/08/2025
+# ifdef OFFLINE_BIOLOGY
+      T_LOOP2 : DO ibt=1,NBT
+        itrc=idbio(ibt)
+# elif defined OFFLINE_TPASSIVE
+      T_LOOP2 : DO itrc=NAT+1,NAT+NPT
+# else
       T_LOOP2 : DO itrc=1,NT(ng)
+# endif
+!!!End modified PWA 09/08/2025
         IF (Vadvection(itrc,ng)%MPDATA) THEN
           JminT=JstrVm2
           JmaxT=Jendp2i
@@ -1220,7 +1243,16 @@
 !  using MPDATA recursive method.  Notice that pipelined J-loop ended.
 !-----------------------------------------------------------------------
 !
+!!!Modified PWA 09/08/2025
+# ifdef OFFLINE_BIOLOGY
+      T_LOOP3 : DO ibt=1,NBT
+        itrc=idbio(ibt)
+# elif defined OFFLINE_TPASSIVE
+      T_LOOP3 : DO itrc=NAT+1,NAT+NPT
+# else
       T_LOOP3 : DO itrc=1,NT(ng)
+# endif
+!!!End modified PWA 09/08/2025
         MPDATA : IF ((Hadvection(itrc,ng)%MPDATA).and.                  &
      &               (Vadvection(itrc,ng)%MPDATA)) THEN
           CALL mpdata_adiff_tile (ng, tile,                             &
@@ -1328,7 +1360,16 @@
 !-----------------------------------------------------------------------
 !
       J_LOOP2 : DO j=Jstr,Jend                  ! start pipelined J-loop
+!!!Modified PWA 09/08/2025
+#ifdef OFFLINE_BIOLOGY
+        DO ibt=1,NBT
+          itrc=idbio(ibt)
+#elif defined OFFLINE_TPASSIVE
+        DO itrc=NAT+1,NAT+NPT
+#else
         DO itrc=1,NT(ng)
+#endif
+!!!End modified PWA 09/08/2025
           ltrc=MIN(NAT,itrc)
 
 # ifdef SPLINES_VDIFF
@@ -1543,13 +1584,22 @@
 !  to tracer data and apply Land/Sea mask.
 !-----------------------------------------------------------------------
 !
+!!!Modified PWA 09/08/2025
+      ic=0
+#ifdef OFFLINE_BIOLOGY
+      DO ibt=1,NBT
+        itrc=idbio(ibt)
+#elif defined OFFLINE_TPASSIVE
+      DO itrc=NAT+1,NAT+NPT
+#else
 !  Initialize tracer counter index. The "tclm" array is only allocated
 !  to the NTCLM fields that need to be processed. This is done to
 !  reduce memory.
 !
-      ic=0
 !
       DO itrc=1,NT(ng)
+#endif
+!!!End modified PWA 09/08/2025
 !
 !  Set compact reduced memory tracer index for nudging coefficients and
 !  climatology arrays.

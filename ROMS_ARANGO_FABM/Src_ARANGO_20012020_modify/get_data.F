@@ -1253,6 +1253,84 @@
         END IF
       END DO
 # endif
+!!!Inserted PWA 10/08/2025
+! Added by DJ ------------------------------------
+
+# if !defined ANA_AKTCLIMA || !defined ANA_VMIX
+# if defined AKTCLIMATOLOGY || defined AKXCLIMATOLOGY
+      !write(*,*) 'reading AKt in climatology file'
+      CALL get_3dfld (ng, iNLM, idAKtclm, ncCLMid(idAKtclm,ng),         &
+     &                nCLMfiles(ng), CLM(1,ng), update(1),              &
+     &                LBi, UBi, LBj, UBj, 0, N(ng), 2, 1,               &
+#  ifdef MASKING
+     &                GRID(ng) % rmask,                                 &
+#  endif
+     &                CLIMA(ng) % AKtclmG)
+          IF (FoundError(exit_flag, NoError, __LINE__,                  &
+     &                   __FILE__)) RETURN
+# endif
+# if defined AKSCLIMATOLOGY || defined AKXCLIMATOLOGY
+      !write(*,*) 'reading AKs in climatology file'
+      CALL get_3dfld (ng, iNLM, idAKsclm, ncCLMid(idAKsclm,ng),         &
+     &                nCLMfiles(ng), CLM(1,ng), update(1),              &
+     &                LBi, UBi, LBj, UBj, 0, N(ng), 2, 1,               &
+#   ifdef MASKING
+     &                GRID(ng) % rmask,                                 &
+#   endif
+     &                CLIMA(ng) % AKsclmG)
+          IF (FoundError(exit_flag, NoError, __LINE__,                  &
+     &                   __FILE__)) RETURN
+# endif
+# if defined AKVCLIMATOLOGY || defined AKXCLIMATOLOGY
+      !write(*,*) 'reading AKv in climatology file'
+      CALL get_3dfld (ng, iNLM, idAKvclm, ncCLMid(idAKvclm,ng),         &
+     &                nCLMfiles(ng), CLM(1,ng), update(1),              &
+     &                LBi, UBi, LBj, UBj, 0, N(ng), 2, 1,               &
+#  ifdef MASKING
+     &                GRID(ng) % rmask,                                 &
+#  endif
+     &                CLIMA(ng) % AKvclmG)
+          IF (FoundError(exit_flag, NoError, __LINE__,                  &
+     &                   __FILE__)) RETURN
+# endif
+# if defined TKECLIMATOLOGY || defined MIXCLIMATOLOGY
+      !write(*,*) 'reading TKE in climatology file'
+      CALL get_3dfld (ng, iNLM, idtkeclm, ncCLMid(idtkeclm,ng),         &
+     &                nCLMfiles(ng), CLM(1,ng), update(1),              &
+     &                LBi, UBi, LBj, UBj, 0, N(ng), 2, 1,               &
+#  ifdef MASKING
+     &                GRID(ng) % rmask,                                 &
+#  endif
+     &                CLIMA(ng) % tkeclmG)
+          IF (FoundError(exit_flag, NoError, __LINE__,                  &
+     &                   __FILE__)) RETURN
+# endif
+# if defined GLSCLIMATOLOGY || defined MIXCLIMATOLOGY
+      !write(*,*) 'reading GLS in climatology file'
+      CALL get_3dfld (ng, iNLM, idglsclm, ncCLMid(idglsclm,ng),         &
+     &                nCLMfiles(ng), CLM(1,ng), update(1),              &
+     &                LBi, UBi, LBj, UBj, 0, N(ng), 2, 1,               &
+#  ifdef MASKING
+     &                GRID(ng) % rmask,                                 &
+#  endif
+     &                CLIMA(ng) % glsclmG)
+          IF (FoundError(exit_flag, NoError, __LINE__,                  &
+     &                   __FILE__)) RETURN
+
+# endif
+# endif
+# if !defined ANA_OCLIMA && defined OCLIMATOLOGY
+      CALL get_3dfld (ng, iNLM, idOclm, ncCLMid(idOclm,ng),             &
+     &                nCLMfiles(ng), CLM(1,ng), update(1),              &
+     &                LBi, UBi, LBj, UBj, 0, N(ng), 2, 1,               &
+#  ifdef MASKING
+     &                GRID(ng) % rmask,                                 &
+#  endif
+     &                CLIMA(ng) % oclmG)
+          IF (FoundError(exit_flag, NoError, __LINE__,                  &
+     &                   __FILE__)) RETURN
+# endif
+!!!End insert PWA 10/08/2025
 #endif
 !!!End modified PWA 20/11/2019
 

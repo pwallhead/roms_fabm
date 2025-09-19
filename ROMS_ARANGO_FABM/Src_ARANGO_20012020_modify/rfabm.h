@@ -38,6 +38,7 @@
 !  Local variable declarations.
 !
 #include "tile.h"
+      IF (nFABM(ng).gt.0) THEN !NOTE: This means that (FABM biology + sinking) can be switched off by setting nFABM=0.
       IF (MOD(iic(ng)-1,nFABM(ng)).eq.0) THEN
 
 !
@@ -80,6 +81,7 @@
 #ifdef PROFILE
       CALL wclock_off (ng, iNLM, 15, __LINE__, __FILE__)
 #endif
+      END IF
       END IF
       RETURN
       END SUBROUTINE biology

@@ -1,6 +1,12 @@
 ﻿GENERAL OVERVIEW
 ================
 
+NEW! 19/09/2025: Code to enable offline FABM biology simulation (cpp OFFLINE_BIOLOGY) based on modifications
+                 from Thyng et al. (2021) and Crespin et al. (2025).
+                 This is currently only included in the trunk code (ROMS_ARANGO_FABM) and has *not yet
+                 been successfully tested*.
+NEW! 19/09/2025: Code for coupling FABM with METROMS-CICE code (based on ROMS trunk version 1041).
+                 This has been successfully tested and should be ready to use.
 NEW! 25/06/2022: Cpp CAP_WSINK_CFL to limit sinking velocity using maximum CFL parameter maxCFLwsink
                  input via rfabm.in (presently only coded for ARANGO branch).
 NEW! 21/06/2022: Cpps (CALC_TDR,CALC_TSR) to calculate turbulent dissipation/shear rates within ROMS

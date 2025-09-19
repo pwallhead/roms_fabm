@@ -817,3 +817,19 @@
 #if !defined VISC_3DCOEF && defined UV_SMAGORINSKY
 # define VISC_3DCOEF
 #endif
+
+!!!Inserted PWA 09/08/2025
+/*
+ Define Mixing climatology
+ Added by DJ
+ */
+
+#if defined TKECLIMATOLOGY && defined GLSCLIMATOLOGY
+# define MIXCLIMATOLOGY
+#endif
+
+#if defined AKTCLIMATOLOGY && defined AKVCLIMATOLOGY && \
+    defined AKSCLIMATOLOGY
+# define AKXCLIMATOLOGY
+#endif
+!!!End insert PWA 09/08/2025

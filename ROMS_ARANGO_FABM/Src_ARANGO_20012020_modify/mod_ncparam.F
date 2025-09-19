@@ -191,6 +191,23 @@
 !
 !  Input/output identification indices.
 !
+!!!Inserted PWA 10/08/2025
+#if defined AKSCLIMATOLOGY || defined AKXCLIMATOLOGY
+        integer  :: idAKsclm        ! 3D Aks (salinity) climatology
+#endif
+#if defined AKVCLIMATOLOGY || defined AKXCLIMATOLOGY
+        integer  :: idAKvclm        ! 3D Akv (momemtum) climatology
+#endif
+#if defined AKTCLIMATOLOGY || defined AKXCLIMATOLOGY
+        integer  :: idAKtclm        ! 3D Akt (temperature) climatology
+#endif
+#if defined TKECLIMATOLOGY || defined MIXCLIMATOLOGY
+        integer  :: idtkeclm        ! 3D TKE climatology
+#endif
+#if defined GLSCLIMATOLOGY || defined MIXCLIMATOLOGY
+        integer  :: idglsclm        ! 3D gls (length scale) climatology
+#endif
+!!!End insert PWA 10/08/2025
         integer  :: idAice        ! fraction of cell covered by ice
         integer  :: idbath        ! bathymetry
         integer  :: idBgEr        ! Background error at observations
@@ -255,6 +272,9 @@
         integer  :: idOtyp        ! observations type
         integer  :: idOval        ! observations value
         integer  :: idOvel        ! omega vertical velocity
+!!!Inserted PWA 16/08/2025
+        integer  :: idOclm        ! omega vertical velocity climatology
+!!!End insert PWA 16/08/2025
         integer  :: idQair        ! surface air humidity
         integer  :: idPair        ! surface air pressure
         integer  :: idPbar        ! streamfunction
@@ -1401,6 +1421,28 @@
               idGhat(itemp)=varid
             CASE ('idGhat(isalt)')
               idGhat(isalt)=varid
+!!!Inserted PWA 10/08/2025
+#if defined AKTCLIMATOLOGY || defined AKXCLIMATOLOGY
+            CASE ('idAKtclm')  !Added by DJ
+              idAKtclm=varid
+#endif
+#if defined AKSCLIMATOLOGY || defined AKXCLIMATOLOGY
+            CASE ('idAKsclm')  !Added by DJ
+              idAKsclm=varid
+#endif
+#if defined AKVCLIMATOLOGY || defined AKXCLIMATOLOGY
+            CASE ('idAKvclm')  !Added by DJ
+              idAKvclm=varid
+#endif
+#if defined TKECLIMATOLOGY || defined MIXCLIMATOLOGY
+            CASE ('idtkeclm')  !Added by DJ
+              idtkeclm=varid
+#endif
+#if defined GLSCLIMATOLOGY || defined MIXCLIMATOLOGY
+            CASE ('idglsclm')  !Added by DJ
+              idglsclm=varid
+#endif
+!!!End insert PWA 10/08/2025
             CASE ('idMtke')
               idMtke=varid
             CASE ('idMtls')
@@ -1684,6 +1726,10 @@
               idUclm=varid
             CASE ('idVclm')
               idVclm=varid
+!!!Inserted PWA 16/08/2025
+            CASE ('idOclm')
+              idOclm=varid
+!!!End insert PWA 16/08/2025
             CASE ('idSSSc')
               idSSSc=varid
             CASE ('idSSTc')
