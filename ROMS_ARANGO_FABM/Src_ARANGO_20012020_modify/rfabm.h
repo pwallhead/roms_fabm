@@ -39,7 +39,7 @@
 !
 #include "tile.h"
       IF (nFABM(ng).gt.0) THEN !NOTE: This means that (FABM biology + sinking) can be switched off by setting nFABM=0.
-      IF (MOD(iic(ng)-1,nFABM(ng)).eq.0) THEN
+      IF (MOD(iic(ng)-ntstart(ng),nFABM(ng)).eq.0) THEN
 
 !
 !  Set header file name.

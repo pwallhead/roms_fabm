@@ -1,5 +1,15 @@
-﻿GENERAL OVERVIEW
-================
+﻿ANNOUNCEMENTS
+=============
+
+BUG FIX! 25/10/2025: This concerns only configurations of (METROMS, ARANGO, COAWST) code branches
+using multiple physical time steps per FABM bgc time step (nFABM>1) which are also subject to restart.
+The condition on computing FABM BGC was incorrectly based on 'iic(ng)-1' rather than 'iic(ng)-ntstart(ng)'.
+This has been corrected.
+BUG FIX! 25/10/2025: This concerns only configurations of METROMS and ARANGO code branches using
+TS_ISOURCE which are restarted part-way through the simulation period. The condition to read in
+the internal source configuration in step3d_t.F was incorrectly requiring 'iic(ng).eq.1' instead
+of 'iic(ng).eq.ntstart(ng)'. Use of the former meant that internal forcing data was not being applied
+in simulations after restart (where iic(ng)>1). This has been corrected.
 
 NEW! 19/09/2025: Code to enable offline FABM biology simulation (cpp OFFLINE_BIOLOGY) based on modifications
                  from Thyng et al. (2021) and Crespin et al. (2025).
@@ -12,6 +22,10 @@ NEW! 25/06/2022: Cpp CAP_WSINK_CFL to limit sinking velocity using maximum CFL p
 NEW! 21/06/2022: Cpps (CALC_TDR,CALC_TSR) to calculate turbulent dissipation/shear rates within ROMS
                  and cpps (FABM_MU,FABM_NU,FABM_TDR,FABM_TSR) to link viscosities and turbulent
                  dissipation/shear rates with FABM (presently only coded for ARANGO branch).
+
+
+GENERAL OVERVIEW
+================
 
 The ROMS-FABM coupling has been developed to allow use of the FABM framework for biogeochemical modelling
 within the ROMS regional ocean modelling system, see:

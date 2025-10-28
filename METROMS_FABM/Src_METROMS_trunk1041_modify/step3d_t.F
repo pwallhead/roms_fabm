@@ -360,7 +360,7 @@
 
 !!!Modified PWA 21/10/2021
 #ifdef TS_ISOURCE
-      IF (iic(ng).eq.1) THEN
+      IF (iic(ng).eq.ntstart(ng)) THEN
         ic=0
         DO is=1,Nisrc(ng)
           Isrc=SOURCES(ng)%Iisrc(is)

@@ -349,6 +349,7 @@ Nonlinear/Biology/rfabm.h (from npzd_Franks.h, note: COAWST and ARANGO versions 
 - Annexed debugging screen output (under icheckmax etc.) to under DEBUGFABM cpp (03/06/2022)
 - Modified to use parameters dtFABM(ng) from mod_scalars (03/06/2022)
 - Introduced optional CFL-based limit on sinking velocity under CAP_WSINK_CFL, using parameter maxCFLwsink from rfabm.in (25/06/2022)
+- BUG FIX! Corrected 'iic(ng)-1' to 'iic(ng)-ntstart(ng)' in condition on nFABM (28/10/2025)
 
 Nonlinear/rho_eos.F
 - Added RFABM-dependent update of rhof from rho and water pressure (pres) calculation (16/03/2015)
@@ -418,6 +419,7 @@ Nonlinear/step3d_t.F (NOT FABM-RELATED)
 - Updated to define TS_ISOURCE input as points sources instead of full-grid forcing (19/10/2021)
 - Added comment under TS_ISOURCE code regarding use of index 'tile+1' (16/09/2022)
 - Modified loop indices to account for OFFLINE_BIOLOGY/TPASSIVE following K.M. Thyng code (COAWST-ROMS-OIL) (09/08/2025)
+- BUG FIX! Corrected 'iic(ng).eq.1' to 'iic(ng).eq.ntstart(ng)' (28/10/2025)
 
 Nonlinear/t3dmix2_geo.h (NOT FABM-RELATED)
 - Modified loop indices to account for OFFLINE_BIOLOGY/TPASSIVE following K.M. Thyng code (COAWST-ROMS-OIL) (09/08/2025)

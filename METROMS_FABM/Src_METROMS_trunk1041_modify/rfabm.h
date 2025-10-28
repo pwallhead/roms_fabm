@@ -41,7 +41,7 @@
 !  Local variable declarations.
 !
 #include "tile.h"
-      IF (MOD(iic(ng)-1,nFABM(ng)).eq.0) THEN
+      IF (MOD(iic(ng)-ntstart(ng),nFABM(ng)).eq.0) THEN
 
 !
 !  Set header file name.
