@@ -1,10 +1,10 @@
 !  RFABM Model Parameters.
 !
-!svn $Id: npzd_Franks.in 1001 2020-01-10 22:41:16Z arango $
+! git $Id$
 !========================================================= Hernan G. Arango ===
-!  Copyright (c) 2002-2020 The ROMS/TOMS Group                                !
+!  Copyright (c) 2002-2025 The ROMS Group                                     !
 !    Licensed under a MIT/X style license                                     !
-!    See License_ROMS.txt                                                     !
+!    See License_ROMS.md                                                      !
 !==============================================================================
 !                                                                             !
 ! Input parameters can be entered in ANY order, provided that the parameter   !
@@ -238,17 +238,17 @@
 ! or in nested applications
 !
 !  Hadvection == U3       \                     ! temperature, Grid 1
-!                U3       \                     ! temperature, Grid 2
-!                U3       \                     ! temperature, Grid 3
 !                HSIMT    \                     ! salinity,    Grid 1
+!                U3       \                     ! temperature, Grid 2
 !                HSIMT    \                     ! salinity,    Grid 2
+!                U3       \                     ! temperature, Grid 3
 !                HSIMT                          ! salinity,    Grid 3
 !
 !  Vadvection == C4       \                     ! temperature, Grid 1
-!                C4       \                     ! temperature, Grid 2
-!                C4       \                     ! temperature, Grid 3
 !                HSIMT    \                     ! salinity,    Grid 1
+!                C4       \                     ! temperature, Grid 2
 !                HSIMT    \                     ! salinity,    Grid 2
+!                C4       \                     ! temperature, Grid 3
 !                HSIMT                          ! salinity,    Grid 3
 !
 ! It is convinient to use the compact specification format for biological and
@@ -406,6 +406,7 @@
 !                   are expected:
 !
 !                   Hout(idTvar)              biological tracers
+!                   Hout(idzslT)              constant depth slices
 !                   Hout(idTsur)              biological tracers surface flux
 !
 !------------------------------------------------------------------------------
@@ -417,11 +418,13 @@
 !                     are expected:
 !
 !                     Qout(idTvar)      biological tracers
+!                     Qout(idzslT)      constant depth slices
 !                     Qout(idsurT)      surface biological tracers
 !                     Qout(idTsur)      biological tracers surface flux
 !
-!                     The idTvar(idbio(:)), idsurR(idbio(:)), and
-!                     idTsur(idbio(:)) indices are provided above.
+!                     The idTvar(idbio(:)), idzslT(idbio(:)),
+!                     idsurT(idbio(:)), and idTsur(idbio(:)) indices
+!                     are provided above.
 !
 !------------------------------------------------------------------------------
 ! Logical switches (T/F) to activate writing of fields into AVERAGE file.

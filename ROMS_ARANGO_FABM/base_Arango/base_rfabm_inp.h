@@ -1,10 +1,10 @@
       SUBROUTINE read_BioPar (model, inp, out, Lwrite)
 !
-!svn $Id: npzd_Franks_inp.h 1001 2020-01-10 22:41:16Z arango $
+!git $Id$
 !================================================== Hernan G. Arango ===
-!  Copyright (c) 2002-2020 The ROMS/TOMS Group                         !
+!  Copyright (c) 2002-2025 The ROMS Group                              !
 !    Licensed under a MIT/X style license                              !
-!    See License_ROMS.txt                                              !
+!    See License_ROMS.md                                               !
 !=======================================================================
 !                                                                      !
 !  This routine reads in the tracer diffusivity, nudging, and output   !
@@ -318,6 +318,20 @@
                   Hout(i,ng)=Ltrc(itrc,ng)
                 END DO
               END DO
+            CASE ('Hout(idzslT)')
+              Npts=load_l(Nval, Cval, NBT, Ngrids, Ltrc)
+              DO ng=1,Ngrids
+                DO itrc=1,NBT
+                  i=idzslT(idbio(itrc))
+                  IF (i.eq.0) THEN
+                    IF (Master) WRITE (out,30)                          &
+     &                                'idzslT(idbio(', itrc, '))'
+                    exit_flag=5
+                    RETURN
+                  END IF
+                  Hout(i,ng)=Ltrc(itrc,ng)
+                END DO
+              END DO
             CASE ('Hout(idTsur)')
               Npts=load_l(Nval, Cval, NBT, Ngrids, Ltrc)
               DO ng=1,Ngrids
@@ -337,6 +351,14 @@
               DO ng=1,Ngrids
                 DO itrc=1,NBT
                   i=idTvar(idbio(itrc))
+                  Qout(i,ng)=Ltrc(itrc,ng)
+                END DO
+              END DO
+            CASE ('Qout(idzslT)')
+              Npts=load_l(Nval, Cval, NBT, Ngrids, Ltrc)
+              DO ng=1,Ngrids
+                DO itrc=1,NBT
+                  i=idzslT(idbio(itrc))
                   Qout(i,ng)=Ltrc(itrc,ng)
                 END DO
               END DO
@@ -571,7 +593,7 @@
 !  Report input parameters.
 !-----------------------------------------------------------------------
 !
-      IF (Lwrite) THEN
+      IF (Master.and.Lwrite) THEN
         DO ng=1,Ngrids
           IF (Lbiology(ng)) THEN
             WRITE (out,50) ng
@@ -674,20 +696,6 @@
               END IF
             END DO
 !!!Inserted PWA 07/02/2020
-# ifdef ROMS_ISOURCES
-            DO itrc=1,NBT
-              i=idbio(itrc)
-              IF (LtracerIbio(itrc,ng)) THEN
-                WRITE (out,100) LtracerIbio(itrc,ng),'LtracerIbio',itrc,&
-     &              'Turning ON internal sources/Sink on tracer ', i,   &
-     &              TRIM(Vname(1,idTvar(i)))
-              ELSE
-                WRITE (out,100) LtracerIbio(itrc,ng),'LtracerIbio',itrc,&
-     &              'Turning OFF internal sources/Sink on tracer ',i,   &
-     &              TRIM(Vname(1,idTvar(i)))
-              END IF
-            END DO
-# endif
 # ifdef TS_ISOURCE
             DO itrc=1,NBT
               i=idbio(itrc)
@@ -737,6 +745,13 @@
               END DO
               DO itrc=1,NBT
                 i=idbio(itrc)
+                IF (Hout(idzslT(i),ng)) WRITE (out,110)                 &
+     &              Hout(idzslT(i),ng), 'Hout(idzslT)',                 &
+     &              'Write out depth slices tracer ', i,                &
+     &              TRIM(Vname(1,idTvar(i)))
+              END DO
+              DO itrc=1,NBT
+                i=idbio(itrc)
                 IF (Hout(idTsur(i),ng)) WRITE (out,110)                 &
      &              Hout(idTsur(i),ng), 'Hout(idTsur)',                 &
      &              'Write out tracer flux ', i,                        &
@@ -750,6 +765,13 @@
                 IF (Qout(idTvar(i),ng)) WRITE (out,110)                 &
      &              Qout(idTvar(i),ng), 'Qout(idTvar)',                 &
      &              'Write out tracer ', i, TRIM(Vname(1,idTvar(i)))
+              END DO
+              DO itrc=1,NBT
+                i=idbio(itrc)
+                IF (Qout(idzslT(i),ng)) WRITE (out,110)                 &
+     &              Qout(idzslT(i),ng), 'Qout(idzslT)',                 &
+     &              'Write out depth slices tracer ', i,                &
+     &              TRIM(Vname(1,idTvar(i)))
               END DO
               DO itrc=1,NBT
                 i=idbio(itrc)

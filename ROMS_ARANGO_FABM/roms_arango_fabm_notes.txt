@@ -1,4 +1,4 @@
-﻿Modified Arango ROMS source files (latest version 20012020)
+﻿Modified Arango ROMS source files (latest version 19012026)
 -----------------------------------------------------------
 
 Insertions and modifications can be browsed by searching "PWA" or "!!!" (if appropriate) in each modified file in Src_..._modify.
@@ -26,23 +26,31 @@ FABM_TSS (13/12/2020)
 FABM_TSS_ONLINE (13/12/2020)
 CALC_TDR, CALC_TSR (21/06/2022)
 OFFLINE_BIOLOGY/TPASSIVE and related CLIMATOLOGY cpps from K.M. Thyng COAWST-ROMS-OIL code (NOT FABM-RELATED, 09/08/2025)
+- Updated in 19012026 code, removing obsolete code for (FABM_ASILT, FABM_ISOURCES, FABM_ADYTRACER) (21/01/2026)
 
 Utility/check_multifile.F (NOT FABM-RELATED):
 - Added code to allow multiple bry/clm/ssf files, following Hedstrom 14092019 code (20/11/2019)
   - Note: multiple bry/clm files can be convenient for complex models, helping to avoid large input files
   - Updated following the new Arango call-to-subroutine structure (20/01/2020)
 - Added code to allow TS_ISOURCE-dependent input from multiple internal sources files (19/10/2021)
+- Updated in 19012026 code (21/01/2026)
+  Note: The 19012026 code seems to generally enable multiple bry/clm (but not ssf) files.
+        However, some code in this file seemed to be still not fully adapted to allow
+        multiple bry/clm files, specifically the setting of max_files not using MAXVAL.
+        We have corrected this, using MAXVAL as requested by the subroutine and as done in the Hedstrom code.
 
 Utility/checkvars.F:
 - set get_var to TRUE depending on (FABM_INITIAL, FABM_INITIAL_SB) if RFABM defined (23/11/2018)
   (avoids searching for netcdf ICs when FABM default ICs are used)
 - Modified conditions following K.M. Thyng OFFLINE code from COAWST-ROMS-OIL
   plus corrections from J. Crespin OfflineFennel code (NOT FABM-RELATED, 09/08/2025)
+- Transferred alterations to 19012026 code (21/01/2026)
 
 Utility/close_io.F (NOT FABM-RELATED):
 - Added code for multiple bry/clm/ssf files, following Hedstrom 14092019 code (20/11/2019)
   - Note: Hedstrom does not set BRYids, ncBRYid etc. to -1 by analogy with forcing code --- something to improve?
   - Updated following the new Arango code for forcing files (20/01/2020)
+- Updated in 19012026 code, now only modifications needed for multiple ssf and issf files (21/01/2026)
 
 Utility/def_avg.F:
 - Added RFABM-dependent code to define NetCDF averages for:
@@ -55,10 +63,15 @@ Utility/def_avg.F:
 - Changed index name idSUVav -> idSUV (11/09/2020)
 - Added definition of NetCDF averages for idtss (total suspended sediments) (13/12/2020)
 - Added definitions for (idMtdr,idMtsr) (turbulent dissipation rate, turbulent shear rate) (03/06/2022) (NOT FABM-RELATED)
+- Updated in 19012026 code following new error contingency and Vinfo(21), corrected cpp indent levels,
+  adding code for parallel-IO, and removing code for (FABM_ASILT, FABM_ISOURCES, FABM_ADYTRACER) (21/01/2026)
+  Consolidated placement of all new variables to the end, before calls to bbl_def_nf90 etc.
+  CHECK: All (scalar,vector) variables should have (32,30) id instances from 'find'. 
 
 Utility/def_diags.F:
 - Added RFABM-dependent code to define NetCDF FABM diagnostic variables (07/08/2019)
   NOTE: This was not needed in the Hedstrom code, since the definitions were only tield to DIAGNOSTICS_BIO cpp
+- Updated in 19012026 code --- now simply add RFABM cpp contingencies to match BIO_FENNEL (22/01/2026)
 
 Utility/def_his.F:
 - Added RFABM-dependent code to define NetCDF history variables:
@@ -67,20 +80,30 @@ Utility/def_his.F:
 - Added RFABM+(FABM_N3ATMDEPO,FABM_N4ATMDEPO,FABM_ISOURCES)-dependent code to define NetCDF history variables N3atmd, N4atmd, Isources (27/01/2020)
 - Added code to define NetCDF history variable tss (total suspended sediments) (13/12/2020)
 - Added definitions for (idMtdr,idMtsr) and (idMmu,idMnu) (dynamic,kinematic viscosity) (03/06/2022) (NOT FABM-RELATED)
+- Updated in 19012026 code following new error contingency and Vinfo(21),
+  adding code for parallel-IO, and removing code for (FABM_ASILT, FABM_ISOURCES, FABM_ADYTRACER) (21/01/2026)
+  Consolidated placement of all new variables to the end, before calls to bbl_def_nf90 etc.
+  CHECK: All (scalar,vector) variables should have (32,30) id instances from 'find'. 
 
 Utility/def_info.F (NOT FABM-RELATED):
 - Added code for multiple bry/clm/ssf files, following Hedstrom 14092019 code (20/11/2019)
 - Added TS_ISOURCE-dependent definition of LtracerISrc netcdf info variable (07/02/2020)
 - Added RFABM+FABM_ISOURCES-dependent definition of LtracerIbio netcdf info variable (10/02/2020)
 - Increased dimension of 'string' (4096-8192) to write names of forcings split over MANY files (20/01/2022) (NOT FABM-RELATED)
+- Updated in 19012026 code removing FABM_ISOURCES and modifications for multiple bry/clm/ssf files (now not needed) (21/01/2026)
 
 Utility/def_quick.F:
 - Added RFABM+(SHORTWAVE,FABM_ASILT,FABM_PCO2ATM,FABM_N3ATMDEPO,FABM_N4ATMDEPO,FABM_ISOURCES)-dependent code to define NetCDF quick variables:
 (srfWm2,Asilt,xCO2atm,pCO2atm,N3atmd,N4atmd,Isource,state_bt,state_sf) (27/01/2020)
+- Updated in 19012026 code following new error contingency and Vinfo(21), iNLM->model,
+  adding code for parallel-IO, and removing code for (FABM_ASILT, FABM_ISOURCES, FABM_ADYTRACER) (21/01/2026)
+  Consolidated placement of all new variables to the end, before calls to bbl_def_nf90 etc.
+  CHECK: All (scalar,vector) variables should have (32,30) id instances from 'find'.
 
 Utility/def_rst.F:
 - Added RFABM-dependent code to define surface/bottom attached restart values (24/04/2017)
 - Removed spurious Hout condition on definition of surface/bottom attached restart variables (01/10/2022)
+- Updated in 19012026 code following new error contingency and Vinfo(21), iNLM->model (21/01/2026)
 
 Utility/def_station.F:
 - Added RFABM-dependent code to define NetCDF station variables (srfWm2,Asilt,xCO2atm,pCO2atm,state_bt,state_sf) (06/08/2019)
@@ -89,13 +112,14 @@ Utility/def_station.F:
 - Added code to define NetCDF station variables (suv,bstrPa) (14/09/2020) (NOT FABM-RELATED)
 - Added definition of NetCDF station output for idtss (total suspended sediments) (13/12/2020)
 - Added definitions for (idMtdr,idMtsr,idMmu,idMnu) (03/06/2022) (NOT FABM-RELATED)
+- Updated in 19012026 code following new error contingency, iNLM->model,
+  adding code for parallel-IO, and removing code for (FABM_ASILT, FABM_ISOURCES, FABM_ADYTRACER) (21/01/2026)
+  Consolidated placement of all new variables to the end, before calls to bbl_def_nf90 etc.
+  CHECK: All (scalar,vector) variables should have 28 id instances from 'find'.
 
 Nonlinear/diag.F: (optional, not FABM-related)
 - Transferred Hedstrom/PWA modifications to allow biological output diagnostics, including minimum values (22/07/2019)
-
-Nonlinear/gls_corstep.F:
-- Added CALC_TDR/CALC_TSR-dependent calculations of turbulent dissipation/shear rates and viscosities (03/06/2022) (NOT FABM-RELATED)
-- Added code under OFFLINE to prevent undesired modification of (Akv,Akt) (NOT FABM-RELATED, 13/08/2025)
+- Adapted Hedstrom/PWA modifications to 19012026 code to allow biological output diagnostics, including minimum values (21/01/2026)
 
 Nonlinear/get_data.F:
 - Added RFABM+FABM_ASILT-dependent getting of Asilt data (16/04/2017)
@@ -107,49 +131,66 @@ Nonlinear/get_data.F:
 - Added RFABM+FABM_ISOURCES-dependent getting of Isources data (10/02/2020)
 - Updated to define TS_ISOURCE input as points sources instead of full-grid forcing (19/10/2021)
 - Added getting for new CLIMATOLOGY variables associated with Thyng OFFLINE code (NOT FABM-RELATED, 10/08/2025)
+- Updated in 19012026 code following new error contingency, correcting ncFRCid->FRCncid etc.,
+  adding code for parallel-IO, and removing code for (FABM_ASILT, FABM_ISOURCES, FABM_ADYTRACER) (21/01/2026)
+  Note: Previous code to allow multifiles for BRY no longer needed.
 
 Nonlinear/get_idata.F (NOT FABM-RELATED):
 - Added code to allow for multiple ssf files, following Hedstrom 14092019 code (20/11/2019)
 - Added TS_ISOURCE-dependent input of internal point source position data (19/10/2021)
+- Updated in 19012026 code following new error contingency, correcting ncSSFid->SSFncid,
+  adding code for parallel-IO.
 
 Utility/get_state.F
 - Added RFABM-dependent reading in of surface/bottom-attached initial conditions (09/02/2020)
+- Updated in 19012026 code following new error contingency and added code for CHECKSUM cpp (21/01/2026)
 
 Include/globaldefs.h:
 - Modified cpp corrections to switch on BIOLOGY if RFABM activated (27/07/2019)
 - Modified cpp corrections to allow DIAGNOSTICS_BIO if RFABM activated (27/07/2019)
 - Added cpp corrections for new CLIMATOLOGY cpps associated with Thyng OFFLINE code (NOT FABM-RELATED, 10/08/2025)
+- Transferred modifications to 19012026 code (21/01/2026)
+
+Nonlinear/gls_corstep.F (NOT FABM-RELATED):
+- Added CALC_TDR/CALC_TSR-dependent calculations of turbulent dissipation/shear rates and viscosities (03/06/2022)
+- Added code under OFFLINE to prevent undesired modification of (Akv,Akt) (13/08/2025)
+- Transferred modifications to 19012026 code (21/01/2026)
 
 Nonlinear/ini_fields.F (NOT FABM-RELATED)
 - Modified conditions following K.M. Thyng OFFLINE code from COAWST-ROMS-OIL (09/08/2025)
+- Transferred modifications to 19012026 code (21/01/2026)
 
 Utility/inp_decode.F
 - Increased nCval (200->500) to allow for forcings split over MANY files (20/01/2022) (NOT FABM-RELATED)
-
-Utility/inp_par.F
-- Updated to latest Arango code to account for bug fix #845 (11/03/2020) (NOT FABM-RELATED)
+- Transferred modifications to 19012026 code (21/01/2026)
 
 Utility/inquiry.F (NOT FABM-RELATED):
 - Added code for multiple bry/clm/ssf files, following Hedstrom 14092019 (20/11/2019)
 NOTE: We do NOT include Kate's automatic conversion of temperature data from Kelvin to Celsius (too dangerous!)
 - Updated with small changes for consistency with new Arango code (24/01/2020)
 - Updated to allow TS_ISOURCE input as points sources instead of full-grid forcing (19/10/2021)
+- Adapted modifications to 19012026 code (21/01/2026)
+POTENTIAL BUG IN 19012026 CODE:
+  Missing assignment 'Fcount=S(ifile)%Fcount' around line 200.
 
 Utility/lbc.F:
 - RFABM-dependent doubling of the length of lbc_att to allow for ERSEM-type models (02/11/2015)
 - Changed to RFABM-dependent quadrupling and also apply to lbc_getatt (18/09/2018)
-
-Compilers/Linux-ftn.mk (PLATFORM DEPENDENT)
-- Added FABM library linking commands to "LIBS", dependent on USE_FABM macro (04/03/2015)
-- Modified initial setting of LIBS to capture cyclical dependencies, following new Arango code (24/01/2020)
+- Transferred modifications to 19012026 code (21/01/2026)
 
 Compilers/Linux-ifort.mk (PLATFORM DEPENDENT)
 - Added FABM library linking commands to "LIBS", dependent on USE_FABM macro (04/03/2015)
 - Platform-dependent modifications for STALLO, FRAM (01/08/2019)
 - Modified initial setting of LIBS to capture cyclical dependencies, following new Arango code (24/01/2020)
+- Transferred modifications to 19012026 code (21/01/2026)
+  Note: In the 19012026 code, LIBS is *not* set initially to capture cyclical dependencies
+
+Compilers/Linux-ifx.mk (PLATFORM DEPENDENT)
+- Transferred modifications from 19012026 code for Linux-ifort.mk (21/01/2026)
 
 Nonlinear/main3d.F (NOT FABM-RELATED)
 - Modified condition following K.M. Thyng OFFLINE code from COAWST-ROMS-OIL (09/08/2025)
+- Transferred modification to 19012026 code (21/01/2026)
 
 Nonlinear/main3d_offline.F (NOT FABM-RELATED)
 - New file based on main3d.F, merging in K.M. Thyng OFFLINE/OFFLINE_TPASSIVE code from COAWST-ROMS-OIL (09/08/2025)
@@ -164,17 +205,21 @@ Nonlinear/main3d_offline.F (NOT FABM-RELATED)
         in the Thyng code.
 - NOTE: We added cpp conditions on (FABM_MU,FABM_NU,FABM_TSR) to enable call to my25_corstep or gls_corstep
         and thereby provide (mu,nu,tsr) variables under offline simulations.
+- Transferred modification to 19012026 code (21/01/2026)
 
 makefile (PLATFORM DEPENDENT)
 - Added FABM include directory to includes list (for locating .h files), dependent on USE_FABM macro (04/03/2015)
 - Inserted command to copy FABM .mod files from FABM_INCDIR, dependent on USE_FABM macro (04/03/2015)
 - Platform-dependent modifications for STALLO, FRAM (01/08/2019)
+- Transferred modifications for FRAM/OLIVIA to 19012026 code (21/01/2026)
 
 Compilers/make_macros.h
 - Added RFABM-dependent definition of USE_FABM macro (04/03/2015)
+- Transferred modification to 19012026 code (21/01/2026)
 
 Master/mct_driver.h
 - Inserted RFABM-dependent USE statement and call to roms_fabm_init (as in ocean.h) following Iva Tojcic suggestion (25/07/2022)
+- Transferred modification to 19012026 code (21/01/2026)
 
 Modules/mod_average.F
 - Added RFABM-dependent declaration, allocation, and initialization of:
@@ -188,16 +233,18 @@ AVERAGE(ng)%avg(srfWm2,Asilt,xCO2atm,pCO2atm,state_bt,state_sf) (21/04/2017)
 - Added AVERAGE(ng)%avgtss (total suspended sediments) (13/12/2020)
 - Removed TS_ISOURCE-dependent declaration, allocation, and initialization of AVERAGE(ng)%avgtsisource (NOT FABM-RELATED) (19/10/2021)
 - Added CALC_TDR/CALC_TSR-dependent setup of turbulent dissipation/shear variables (03/06/2022) (NOT FABM-RELATED)
-
-Modules/mod_mixing.F
-- Added CALC_TDR/CALC_TSR-dependent setup of turbulent dissipation/shear and viscosity variables in MIXING (03/06/2022) (NOT FABM-RELATED)
+- Transferred modifications to 19012026 code, removing (FABM_ASILT, FABM_ISOURCES, FABM_ADYTRACER) code (21/01/2026)
+  Added missing code for (mu,nu).
+  Consolidated placement of all new variables to the end.
 
 Modules/mod_biology.F:
 - Added comments and cpp-contingent include statement for rfabm_mod.F (17/11/2014)
+- Transferred modification to 19012026 code (21/01/2026)
 
 Modules/mod_clima.F (NOT FABM-RELATED)
 - Added arrays for new CLIMATOLOGY cpps associated with Thyng OFFLINE code (10/08/2025)
 - NOTE: We corrected some of the logic in the cpp conditions on initialization.
+- Transferred modification to 19012026 code (21/01/2026)
 
 Modules/mod_coupler.F:
 - Increased MaxNumberFields from 50 to 100 to allow for ERSEM-level complexity (05/10/2015)
@@ -205,6 +252,8 @@ Modules/mod_coupler.F:
 
 Modules/mod_diags.F:
 - Added RFABM-dependent declaration, allocation, and initialization of DIAGS(ng)%DiaBio2d,DiaBio3d (30/07/2019)
+- Transferred modification to 19012026 code, now more simply modifying the cpp conditions
+  on BIO_FENNEL and ECB to include RFABM (21/01/2026)
 
 Modules/mod_forces.F:
 - Added RFABM-dependent declaration, allocation, and initialization of wind_speed variable Swind (16/03/2015)
@@ -216,11 +265,19 @@ Modules/mod_forces.F:
 - Added TS_ISOURCE-dependent declaration, allocation, and initialization of tsisource (07/02/2020) (NOT FABM-RELATED)
 - Added FABM_TSS,FABM_TSS_ONLINE-dependent declaration, allocation, and initialization of tss (total suspended sediments) (13/12/2020)
 - Removed TS_ISOURCE-dependent declaration, allocation, and initialization of tsisource (19/10/2021) (NOT FABM-RELATED)
+- Transferred modification to 19012026 code, removing (FABM_ASILT, FABM_ISOURCES, FABM_ADYTRACER) code (21/01/2026)
+  Consolidated placement of RFABM forcing variables to after VwindG (minimizes fragmentation).
 
 Modules/mod_iounits.F (NOT FABM-RELATED):
 - Added code to allow for multiple bry/clm/ssf files, following Hedstrom 14092019 code (20/11/2019)
 - Updated to new Arango code with added "head" substructures (24/01/2020)
 - Updated to define TS_ISOURCE input as points sources instead of full-grid forcing (19/10/2021)
+- Transferred and updated modifications in 19012026 code (21/01/2026)
+  Here we only needed to modify to allow for multiple ssf/issf files.
+
+Modules/mod_mixing.F
+- Added CALC_TDR/CALC_TSR-dependent setup of turbulent dissipation/shear and viscosity variables in MIXING (03/06/2022) (NOT FABM-RELATED)
+- Transferred modification to 19012026 code (21/01/2026)
 
 Modules/mod_ncparam.F
 - Added comments showing how this code is a likely source of SIGSEGV errors (worth keeping these!)
@@ -248,11 +305,17 @@ Modules/mod_ncparam.F
 - Added new variables (idMtdr,idMmu,idMnu,idMtsr) under CALC_TDR/CALC_TSR (03/06/2022)
 - Added variables for new CLIMATOLOGY cpps associated with Thyng OFFLINE code (NOT FABM-RELATED, 10/08/2025)
 - Added idOclm variable for use with OCLIMATOLOGY cpp from Thyng OFFLINE code (NOT FABM-RELATED, 10/08/2025)
+- Transferred modifications to 19012026 code (21/01/2026)
+  Here we drop insertions for (FABM_ASILT, FABM_ISOURCES, FABM_ADYTRACER).
+  We also drop insertions for (ncBRYid, ncCLMid) since now replaced with (BRYncid, CLMncid).
+  (ncSSFid, ncISSFid) insertions are replaced with (SSFncid, ISSFncid), following the new style.
+  Parallel-IO variables (SSFpioFile, ISSFpioFile) are also added.
 
 Modules/mod_ocean.F
 - Added RFABM-dependent declaration, allocation, and initialization of full density variable rhof and water pressure variable pres (16/03/2015)
 - Added RFABM-dependent declaration, allocation, and initialization of state_sf and state_bt (16/03/2015)
 - Added RFABM-dependent declaration, allocation, and initialization of state1 (08/05/2017)
+- Transferred modifications to 19012026 code (21/01/2026)
 
 Modules/mod_param.F
 - Added RFABM-dependent declaration and allocation of FMODELS(1:Ngrids)%fmodel(-1:Ntiles) (16/03/2015)
@@ -263,6 +326,7 @@ Modules/mod_param.F
 - Updated declaration of fabm model structure vector fmodels(:) (type->class) and names of fabm types (29/10/2020)
 - Updated fabm objects (e.g. FMODEL(ng)%f(tile)%model) for compatibility with updated FABM source (29/10/2020)
 - Restricted use fabm statement (using 'only') and removed use of fabm_config (redundant) (31/10/2023)
+- Transferred modifications to 19012026 code (21/01/2026)
 
 Modules/mod_scalars.F
 - Added RFABM-dependent declaration and allocation of scalar ydayc(ng) = No. days since start of year (29/10/2015)
@@ -272,27 +336,31 @@ Modules/mod_scalars.F
 - Added RFABM+FABM_ISOURCES-dependent declaration, allocation, and initialization of LtracerIbio (10/02/2020)
 - Added nFABM biology superstep parameter (no. DT per FABM step) (05/01/2021)
 - Added FABM time step dtFABM(ng) (17/06/2022)
+- Transferred modifications to 19012026 code, excluding code for FABM_ISOURCES (21/01/2026)
 
 Modules/mod_sources.F (NOT FABM-RELATED):
 - Added code to allow for multiple ssf files, following Hedstrom 14092019 code (20/11/2019)
 - Updated to define TS_ISOURCE input as points sources instead of full-grid forcing (19/10/2021)
 - BUG FIX: Corrected initialization of Nisrct to range over indices 1:Ntiles (was 1:Nisrc(ng)) (16/09/2022)
+- Transferred modifications to 19012026 code, replacing loop over multifiles with use of only first file
+  to determine numbers of standard and internal point sources (21/01/2026)
 
 Nonlinear/my25_corstep.F
 - Added CALC_TDR/CALC_TSR-dependent calculations of turbulent dissipation/shear rates and viscosities (03/06/2022) (NOT FABM-RELATED)
 - Added code under OFFLINE to prevent undesired modification of (Akv,Akt) (NOT FABM-RELATED, 13/08/2025)
+- Transferred modifications to 19012026 code (21/01/2026)
 
-Drivers/nl_ocean.h (NOT FABM-RELATED)
+Drivers/nl_roms.h (previously nl_ocean.h) (NOT FABM-RELATED)
 - Imported conditional call to main3d_offline from K.M. Thyng OFFLINE_BIOLOGY/TPASSIVE code (09/08/2025)
-
-Master/ocean.h
-- Inserted RFABM-dependent USE statement and call to roms_fabm_init (31/03/2015)
+- Transferred modifications to 19012026 code, noting name change (ocean->roms) (21/01/2026)
 
 Nonlinear/pre_step3d.F (NOT FABM-RELATED)
 - Modified loops and conditions to account for OFFLINE_BIOLOGY/TPASSIVE following K.M. Thyng code (COAWST-ROMS-OIL) (09/08/2025)
+- Transferred modifications to 19012026 code (21/01/2026)
 
 Utility/read_biopar.F
 - RFABM-dependent include statement referring to rfabm_inp.h (04/08/2015)
+- Transferred modifications to 19012026 code (21/01/2026)
 
 Utility/read_phypar.F
 - RFABM+FABM_ASILT/FABM_PCO2ATM-dependent reading in of Hout(idAsilt) Aout(idAsilt) etc. (04/05/2017)
@@ -310,6 +378,7 @@ Utility/read_phypar.F
 - Changed index name idSUVav -> idSUV (11/09/2020)
 - Added Hout,Aout code for idtss (total suspended sediments) (13/12/2020)
 - Added Hout code for (idMtdr,idMmu,idMnu,idMtsr) and Aout for (idMtdr,idMtsr) (03/06/2022) (NOT FABM-RELATED)
+- Transferred modifications to 19012026 code, dropping insertions for (FABM_ASILT, FABM_ISOURCES, FABM_ADYTRACER) (21/01/2026)
 
 Utility/read_stapar.F
 - Added RFABM-dependent reading in of Sout for (srfWm2,Asilt,xCO2atm,pCO2atm,state_bt,state_sf) (07/08/2019)
@@ -319,6 +388,7 @@ Utility/read_stapar.F
 - Added reading of Sout for tss (total suspended sediments) (13/12/2020)
 - Removed TS_ISOURCE-dependent reading in of Sout (19/10/2021) (NOT FABM-RELATED)
 - Added Sout code for (idMtdr,idMmu,idMnu,idMtsr) (03/06/2022) (NOT FABM-RELATED)
+- Transferred modifications to 19012026 code, dropping insertions for (FABM_ASILT, FABM_ISOURCES, FABM_ADYTRACER) (21/01/2026)
 
 Nonlinear/Biology/rfabm.h (from npzd_Franks.h, note: COAWST and ARANGO versions should be identical)
 - Added linking calls (pointers that change between time steps) and call to fabm_do (31/03/2015)
@@ -350,13 +420,24 @@ Nonlinear/Biology/rfabm.h (from npzd_Franks.h, note: COAWST and ARANGO versions 
 - Modified to use parameters dtFABM(ng) from mod_scalars (03/06/2022)
 - Introduced optional CFL-based limit on sinking velocity under CAP_WSINK_CFL, using parameter maxCFLwsink from rfabm.in (25/06/2022)
 - BUG FIX! Corrected 'iic(ng)-1' to 'iic(ng)-ntstart(ng)' in condition on nFABM (28/10/2025)
+- Adapted for 19012026 code based on updates to npzd_Franks.h and fennel.h (21/01/2026)
+  We adopt the new structure enclosing within module biology_mod.
+  __FILE__ -> MyFile
+  Modified comments to clarify the use of only rmask_full (=rmaskwet*rmask if WET_DRY (see Nonlinear/wetdry.F),
+  =rmask if not WET_DRY (see initialisation in Utility/set_masks.F)).
 
 Nonlinear/rho_eos.F
 - Added RFABM-dependent update of rhof from rho and water pressure (pres) calculation (16/03/2015)
 - Removed redundant use of modules (fabm,fabm_config) (31/10/2023)
+- Transferred modifications to 19012026 code (21/01/2026)
 
 Nonlinear/rhs3d.F (NOT FABM-RELATED)
 - Modified loops and conditions to account for OFFLINE_BIOLOGY/TPASSIVE following K.M. Thyng code (COAWST-ROMS-OIL) (09/08/2025)
+- Transferred modifications to 19012026 code (21/01/2026)
+
+Master/roms.h (previously ocean.h)
+- Inserted RFABM-dependent USE statement and call to roms_fabm_init (31/03/2015)
+- Transferred modifications to 19012026 code, noting name change (ocean->roms) (21/01/2026)
 
 Nonlinear/Biology/roms_fabm.F (NEW, note: COAWST and ARANGO versions should be identical)
 - Wrote initialisation subroutine roms_fabm_init (31/03/2015)
@@ -371,6 +452,7 @@ Nonlinear/Biology/roms_fabm.F (NEW, note: COAWST and ARANGO versions should be i
 - Added FABM_TSS,FABM_TSS_ONLINE linkage to variable tss (total suspended sediments) (13/12/2020)
 - Added (FABM_MU,FABM_NU,FABM_TSR)-dependent linkage to (dynamic viscosity,kinamtic viscosity,turbulent shear rate) (03/06/2022)
 - Added setting of dtFABM(ng) variable (held in mod_scalars) using nFABM(ng) (03/06/2022)
+- For 19012026 code, drop code for (FABM_ASILT, FABM_ISOURCES, FABM_ADYTRACER) (21/01/2026)
 
 Nonlinear/set_avg.F
 - Added RFABM-dependent calculation of avgstate_sf and avgstate_bt (23/04/2017)
@@ -382,6 +464,10 @@ Nonlinear/set_avg.F
 - Changed index name idSUVav -> idSUV (11/09/2020)
 - Added SEDIMENT-dependent calculation of average Total Suspended Sediment (13/12/2020) (NOT FABM-RELATED)
 - Added CALC_TDR/CALC_TSR-dependent average updates for turbulent dissipation/shear rate variables (tdr,tsr) (03/06/2022) (NOT FABM-RELATED)
+- Transferred modifications to 19012026 code, dropping insertions for (FABM_ASILT, FABM_ISOURCES, FABM_ADYTRACER) (21/01/2026)
+  Note: in new code, iNLM->model.
+  Added missing code for (mu,nu).
+  Consolidated placement of all new variables to the end.  
 
 Nonlinear/set_data.F
 - Added RFABM-dependent update of wind_speed variable Swind (16/03/2015)
@@ -397,20 +483,26 @@ Nonlinear/set_data.F
 - Updated to define TS_ISOURCE input as points sources instead of full-grid forcing (19/10/2021)
 - Added code under OFFLINE/CLIMATOLOGY cpps following K.M. Thyng offline transport code (COAWST-ROMS-OIL)
   plus corrections from J. Crespin OfflineFennel code (NOT FABM-RELATED, 09/08/2025)
+- Transferred modifications to 19012026 code, dropping insertions for (FABM_ASILT, FABM_ISOURCES, FABM_ADYTRACER) (21/01/2026)
+  Modified placement of new forcing variables to end.
 
 Utility/set_diags.F
 - Added RFABM-dependent setting of FABM diagnostics (30/07/2019)
 - Modified divisor rfacFABM to account for nFABM>1 (biology superstepping) (09/01/2021)
+- Transferred modifications to 19012026 code (21/01/2026)
 
 Nonlinear/set_massflux.F (NOT FABM-RELATED)
 - Added code to account for OFFLINE/CLIMATOLOGY cpps following K.M. Thyng code (COAWST-ROMS-OIL) (09/08/2025)
+- Transferred modifications to 19012026 code (21/01/2026)
 
 Nonlinear/set_vbc.F
 - Added RFABM-dependent assignment of srflxWm2 from srflx (05/05/2017)
 (done here to account for possible corrections in bulk_flux.F etc.)
+- Transferred modifications to 19012026 code (21/01/2026)
 
 Nonlinear/set_zeta.F (NOT FABM-RELATED)
 - Added code to account for OFFLINE following K.M. Thyng code (COAWST-ROMS-OIL) (09/08/2025)
+- Transferred modifications to 19012026 code (21/01/2026)
 
 Nonlinear/step3d_t.F (NOT FABM-RELATED)
 - Corrected following MPDATA bug fix (#842) (07/02/2020)
@@ -420,24 +512,35 @@ Nonlinear/step3d_t.F (NOT FABM-RELATED)
 - Added comment under TS_ISOURCE code regarding use of index 'tile+1' (16/09/2022)
 - Modified loop indices to account for OFFLINE_BIOLOGY/TPASSIVE following K.M. Thyng code (COAWST-ROMS-OIL) (09/08/2025)
 - BUG FIX! Corrected 'iic(ng).eq.1' to 'iic(ng).eq.ntstart(ng)' (28/10/2025)
+- Transferred modifications to 19012026 code (21/01/2026)
 
 Nonlinear/t3dmix2_geo.h (NOT FABM-RELATED)
 - Modified loop indices to account for OFFLINE_BIOLOGY/TPASSIVE following K.M. Thyng code (COAWST-ROMS-OIL) (09/08/2025)
+- Transferred modifications to 19012026 code (21/01/2026)
 
 Nonlinear/t3dmix2_iso.h (NOT FABM-RELATED)
 - Modified loop indices to account for OFFLINE_BIOLOGY/TPASSIVE following K.M. Thyng code (COAWST-ROMS-OIL) (09/08/2025)
+- Transferred modifications to 19012026 code (21/01/2026)
 
 Nonlinear/t3dmix2_s.h (NOT FABM-RELATED)
 - Modified loop indices to account for OFFLINE_BIOLOGY/TPASSIVE following K.M. Thyng code (COAWST-ROMS-OIL) (09/08/2025)
+- Transferred modifications to 19012026 code (21/01/2026)
 
 Nonlinear/t3dmix4_geo.h (NOT FABM-RELATED)
 - Modified loop indices to account for OFFLINE_BIOLOGY/TPASSIVE following K.M. Thyng code (COAWST-ROMS-OIL) (09/08/2025)
+- Transferred modifications to 19012026 code (21/01/2026)
 
 Nonlinear/t3dmix4_iso.h (NOT FABM-RELATED)
 - Modified loop indices to account for OFFLINE_BIOLOGY/TPASSIVE following K.M. Thyng code (COAWST-ROMS-OIL) (09/08/2025)
+- Transferred modifications to 19012026 code (21/01/2026)
 
 Nonlinear/t3dmix4_s.h (NOT FABM-RELATED)
 - Modified loop indices to account for OFFLINE_BIOLOGY/TPASSIVE following K.M. Thyng code (COAWST-ROMS-OIL) (09/08/2025)
+- Transferred modifications to 19012026 code (21/01/2026)
+
+Utility/tadv.F
+- RFABM-dependent doubling of the length of tadv_att to allow for ERSEM-type models (30/01/2021)
+- Transferred modifications to 19012026 code (21/01/2026)
 
 Utility/wrt_avg.F
 - Added RFABM-dependent code to write NetCDF averages for:
@@ -451,14 +554,15 @@ Utility/wrt_avg.F
 - Changed index name idSUVav -> idSUV (11/09/2020)
 - Added code to write NetCDF averages for idtss (13/12/2020)
 - Added CALC_TDR/CALC_TSR-dependent code to write averages for (idMtdr,idMtsr) (03/06/2022) (NOT FABM-RELATED)
-
-Utility/tadv.F
-- RFABM-dependent doubling of the length of tadv_att to allow for ERSEM-type models (30/01/2021)
+- Updated in 19012026 code following new format, adding code for parallel-IO, and removing code for (FABM_ASILT, FABM_ISOURCES, FABM_ADYTRACER) (21/01/2026)
+  Consolidated placement into one block before calls to bbl_def_nf90 etc.
+  CHECK: All variables should have 9 id instances from 'find'. 
 
 Utility/wrt_diags.F
 - Added RFABM-dependent removal of per-second to per-day units conversion (28/04/2017) and dtBIO setting (29/04/2017)
 - Added RFABM-dependent removal of optional argument SetFillVal = .FALSE. (07/05/2017)
 - Updated to new Arando code with Fcount set by DIA(ng)%load instead of DIA(ng)%Fcount (24/01/2020)
+- Updated in 19012026 code (_r8->_dp, extra ifield argument, new error contingency, file number 10->20) (21/01/2026)
 
 Utility/wrt_his.F
 - Added RFABM-dependent code to write NetCDF history variables:
@@ -469,17 +573,25 @@ Utility/wrt_his.F
 - Updated to latest Arango code to include idTair functionality (ticket #844, 11/03/2020) (NOT FABM-RELATED)
 - Added SEDIMENT-dependent writing of tss (total suspended sediments) (13/12/2020)
 - Added CALC_TDR/CALC_TSR-dependent code to write for (idMtdr,idMmu,idMnu,idMtsr) (03/06/2022) (NOT FABM-RELATED)
+- Updated in 19012026 code following new format, adding code for parallel-IO, and removing code for (FABM_ASILT, FABM_ISOURCES, FABM_ADYTRACER) (21/01/2026)
+  (_r8->_dp, extra ifield argument, new error contingency, file number 10->20) (21/01/2026)
+  Consolidated placement into one block before calls to bbl_def_nf90 etc.
 
 Utility/wrt_info.F (NOT FABM-RELATED)
 - Added logical switches to activate tracer internal point Sources/Sinks (20/10/2021) (NOT FABM-RELATED)
+- Updated in 19012026 code following new format of error contingency (21/01/2026)
 
 Utility/wrt_quick.F:
 - Added RFABM+(SHORTWAVE,FABM_ASILT,FABM_PCO2ATM,FABM_N3ATMDEPO,FABM_N4ATMDEPO,FABM_ISOURCES)-dependent code to write NetCDF quick variables:
 (srfWm2,Asilt,xCO2atm,pCO2atm,N3atmd,N4atmd,Isource,state_bt,state_sf) (27/01/2020)
 - Updated to latest Arango code to include idTair functionality (ticket #844, 11/03/2020) (NOT FABM-RELATED)
+- Updated in 19012026 code adding code for parallel-IO and following new format 
+  (_r8->_dp, extra ifield argument, new error contingency, file number 10->20) (21/01/2026)
 
 Utility/wrt_rst.F
 - Added RFABM-dependent code to write NetCDF restart variables (state_bt,state_sf) (25/04/2017)
+- Updated in 19012026 code adding code for parallel-IO and following new format 
+  (_r8->_dp, iNLM->model, extra ifield argument, new error contingency, file number 10->20) (21/01/2026)
 
 Utility/wrt_station.F
 - Added RFABM-dependent code to write NetCDF station variables (srfWm2,Asilt,xCO2atm,pCO2atm,state_bt,state_sf) (07/08/2019)
@@ -489,6 +601,9 @@ Utility/wrt_station.F
 - Added FABM_TSS,FABM_TSS_ONLINE,SEDIMENT-dependent code to write total suspended sediments (13/12/2020)
 - Removed TS_ISOURCE-dependent code to write NetCDF station variable tsisource (19/10/2021) (NOT FABM-RELATED)
 - Added CALC_TDR/CALC_TSR-dependent code to write for (idMtdr,idMmu,idMnu,idMtsr) (03/06/2022) (NOT FABM-RELATED)
+- Updated in 19012026 code adding code for parallel-IO and following new format 
+  (_r8->_dp, iNLM->model, new error contingency) (21/01/2026)
+
 
 Base files for python-generated input files
 -------------------------------------------
@@ -498,6 +613,7 @@ base_rfabm.in (from External/npzd_Franks.in, note: COAWST and ARANGO versions sh
 - Removed all parameter setting and model-specific comments (30/07/2019)
 - All parameters are now initially set within the python script - the base file only provides model-independent comments (30/07/2019)
 - Updated to latest Arango code (adding Hadvection, Vadvection etc.) (27/01/2020)
+- Updated in 19012026 code, modifying some of the comments (21/01/2026)
 
 base_rfabm_inp.h (from Nonlinear/Biology/npzd_Franks_inp.h, note: COAWST and ARANGO versions should be identical)
 - Removed BioIter and wPhy parameters, but still need to input tracer diffusivities etc. (28/07/2015)
@@ -507,8 +623,9 @@ base_rfabm_inp.h (from Nonlinear/Biology/npzd_Franks_inp.h, note: COAWST and ARA
 - Updated to latest Arango code (adding Hadvection, Vadvection etc.) (27/01/2020)
 - Added nFABM parameter (no. FABM time steps per baroclinic time step) (17/01/2021)
 - Updated to include maxCFLwsink parameter (upper cap on sinking velocity CFL number) (25/06/2022)
+- Updated in 19012026 code (21/01/2026)
 
-base_varinfo.dat (from External/varinfo.dat)
+base_varinfo.yaml (from External/varinfo.yaml)
 - Copied and renamed ROMS/External/varinfo.dat (30/07/2019)
 - Updated to latest Arango code (adding Hadvection, Vadvection etc.) (27/01/2020)
 - Added supplementary non-FABM variables (suv,bstrPa,tss) (18/01/2021) (NOT FABM RELATED)
@@ -516,3 +633,6 @@ base_varinfo.dat (from External/varinfo.dat)
 - Corrected typo in suggested units for specific humidity (should be kg/kg, not g/kg, if scale factor = 1.00) (23/12/2021) (NOT FABM RELATED)
 - Corrected srf_time to swrad_time for swrad variables (23/12/2021) (NOT FABM RELATED)
 - Added new variables (tdr,mu,nu,tsr) (27/06/2022) (NOT FABM RELATED)
+- Updated in 19012026 code, changing .dat->.yaml and re-adding the additional non-FABM variables
+  (suv,bstrPa,tss,tdr,mu,nu,tsr), and also adding the new climatology variables associated
+  withi OFFLINE (omega,AKt,AKs,AKv,tke,gls) (placed between v and SST in climatology section) (21/01/2026)

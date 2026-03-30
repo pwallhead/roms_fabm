@@ -1,6 +1,9 @@
 ﻿ANNOUNCEMENTS
 =============
 
+NEW! 21/06/2026: Major update of ROMS trunk code (new version ROMS_ARANGO_19012026, code for old version
+                 ROMS_ARANGO_20012020 moved to subfolder old/).
+
 BUG FIX! 25/10/2025: This concerns only configurations of (METROMS, ARANGO, COAWST) code branches
 using multiple physical time steps per FABM bgc time step (nFABM>1) which are also subject to restart.
 The condition on computing FABM BGC was incorrectly based on 'iic(ng)-1' rather than 'iic(ng)-ntstart(ng)'.
