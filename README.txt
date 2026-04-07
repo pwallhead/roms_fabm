@@ -1,6 +1,10 @@
 ﻿ANNOUNCEMENTS
 =============
 
+BUG FIX! 07/04/2026: Some code for TS_ISOURCE in get_idata.F was not carried through to the new ROMS version.
+                     This has been corrected. 
+                     Affects code in Src_ARANGO_19012026_modify downloaded between 30/03/2026 and 07/04/2026. 
+
 NEW! 21/06/2026: Major update of ROMS trunk code (new version ROMS_ARANGO_19012026, code for old version
                  ROMS_ARANGO_20012020 moved to subfolder old/).
 
