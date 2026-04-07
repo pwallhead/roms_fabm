@@ -792,6 +792,37 @@
       END IF
 #endif
 
+!!!Modified PWA 21/01/2026
+#ifdef TS_ISOURCE
+      IF ((iic(ng).eq.0).and.ANY(LtracerISrc(:,ng))) THEN
+        CALL get_ngfld (ng, iNLM, idIxpo, ISSFncid(idIxpo,ng),          &
+# if defined PIO_LIB && defined DISTRIBUTE
+     &                  ISSFpioFile(idIxpo,ng)                          &
+# endif
+     &                  1, ISSF(1,ng), recordless, update(1),           &
+     &                  1, Nisrc(ng), 1, 1, 1, Nisrc(ng), 1,            &
+     &                  SOURCES(ng) % Xisrc)
+        IF (FoundError(exit_flag, NoError, __LINE__, MyFile)) RETURN
+
+        CALL get_ngfld (ng, iNLM, idIepo, ISSFncid(idIepo,ng),          &
+# if defined PIO_LIB && defined DISTRIBUTE
+     &                  ISSFpioFile(idIepo,ng)                          &
+# endif
+     &                  1, ISSF(1,ng), recordless, update(1),           &
+     &                  1, Nisrc(ng), 1, 1, 1, Nisrc(ng), 1,            &
+     &                  SOURCES(ng) % Yisrc)
+        IF (FoundError(exit_flag, NoError, __LINE__, MyFile)) RETURN
+
+        DO is=1,Nisrc(ng)
+          SOURCES(ng)%Iisrc(is)=                                        &
+     &                MAX(1,MIN(NINT(SOURCES(ng)%Xisrc(is)),Lm(ng)+1))
+          SOURCES(ng)%Jisrc(is)=                                        &
+     &                MAX(1,MIN(NINT(SOURCES(ng)%Yisrc(is)),Mm(ng)+1))
+        END DO
+      END IF
+#endif
+!!!End modified PWA 21/01/2026
+
 #ifdef RED_TIDE
 !
 !-----------------------------------------------------------------------
