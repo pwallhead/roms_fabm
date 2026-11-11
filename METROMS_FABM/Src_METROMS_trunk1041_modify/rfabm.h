@@ -415,7 +415,7 @@
 !-----------------------------------------------------------------------
 !  Prepare all fields FABM needs to compute SMS terms (e.g., light)
 !-----------------------------------------------------------------------
-      CALL FMODEL(ng)%f(tile)%model%prepare_inputs()
+      CALL FMODEL(ng)%f(tile)%model%prepare_inputs(time(ng))
 
 
 

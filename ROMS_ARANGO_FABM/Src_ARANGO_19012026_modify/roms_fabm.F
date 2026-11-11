@@ -161,7 +161,7 @@
         END IF
         IF (FMODEL(ng)%f(tile)%model%variable_needs_values(             &
      &   fabm_standard_variables%depth)) THEN
-          CALL FMODEL(ng)%f(tile)%model%link_interior_data(             & !depth of layer midpoints (m)
+          CALL FMODEL(ng)%f(tile)%model%link_interior_data(             & !depth of layer midpoints (m) (time-varying actual depths below surface, see Nonliner/set_depth.F)
      &     fabm_standard_variables%depth,                               &
      &     GRID(ng)%z_r(Istr:Iend,Jstr:Jend,1:N(ng)))
         END IF
